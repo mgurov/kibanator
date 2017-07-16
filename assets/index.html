@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title></title>
+        <title>Kibanator - streaming for elm</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -20,7 +20,20 @@
         <![endif]-->
 
         <!-- Add your site or application content here -->
-        <p>Hello world! This is HTML5 Boilerplate.</p>
+        <form>
+            <label for="from">from</label>
+            <input type="number" name="from" id="from" />
+            <br>
+            <label for="to">to</label>
+            <input type="text" name="to" id="to"/>
+            <br>
+
+            <label for="message">query</label>
+                <textarea id="message" name="message" rows="10" cols="30"></textarea>
+            <br>
+
+            <input type="submit"/>
+        </form>
 
         <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.12.0.min.js"><\/script>')</script>
