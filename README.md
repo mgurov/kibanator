@@ -1,2 +1,2 @@
 # restreamata
-crafted streaming and re-streaming with UI
+crafted streaming and re-streaming kibana(es)
