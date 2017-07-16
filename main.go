@@ -1,5 +1,14 @@
 package main
 
+import (
+	"log"
+	"net/http"
+)
+
 func main() {
-	println("Hello, world")
+	fs := http.FileServer(http.Dir("assets"))
+	http.Handle("/", fs)
+
+	log.Println("Listening...")
+	http.ListenAndServe(":3000", nil)
 }
