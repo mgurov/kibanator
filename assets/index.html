@@ -47,7 +47,21 @@
     <script>
         $(document).ready(function () {
             $("#submit").click(function (event) {
-                alert("The link will no longer take you to jquery.com");
+                $.ajax({
+                    url: "/api/next",
+                    method: "POST",
+                    dataType: "json",
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify({
+                        query: $("#message").val()
+                    }),
+                    success: function (result) {
+                        console.log('ajax is goed');
+                    },
+                    success: function (jqXHR, textStatus) {
+                        console.error('Error accessing api', textStatus);
+                    }
+                });
                 event.preventDefault();
             });
         });
