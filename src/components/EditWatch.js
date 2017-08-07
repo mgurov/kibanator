@@ -13,6 +13,7 @@ function FieldGroup({ id, label, help, ...props }) {
   );
 }
 
+//TODO: rename to the EditWatchDialog?
 class EditWatch extends Component {
 
   constructor(props) {
