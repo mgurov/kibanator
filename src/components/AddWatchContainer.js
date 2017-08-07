@@ -3,6 +3,7 @@ import EditWatchForm from './EditWatchForm'
 
 import { connect } from 'react-redux'
 import {Button} from 'react-bootstrap'
+import {addWatch} from '../actions'
 
 class AddWatchContainer extends Component {
     constructor(props) {
@@ -18,7 +19,7 @@ class AddWatchContainer extends Component {
         }
 
         this.onSave = function(name) {
-            console.log('woudl save', name)
+            props.dispatch(addWatch(name))
             that.toggleState();
         }
     }

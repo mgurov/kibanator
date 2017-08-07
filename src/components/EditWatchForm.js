@@ -11,10 +11,6 @@ class EditWatchForm extends Component {
         disabled: true 
     }
 
-    this.save = () => {
-      this.props.onSave(this.state.name)
-    }
-
     this.onChange = (event) => {
       this.setState({
         name: event.target.value,
@@ -25,7 +21,8 @@ class EditWatchForm extends Component {
     this.submit = (event) => {
       event.preventDefault();
       if (!this.state.disabled) {
-        this.save()
+        this.props.onSave(this.state.name)
+        this.setState({name: ""})
       }
     }
   }
