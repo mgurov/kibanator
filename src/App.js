@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import Watch from './components/Watch.js'
 import EditWatch from './components/EditWatch.js'
+import AddWatchContainer from './components/AddWatchContainer.js'
 import _ from 'lodash'
 
 class App extends Component {
@@ -48,8 +49,9 @@ class App extends Component {
   }
 
   render() {
-    const watches = this.state.watches.map((k, v) => (<Watch key={k.id} name={k.text} onClick={() => this.onEditClick(k)} />))
+    const watches = this.state.watches.map((k, v) => (<Watch key={'item_' + k.id} name={k.text} onClick={() => this.onEditClick(k)} />))
     watches.push((<Watch key='+' name='+' onClick={this.onAddWatch} />))
+    watches.push((<AddWatchContainer key='++' />))
 
     let editWindow;
     if (this.state.showModal) {
@@ -68,9 +70,7 @@ class App extends Component {
         <div className="App-header">
           <h2>Welcome to React</h2>
         </div>
-        <p className="App-intro">
-          {watches}
-        </p>
+        {watches}
       </div>
     );
   }
