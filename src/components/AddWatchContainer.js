@@ -29,7 +29,7 @@ class AddWatchContainer extends Component {
             <span>
                 <EditWatchForm 
                     visible={this.state.active}
-                    onCancel={this.toggleState}
+                    onClose={this.toggleState}
                     onSave={this.onSave}
                     />
                 <Button onClick={this.toggleState}>++</Button>

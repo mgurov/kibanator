@@ -68,7 +68,7 @@ class EditWatchForm extends Component {
 EditWatchForm.propTypes = {
   visible: PropTypes.bool.isRequired,
   text: PropTypes.string,
-  onCancel: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
   onDelete: PropTypes.func,
   onSave: PropTypes.func.isRequired
 }
