@@ -2,23 +2,23 @@ import React, { Component } from 'react';
 import EditWatchForm from './EditWatchForm'
 
 import { connect } from 'react-redux'
-import {Button} from 'react-bootstrap'
-import {addWatch} from '../actions'
+import { Button } from 'react-bootstrap'
+import { addWatch } from '../actions'
 
 class AddWatchContainer extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            active : false
+            active: false
         }
 
         let that = this
 
-        this.toggleState = function() {
-            that.setState({active: !that.state.active})
+        this.toggleState = function () {
+            that.setState({ active: !that.state.active })
         }
 
-        this.onSave = function(name) {
+        this.onSave = function (name) {
             props.dispatch(addWatch(name))
             that.toggleState();
         }
@@ -27,11 +27,11 @@ class AddWatchContainer extends Component {
     render() {
         return (
             <span>
-                <EditWatchForm 
+                <EditWatchForm
                     visible={this.state.active}
                     onClose={this.toggleState}
                     onSave={this.onSave}
-                    />
+                />
                 <Button onClick={this.toggleState}>++</Button>
             </span>)
     }
