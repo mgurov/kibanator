@@ -3,6 +3,7 @@ import './App.css';
 import Watch from './components/Watch.js'
 import EditWatch from './components/EditWatch.js'
 import AddWatchContainer from './components/AddWatchContainer.js'
+import WatchListContainer from './components/WatchListContainer.js'
 import _ from 'lodash'
 
 class App extends Component {
@@ -71,6 +72,8 @@ class App extends Component {
           <h2>Welcome to React</h2>
         </div>
         {watches}
+        <br/>
+        <WatchListContainer />
       </div>
     );
   }
