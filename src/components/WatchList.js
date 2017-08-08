@@ -46,10 +46,10 @@ class WatchList extends Component {
             edit = null;
         }
 
-        return (<div>
+        return (<span>
             {watches}
             {edit}
-        </div>)
+        </span>)
     }
 }
 

@@ -30,7 +30,7 @@ class EditWatchForm extends Component {
     render() {
 
         const modalInstance = (
-            <div className="static-modal">
+            <span className="static-modal">
                 <Modal show={this.props.visible} onHide={this.props.onClose}>
                     <Modal.Header closeButton>
                         <Modal.Title>Add an entry</Modal.Title>
@@ -58,7 +58,7 @@ class EditWatchForm extends Component {
                     </Modal.Footer>
 
                 </Modal>
-            </div>
+            </span>
         );
 
         return modalInstance;
