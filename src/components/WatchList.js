@@ -23,6 +23,10 @@ class WatchList extends Component {
             )
             that.onClose()
         }
+        this.onDelete = () => {
+            that.props.onWatchDeleted(that.state.editing.id)
+            that.onClose()
+        }
     }
 
     render() {
@@ -35,6 +39,7 @@ class WatchList extends Component {
                 text={this.state.editing.text}
                 onClose={this.onClose}
                 onSave={this.onSave}
+                onDelete={this.onDelete}
                 />
 
         } else {
