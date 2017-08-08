@@ -32,20 +32,14 @@ class WatchList extends Component {
     render() {
         var watches = this.props.watches.map((k, v) => (<Watch key={'item_' + k.id} name={k.text} onClick={() => this.onEditClick(k)} />))
 
-        let edit;
-        if (!!this.state.editing) {
-            edit = <EditWatchForm
+        let edit = !this.state.editing || <EditWatchForm
                 visible={!!this.state.editing}
                 text={this.state.editing.text}
                 onClose={this.onClose}
                 onSave={this.onSave}
                 onDelete={this.onDelete}
             />
-
-        } else {
-            edit = null;
-        }
-
+            
         return (<span>
             {watches}
             {edit}
