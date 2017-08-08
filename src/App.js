@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import './App.css';
-import Watch from './components/Watch.js'
-import EditWatch from './components/EditWatch.js'
 import AddWatchContainer from './components/AddWatchContainer.js'
 import WatchListContainer from './components/WatchListContainer.js'
 import _ from 'lodash'
@@ -50,30 +48,13 @@ class App extends Component {
   }
 
   render() {
-    const watches = this.state.watches.map((k, v) => (<Watch key={'item_' + k.id} name={k.text} onClick={() => this.onEditClick(k)} />))
-    watches.push((<Watch key='+' name='+' onClick={this.onAddWatch} />))
-    watches.push((<AddWatchContainer key='++' />))
-
-    let editWindow;
-    if (this.state.showModal) {
-      editWindow = <EditWatch 
-        store={this.props.store}
-        onClose={this.onDialogClose} 
-        watch={this.state.showModal}
-        />
-    } else {
-      editWindow = null
-    }
-
     return (
       <div className="App">
-        {editWindow}
         <div className="App-header">
           <h2>Welcome to React</h2>
         </div>
-        {watches}
-        <br/>
         <WatchListContainer />
+        <AddWatchContainer/>
       </div>
     );
   }
