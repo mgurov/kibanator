@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import Watch from './Watch'
 import PropTypes from 'prop-types';
 import EditWatchForm from './EditWatchForm'
+import { CSSTransitionGroup } from 'react-transition-group'
+import './WatchList.css'
 
 class WatchList extends Component {
     constructor(props) {
@@ -39,9 +41,14 @@ class WatchList extends Component {
                 onSave={this.onSave}
                 onDelete={this.onDelete}
             />
-            
+
         return (<span>
+            <CSSTransitionGroup
+                transitionName="example"
+                transitionEnterTimeout={500}
+                transitionLeaveTimeout={700}>
             {watches}
+            </CSSTransitionGroup>
             {edit}
         </span>)
     }
