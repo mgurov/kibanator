@@ -5,13 +5,21 @@ import WatchListContainer from './components/WatchListContainer.js'
 import DataListContainer from './components/DataListContainer.js'
 
 let App = () => {
+
+  let showWatches = false
+
+  let watches
+  if (showWatches) {
+    watches = (<div><WatchListContainer />
+               <AddWatchContainer /></div>)
+  }
+
   return (
     <div className="App">
       <div className="App-header">
-        <h2>Welcome to React</h2>
+        <h2>Kibanator</h2>
       </div>
-      <WatchListContainer />
-      <AddWatchContainer />
+      {watches}
       <DataListContainer />
     </div>
   );
