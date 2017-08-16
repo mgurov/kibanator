@@ -58,8 +58,8 @@ export function fetchData() {
 
     from = from + 10
     return fetch('/mylog/_search?size=10&from=' + from, {
-      method: "GET",
-      body: makeSearch('foo')
+      method: "POST",
+      body: JSON.stringify(makeSearch('foo'))
     })
       .then(
         response => {
