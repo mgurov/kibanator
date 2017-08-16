@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Grid, Col, Row, ListGroupItem, ListGroup } from 'react-bootstrap'
+import { Grid, Col, Row } from 'react-bootstrap'
 import {flattenMap} from '../domain/maps'
 import _ from 'lodash'
 
