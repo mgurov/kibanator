@@ -49,11 +49,15 @@ export const failedFetchingData = (error) => {
   }
 }
 
+//hack
+let from = -10;
+
 export function fetchData() {
   return function (dispatch) {
     dispatch(fetchingData())
 
-    return fetch('/mylog/_search', {
+    from = from + 10
+    return fetch('/mylog/_search?size=10&from=' + from, {
       method: "GET",
       body: makeSearch('foo')
     })

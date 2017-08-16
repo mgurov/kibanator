@@ -50,7 +50,7 @@ class DataRow extends Component {
 
 function DataList(props) {
     return (<Grid>
-        {props.data.map(o => <DataRow key={o._id} data={o} />)}
+        {props.data.hits.map(o => <DataRow key={o._id} data={o} />)}
     </Grid>)
 }
 
