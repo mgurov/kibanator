@@ -3,7 +3,7 @@ const _ = require('lodash');
 
 test('should filter on the_service when asked so', () => {
     var serviceName = "the_service"
-    let actual = makeSearch(serviceName);
+    let actual = makeSearch({serviceName, from: new Date()});
     
     const mustPath = 'query.filtered.filter.bool.must';
     expect(actual).toHaveProperty(mustPath);

@@ -1,4 +1,4 @@
-var makeSearch = function (serviceName) {
+var makeSearch = function ({serviceName, from, to=new Date()}) {
     serviceName = serviceName || ''
     return {
         "query": {
@@ -25,8 +25,8 @@ var makeSearch = function (serviceName) {
                   {
                     "range": {
                       "Timestamp": {
-                        "gte": 1502619599395,
-                        "lte": 1502620499395,
+                        "gte": from.getTime(),
+                        "lte": to.getTime(),
                         "format": "epoch_millis"
                       }
                     }

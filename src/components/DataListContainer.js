@@ -1,20 +1,25 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { fetchData } from '../actions'
+import { fetchData, selectSyncTime } from '../actions'
 import DataList from './DataList'
 import { Alert } from 'react-bootstrap'
+import {SyncTimeControl} from './SyncTimeControl'
 
 const mapStateToProps = state => {
     return {
-        data: state.data
+        data: state.data,
+        synctimes: state.synctimes
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        onDataAsked: (id, text) => {
+        onDataAsked: () => {
             dispatch(fetchData())
-        }
+        },
+        onSyncSelected: (st) => {
+            dispatch(selectSyncTime(st))
+        },
     }
 }
 
@@ -28,7 +33,7 @@ function DataListContainer(props) {
     }
 
     return (<div>
-        <button onClick={props.onDataAsked} disabled={props.data.isFetching} className="btn btn-default">Sync</button>
+        <SyncTimeControl synctimes={props.synctimes} onSyncSelected={props.onSyncSelected}/>
         {error}
         <DataList data={props.data.data} />
     </div>)
