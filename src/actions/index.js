@@ -27,13 +27,19 @@ export const deleteWatch = id => {
 }
 
 export const selectSyncTime = selected => {
-
+  
   return function(dispatch) {
     dispatch({type: 'SELECT_SYNC_TIME', selected})
-
+    
     startFetching(new Date(selected.nowToStart(new Date())), dispatch)    
-  }
+  }  
+}
 
+export const removeTillId = id => {
+  return {
+    type: 'REMOVE_TILL_TICK_ID',
+    id
+  }
 }
 
 export * from "./fetching"

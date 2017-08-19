@@ -41,6 +41,7 @@ class DataRow extends Component {
 
         return <Row>
             <Col sm={3} md={3} lg={3}>
+                <span className="glyphicon glyphicon-ok" onClick={this.props.removeTillThis} title="remove everything down to and including this"></span>
                 <span className={chevronDirection} onClick={this.toggle}></span>
                 <Timestamp value={timestamp} />
             </Col>
@@ -52,7 +53,7 @@ class DataRow extends Component {
 
 function DataList(props) {
     return (<Grid fluid={true}>
-        {props.data.hits.map(o => <DataRow key={o._id} data={o} />)}
+        {props.data.hits.map(o => <DataRow key={o._id} data={o} removeTillThis={() => props.removeTillId(o._id)} />)}
     </Grid>)
 }
 

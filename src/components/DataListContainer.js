@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { fetchData, selectSyncTime } from '../actions'
+import { fetchData, selectSyncTime, removeTillId } from '../actions'
 import DataList from './DataList'
 import { Alert } from 'react-bootstrap'
 import {SyncTimeControl} from './SyncTimeControl'
@@ -20,6 +20,9 @@ const mapDispatchToProps = dispatch => {
         onSyncSelected: (st) => {
             dispatch(selectSyncTime(st))
         },
+        removeTillId: (id) => {
+            dispatch(removeTillId(id))
+        },
     }
 }
 
@@ -35,7 +38,7 @@ function DataListContainer(props) {
     return (<div>
         <SyncTimeControl synctimes={props.synctimes} onSyncSelected={props.onSyncSelected}/>
         {error}
-        <DataList data={props.data.data} />
+        <DataList data={props.data.data} removeTillId={props.removeTillId} />
     </div>)
 }
 

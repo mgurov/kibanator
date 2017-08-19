@@ -7,7 +7,17 @@ const data = (state = {isFetching: false, data: {knownIds: {}, hits: []}, error:
     case 'RECEIVED_HITS':
       return Object.assign({}, state, {isFetching: false, data: mergeHits(action.data.hits, state.data)})
     case 'FAILED_FETCHING_DATA':
-    return Object.assign({}, state, {isFetching: false, error: action.error})
+      return Object.assign({}, state, {isFetching: false, error: action.error})
+    case 'REMOVE_TILL_TICK_ID':
+      let index = _.findIndex(state.data.hits, ['_id', action.id])
+      if (index >= 0) {
+        return Object.assign({}, state, {
+          data : Object.assign({}, state.data, {hits: state.data.hits.slice(index + 1)})
+        })
+      } else {
+        console.error('Could not find id to delete to: ', action.id, data)
+        return state
+      }
     default:
       return state
   }
