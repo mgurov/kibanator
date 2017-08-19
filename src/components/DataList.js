@@ -2,11 +2,7 @@ import React, { Component } from 'react'
 import { Grid, Col, Row } from 'react-bootstrap'
 import {flattenMap} from '../domain/maps'
 import _ from 'lodash'
-
-function Timestamp({ value }) {
-    var date = new Date(value);
-    return (<span title={value}>{date.toLocaleDateString() + " " + date.toLocaleTimeString()}</span>)
-}
+import DateTime from './DateTime'
 
 class DataRow extends Component {
     constructor(props) {
@@ -43,7 +39,7 @@ class DataRow extends Component {
             <Col sm={3} md={3} lg={3}>
                 <span className="glyphicon glyphicon-ok" onClick={this.props.removeTillThis} title="remove everything down to and including this"></span>
                 <span className={chevronDirection} onClick={this.toggle}></span>
-                <Timestamp value={timestamp} />
+                <DateTime value={timestamp} />
             </Col>
             <Col sm={9} md={9} lg={9}>{message}</Col>
             {expandedRow}
