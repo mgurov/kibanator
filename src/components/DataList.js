@@ -40,16 +40,18 @@ class DataRow extends Component {
         }
 
         return <Row>
-            <Col xs={1} sm={1} md={1} lg={1}><span className={chevronDirection} onClick={this.toggle}></span></Col>
-            <Col xs={3} sm={3} md={3} lg={3}><Timestamp value={timestamp} /></Col>
-            <Col xs={2} md={2} lg={2}>{message}</Col>
+            <Col sm={3} md={3} lg={3}>
+                <span className={chevronDirection} onClick={this.toggle}></span>
+                <Timestamp value={timestamp} />
+            </Col>
+            <Col sm={9} md={9} lg={9}>{message}</Col>
             {expandedRow}
             </Row>
     }
 }
 
 function DataList(props) {
-    return (<Grid>
+    return (<Grid fluid={true}>
         {props.data.hits.map(o => <DataRow key={o._id} data={o} />)}
     </Grid>)
 }
