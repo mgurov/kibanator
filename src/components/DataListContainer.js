@@ -36,7 +36,7 @@ function DataListContainer(props) {
     }
 
     return (<div>
-        <SyncTimeControl synctimes={props.synctimes} onSyncSelected={props.onSyncSelected}/>
+        <SyncTimeControl synctimes={props.synctimes} acked={props.data.data.acked} onSyncSelected={props.onSyncSelected}/>
         {error}
         <DataList data={props.data.data} removeTillId={props.removeTillId} />
     </div>)

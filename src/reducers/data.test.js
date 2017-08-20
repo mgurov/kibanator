@@ -7,7 +7,8 @@ describe('some hits present, new received', () => {
             {_id : "1"},
             {_id : "2"},
         ],
-        knownIds : {"1": 1, "2": 1}
+        knownIds : {"1": 1, "2": 1},
+        propertyWeDontCareAbout: 'valueWeDontCareAbout',
     }
 
     let originalGiven = _.cloneDeep(given)
@@ -25,9 +26,10 @@ describe('some hits present, new received', () => {
                     {_id : "2"},
                     {_id : "3"},
                 ],
-                knownIds : {"1": 1, "2": 1, "3": 1}
+                knownIds : {"1": 1, "2": 1, "3": 1},
+                propertyWeDontCareAbout: 'valueWeDontCareAbout',
             }
-        )    
+        )
     })
 
     test('should not modify the original input', () => {

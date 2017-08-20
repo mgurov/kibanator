@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-const data = (state = {isFetching: false, data: {knownIds: {}, hits: []}, error: null}, action) => {
+const data = (state = {isFetching: false, data: {knownIds: {}, hits: [], acked: 0}, error: null}, action) => {
   switch (action.type) {
     case 'FETCHING_DATA':
       return Object.assign({}, state, {isFetching: true})
@@ -9,10 +9,15 @@ const data = (state = {isFetching: false, data: {knownIds: {}, hits: []}, error:
     case 'FAILED_FETCHING_DATA':
       return Object.assign({}, state, {isFetching: false, error: action.error})
     case 'REMOVE_TILL_TICK_ID':
-      let index = _.findIndex(state.data.hits, ['_id', action.id])
-      if (index >= 0) {
+      let removeUpToIndex = _.findIndex(state.data.hits, ['_id', action.id])
+      if (removeUpToIndex >= 0) {
+        let startFromIndex = removeUpToIndex + 1
+        let acked = state.data.acked + removeUpToIndex + 1 
         return Object.assign({}, state, {
-          data : Object.assign({}, state.data, {hits: state.data.hits.slice(index + 1)})
+          data : Object.assign({}, state.data, {
+            hits: state.data.hits.slice(startFromIndex),
+            acked
+          })
         })
       } else {
         console.error('Could not find id to delete to: ', action.id, data)

@@ -6,7 +6,7 @@ import DateTime from './DateTime'
 export function SyncTimeControl(props) {
 
     if (props.synctimes.selected) {
-        return (<span>Syncing from <DateTime value={new Date(props.synctimes.selected)}></DateTime></span>)
+        return (<span>Syncing from <DateTime value={new Date(props.synctimes.selected)}></DateTime> removed {props.acked} </span>)
     }
 
     function onClickF(st) {
