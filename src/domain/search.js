@@ -41,7 +41,7 @@ var makeSearch = function ({serviceName, from, to=new Date()}) {
         "sort": [
           {
             "Timestamp": {
-              "order": "desc",
+              "order": "asc",
               "unmapped_type": "boolean"
             }
           }
