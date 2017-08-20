@@ -1,12 +1,15 @@
 import React from 'react'
-import {DropdownButton, MenuItem} from 'react-bootstrap'
+import {DropdownButton, MenuItem, Badge} from 'react-bootstrap'
 import _ from 'lodash'
 import DateTime from './DateTime'
 
 export function SyncTimeControl(props) {
 
     if (props.synctimes.selected) {
-        return (<span>Syncing from <DateTime value={new Date(props.synctimes.selected)}></DateTime> removed {props.acked} </span>)
+        return (
+        <span>Syncing from <DateTime value={new Date(props.synctimes.selected)}></DateTime> 
+        &nbsp;acked <Badge>{props.acked}</Badge>
+        </span>)
     }
 
     function onClickF(st) {
