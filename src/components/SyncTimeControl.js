@@ -11,8 +11,8 @@ export function SyncTimeControl(props) {
 
         if (true) {
             ackedPopover = (
-                <Popover id="popover-trigger-hover-focus" title="Acked">
-                    Acked {props.acked.count} latest <DateTime value={new Date(props.acked.lastTimestamp)}></DateTime>
+                <Popover id="popover-trigger-hover-focus" title="Acknowledged">
+                    latest <DateTime value={new Date(props.acked.lastTimestamp)}></DateTime>
                 </Popover>
             );
         }
