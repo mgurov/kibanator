@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Grid, Col, Row } from 'react-bootstrap'
 import {flattenMap} from '../domain/maps'
 import _ from 'lodash'
-import DateTime from './DateTime'
+import DateTime from './generic/DateTime'
 
 class DataRow extends Component {
     constructor(props) {

@@ -1,8 +1,7 @@
 import React from 'react'
 import { DropdownButton, MenuItem, Badge, Popover} from 'react-bootstrap'
 import _ from 'lodash'
-import DateTime from './DateTime'
-import ConditionalOverlayTrigger from './generic/ConditionalOverlayTrigger'
+import {DateTime, ConditionalOverlayTrigger} from './generic/'
 
 export function SyncTimeControl(props) {
 

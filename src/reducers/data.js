@@ -26,8 +26,6 @@ const data = (state = emptyState, action) => {
           count : state.data.acked.count + removeUpToIndex + 1,
           lastTimestamp : state.data.hits[removeUpToIndex]._source.Timestamp
         }
-        console.log(state.data.hits[removeUpToIndex])
-        console.log(state.data.hits[removeUpToIndex]._source.Timestamp)
         return Object.assign({}, state, {
           data : Object.assign({}, state.data, {
             hits: state.data.hits.slice(startFromIndex),
