@@ -1,6 +1,16 @@
 import _ from 'lodash'
 
-const data = (state = {isFetching: false, data: {knownIds: {}, hits: [], acked: 0}, error: null}, action) => {
+const emptyState = {
+  isFetching: false, 
+  data: {
+    knownIds: {}, 
+    hits: [], 
+    acked: {count: 0, lastTimestamp: null}
+  },
+  error: null,
+}
+
+const data = (state = emptyState, action) => {
   switch (action.type) {
     case 'FETCHING_DATA':
       return Object.assign({}, state, {isFetching: true})
@@ -12,7 +22,12 @@ const data = (state = {isFetching: false, data: {knownIds: {}, hits: [], acked: 
       let removeUpToIndex = _.findIndex(state.data.hits, ['_id', action.id])
       if (removeUpToIndex >= 0) {
         let startFromIndex = removeUpToIndex + 1
-        let acked = state.data.acked + removeUpToIndex + 1 
+        let acked = {
+          count : state.data.acked.count + removeUpToIndex + 1,
+          lastTimestamp : state.data.hits[removeUpToIndex]._source.Timestamp
+        }
+        console.log(state.data.hits[removeUpToIndex])
+        console.log(state.data.hits[removeUpToIndex]._source.Timestamp)
         return Object.assign({}, state, {
           data : Object.assign({}, state.data, {
             hits: state.data.hits.slice(startFromIndex),

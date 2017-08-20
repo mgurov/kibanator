@@ -9,7 +9,7 @@ import { Provider } from 'react-redux'
 import { createStore, applyMiddleware } from 'redux'
 
 import thunkMiddleware from 'redux-thunk'
-import { createLogger } from 'redux-logger'
+//import { createLogger } from 'redux-logger'
 
 import kibanatorApp from './reducers'
 import {getNextId} from './actions'
@@ -19,7 +19,7 @@ let watches = JSON.parse(localStorage.getItem('watches') || '[]')
 let store = createStore(
     kibanatorApp, 
     {watches},
-    applyMiddleware(thunkMiddleware , createLogger())
+    applyMiddleware(thunkMiddleware /* , createLogger() */)
 )
 store.subscribe(() => localStorage.setItem('watches', JSON.stringify(store.getState().watches)))
 
