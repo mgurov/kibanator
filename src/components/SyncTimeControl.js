@@ -1,7 +1,8 @@
 import React from 'react'
-import { DropdownButton, MenuItem, Badge, Popover, OverlayTrigger} from 'react-bootstrap'
+import { DropdownButton, MenuItem, Badge, Popover} from 'react-bootstrap'
 import _ from 'lodash'
 import DateTime from './DateTime'
+import ConditionalOverlayTrigger from './generic/ConditionalOverlayTrigger'
 
 export function SyncTimeControl(props) {
 
@@ -9,7 +10,7 @@ export function SyncTimeControl(props) {
 
         let ackedPopover = null;
 
-        if (true) {
+        if (props.acked.count > 0) {
             ackedPopover = (
                 <Popover id="popover-trigger-hover-focus" title="Acknowledged">
                     latest <DateTime value={new Date(props.acked.lastTimestamp)}></DateTime>
@@ -19,9 +20,10 @@ export function SyncTimeControl(props) {
 
         return (
             <span>Syncing from <DateTime value={new Date(props.synctimes.selected)}></DateTime>
-                &nbsp;acked <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={ackedPopover}>
+                &nbsp;acked&nbsp;
+                <ConditionalOverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={ackedPopover} visible={null != ackedPopover}>
                     <Badge>{props.acked.count}</Badge>
-                </OverlayTrigger>
+                </ConditionalOverlayTrigger>
             </span>)
     }
 
