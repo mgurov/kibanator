@@ -30,22 +30,21 @@ export function fetchData(fromTimestamp) {
         from = from + 10
         return fetch('/mylog/_search?size=10&from=' + from, {
             method: "POST",
-            body: JSON.stringify(makeSearch({serviceName: 'foo', from: fromTimestamp}))
+            body: JSON.stringify(makeSearch({ serviceName: 'foo', from: fromTimestamp }))
         })
             .then(
             response => {
                 if (response.ok) {
-                    return response;
+                    return response.json();
                 }
                 throw new Error(response.statusText);
             }
             )
             .then(
-            response => response.json(),
-            error => dispatch(failedFetchingData(error))
-            )
-            .then(json =>
-                dispatch(receiveData(json))
+            responseJson => dispatch(receiveData(responseJson)),
+            error => {
+                dispatch(failedFetchingData(error))
+            }
             )
     }
 }
