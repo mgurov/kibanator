@@ -42,4 +42,11 @@ export const removeTillId = id => {
   }
 }
 
+export const setConfig = newState => {
+  return {
+    type: 'SET_CONFIG',
+    newState
+  }
+}
+
 export * from "./fetching"

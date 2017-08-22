@@ -16,12 +16,22 @@ import {getNextId} from './actions'
 
 let watches = JSON.parse(localStorage.getItem('watches') || '[]')
     .map((v) => { return { id : getNextId(), text: v.text }})
+let config
+let localConfig = localStorage.getItem('config')
+if (localConfig) {
+    config = JSON.parse(localConfig)
+}
+
 let store = createStore(
     kibanatorApp, 
-    {watches},
+    {watches, config},
     applyMiddleware(thunkMiddleware /* , createLogger() */)
 )
-store.subscribe(() => localStorage.setItem('watches', JSON.stringify(store.getState().watches)))
+store.subscribe(() => {
+    let state = store.getState()
+    localStorage.setItem('watches', JSON.stringify(state.watches))
+    localStorage.setItem('config', JSON.stringify(state.config))
+})
 
 ReactDOM.render(<Provider store={store}>
     <App store={store}/>
