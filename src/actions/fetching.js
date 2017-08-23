@@ -29,7 +29,7 @@ export function fetchData(fromTimestamp, config) {
         dispatch(fetchingData())
 
         from = from + 10
-        return fetch('/mylog/_search?size=10&from=' + from, {
+        return fetch('/' + config.index +'/_search?size=10&from=' + from, {
             method: "POST",
             body: JSON.stringify(makeSearch({ serviceName: 'igs', from: fromTimestamp, config }))
         })
