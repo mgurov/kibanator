@@ -1,4 +1,4 @@
-var makeSearch = function ({serviceName, from, to=new Date()}) {
+var makeSearch = function ({serviceName, from, to=new Date(), config}) {
     serviceName = serviceName || ''
     return {
         "query": {
@@ -15,7 +15,7 @@ var makeSearch = function ({serviceName, from, to=new Date()}) {
                             {
                                 "query": {
                                     "match": {
-                                        "Data.app": {
+                                        [config.appField]: {
                                             "query": serviceName,
                                             "type": "phrase"
                                         }
@@ -24,7 +24,7 @@ var makeSearch = function ({serviceName, from, to=new Date()}) {
                             },
                   {
                     "range": {
-                      "Timestamp": {
+                      [config.timeField]: {
                         "gte": from.getTime(),
                         "lte": to.getTime(),
                         "format": "epoch_millis"
@@ -51,7 +51,7 @@ var makeSearch = function ({serviceName, from, to=new Date()}) {
           "_source"
         ],
         "fielddata_fields": [
-          "Timestamp"
+            config.timeField
         ]
     }
 }
