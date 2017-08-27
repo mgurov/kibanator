@@ -6,32 +6,10 @@ import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import { Provider } from 'react-redux'
-import { createStore, applyMiddleware } from 'redux'
 
-import thunkMiddleware from 'redux-thunk'
-//import { createLogger } from 'redux-logger'
+import store from './store'
 
-import kibanatorApp from './reducers'
-import {getNextId} from './actions'
-
-let watches = JSON.parse(localStorage.getItem('watches') || '[]')
-    .map((v) => { return { id : getNextId(), text: v.text }})
-let config
-let localConfig = localStorage.getItem('config')
-if (localConfig) {
-    config = JSON.parse(localConfig)
-}
-
-let store = createStore(
-    kibanatorApp, 
-    {watches, config},
-    applyMiddleware(thunkMiddleware /* , createLogger() */)
-)
-store.subscribe(() => {
-    let state = store.getState()
-    localStorage.setItem('watches', JSON.stringify(state.watches))
-    localStorage.setItem('config', JSON.stringify(state.config))
-})
+console.log('store', store)
 
 ReactDOM.render(<Provider store={store}>
     <App store={store}/>
