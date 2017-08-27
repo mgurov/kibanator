@@ -9,8 +9,6 @@ import { Provider } from 'react-redux'
 
 import store from './store'
 
-console.log('store', store)
-
 ReactDOM.render(<Provider store={store}>
     <App store={store}/>
   </Provider>, document.getElementById('root'));
