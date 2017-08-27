@@ -37,7 +37,7 @@ var makeSearch = function ({serviceName, from, to=new Date(), config}) {
                 }
             }
         },
-        "size": 500,
+        //"size": 500,
         "sort": [
           {
             "Timestamp": {
