@@ -1,5 +1,4 @@
 import makeSearch from '../domain/search'
-import store from '../'
 
 export const fetchingData = () => {
     return {
