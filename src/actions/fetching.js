@@ -20,15 +20,16 @@ export const failedFetchingData = (error) => {
     }
 }
 
-//hack
-let from = -10;
-
+//hack from
+//let from = -10;
 export function fetchData(fromTimestamp, config) {
     return function (dispatch) {
         dispatch(fetchingData())
 
-        from = from + 10
-        return fetch('/' + config.index +'/_search?size=10&from=' + from, {
+        //hack from
+        //from = from + 10
+        //?size=10&from=' + from
+        return fetch('/' + config.index +'/_search', {
             method: "POST",
             body: JSON.stringify(makeSearch({ serviceName: config.serviceName, from: fromTimestamp, config }))
         })
