@@ -37,5 +37,14 @@ export function SyncTimeControl(props) {
         </span>)
     }
 
+    if (props.shown) {
+        stuff.push(<span key="shown">
+            &nbsp;shown&nbsp;
+                <Badge>{props.shown}</Badge>
+        </span>)
+        
+    }
+    //props.shown
+
     return <span>{stuff}</span>
 }
