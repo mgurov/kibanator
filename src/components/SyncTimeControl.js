@@ -20,7 +20,7 @@ export function SyncTimeControl(props) {
     }
 
     let stuff = [
-        <span>Syncing from <DateTime value={new Date(props.synctimes.selected)}></DateTime></span>
+        <span key="syncfrom">Syncing from <DateTime value={new Date(props.synctimes.selected)}></DateTime></span>
     ]
 
     if (props.acked.count > 0) {
@@ -29,7 +29,7 @@ export function SyncTimeControl(props) {
                 latest <DateTime value={new Date(props.acked.lastTimestamp)}></DateTime>
             </Popover>
         );
-        stuff.push(<span>
+        stuff.push(<span key="acked">
             &nbsp;acked&nbsp;
             <ConditionalOverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={ackedPopover} visible={null != ackedPopover}>
                 <Badge>{props.acked.count}</Badge>

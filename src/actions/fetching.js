@@ -29,7 +29,7 @@ export function fetchData(fromTimestamp, config) {
         //hack from
         //from = from + 10
         //?size=10&from=' + from
-        return fetch('/' + config.index +'/_search', {
+        return fetch('/' + config.index +'/_search?size=10000', {
             method: "POST",
             body: JSON.stringify(makeSearch({ serviceName: config.serviceName, from: fromTimestamp, config }))
         })
