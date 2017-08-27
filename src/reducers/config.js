@@ -1,7 +1,8 @@
 const defaultConfig = {
   timeField : '@timestamp',
-  appField : '@fields.application',
-  index : 'logstash-tst-log4json-*'
+  serviceField : '@fields.application',
+  serviceName: 'yourAppHere',
+  index : 'logstash-tst-log4json-*',
 }
 
 const config = (state = defaultConfig, action) => {

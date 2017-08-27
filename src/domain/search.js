@@ -15,7 +15,7 @@ var makeSearch = function ({serviceName, from, to=new Date(), config}) {
                             {
                                 "query": {
                                     "match": {
-                                        [config.appField]: {
+                                        [config.serviceField]: {
                                             "query": serviceName,
                                             "type": "phrase"
                                         }

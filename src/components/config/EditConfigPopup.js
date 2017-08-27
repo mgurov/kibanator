@@ -6,10 +6,16 @@ class EditConfigPopup extends Component {
 
     constructor(props) {
         super(props)
-        let {timeField='', appField='', index=''} = props.config
+        let {
+            timeField='', 
+            serviceField='', 
+            serviceName='', 
+            index='',
+        } = props.config
         this.state = {
             timeField,
-            appField,
+            serviceField,
+            serviceName,
             index,
         }
         
@@ -50,12 +56,22 @@ class EditConfigPopup extends Component {
                                 onChange={this.onChange}
                                 autoFocus
                             />
+
                             <FieldGroup
-                                id="appField"
+                                id="serviceField"
                                 type="text"
-                                label="App Field"
+                                label="Service Field"
                                 help="e.g. @fields.application"
-                                value={this.state.appField}
+                                value={this.state.serviceField}
+                                onChange={this.onChange}
+                            />
+
+                            <FieldGroup
+                                id="serviceName"
+                                type="text"
+                                label="Service Name"
+                                help="e.g. wps or webfrontende"
+                                value={this.state.serviceName}
                                 onChange={this.onChange}
                             />
 

@@ -31,7 +31,7 @@ export function fetchData(fromTimestamp, config) {
         from = from + 10
         return fetch('/' + config.index +'/_search?size=10&from=' + from, {
             method: "POST",
-            body: JSON.stringify(makeSearch({ serviceName: 'igs', from: fromTimestamp, config }))
+            body: JSON.stringify(makeSearch({ serviceName: config.serviceName, from: fromTimestamp, config }))
         })
             .then(
             response => {
