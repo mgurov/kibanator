@@ -60,8 +60,6 @@ export function startFetching(fromTimestamp, dispatch) {
     } else {
         throw Error('need some config before fetching')
     }
-    
-
 
     let doFetch = () => dispatch(fetchData(fromTimestamp, config))
     doFetch()
