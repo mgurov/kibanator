@@ -17,6 +17,9 @@ class DataRow extends Component {
     render() {
         let { Timestamp: timestamp, Message: message, ...restFields } = this.props.data._source;
 
+        timestamp = timestamp || restFields['@timestamp']
+        message = message || restFields['@message']
+
         let chevronDirection, expandedRow;
 
         if (this.state.expanded) {
