@@ -19,10 +19,17 @@ let store = createStore(
     {watches, config},
     applyMiddleware(thunkMiddleware /* , createLogger() */)
 )
+let [currentWatches, currentConfig] = [null, null]
 store.subscribe(() => {
     let state = store.getState()
-    localStorage.setItem('watches', JSON.stringify(state.watches))
-    localStorage.setItem('config', JSON.stringify(state.config))
+    if (currentWatches !== state.watches) {
+        localStorage.setItem('watches', JSON.stringify(state.watches))
+        currentWatches = state.watches
+    }
+    if (currentConfig !== state.config) {
+        localStorage.setItem('config', JSON.stringify(state.config))
+        currentConfig = state.config
+    }
 })
 
 export default store;
