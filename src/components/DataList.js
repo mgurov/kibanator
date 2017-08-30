@@ -49,7 +49,7 @@ class DataRow extends Component {
 
 function DataList(props) {
     return (<Grid fluid={true}>
-        {props.data.hits.map(o => <DataRow key={o._id} data={o} removeTillThis={() => props.removeTillId(o._id)} />)}
+        {_.take(props.data.hits, 20).map(o => <DataRow key={o._id} data={o} removeTillThis={() => props.removeTillId(o._id)} />)}
     </Grid>)
 }
 
