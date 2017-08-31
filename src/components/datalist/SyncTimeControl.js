@@ -2,37 +2,31 @@ import React from 'react'
 import { ButtonGroup, Button, Badge, Popover} from 'react-bootstrap'
 import _ from 'lodash'
 import {DateTime, ConditionalOverlayTrigger} from '../generic/'
-import {ViewSize} from './const.js'
 
 export function SyncTimeControl(props) {
 
     const selected = props.synctimes.selected
 
-    function onClickF(st) {
-        return function () {
-            props.onSyncSelected(st)
+    if (!selected) {
+        function onClickF(st) {
+            return function () {
+                props.onSyncSelected(st)
+            }
         }
+        let timeRangeButton = (<ButtonGroup key="timeRangeButton" title="Sync" id="bg-nested-dropdown">
+        {
+            _.map(props.synctimes.options, st => <Button 
+                key={st.name} 
+                onClick={onClickF(st)}
+                >{st.name}</Button>)
+        }
+        </ButtonGroup>)
+        return timeRangeButton
     }
-
-    let disabledButton = !!selected;
-    let visibleButtonPredicate = selected ? (e) => e === selected.entry : () => true
-
-    let timeRangeButton = (<ButtonGroup key="timeRangeButton" title="Sync" id="bg-nested-dropdown">
-    {
-        _.filter(props.synctimes.options, visibleButtonPredicate).map(st => <Button 
-            key={st.name} 
-            onClick={onClickF(st)}
-            disabled={disabledButton}
-            >{st.name}</Button>)
-    }
-    </ButtonGroup>)
 
     let stuff = [
-        timeRangeButton,
+        <span key="syncfrom">from<DateTime value={new Date(selected.from)} className="label label-default"/></span>,
     ]
-    if (selected) {
-        stuff.push(<span key="syncfrom">from<DateTime value={new Date(selected.from)} className="label label-default"/></span>)
-    }
     
     if (props.notAcked) {
         stuff.push(<span key="notAcked">
