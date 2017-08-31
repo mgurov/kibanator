@@ -4,6 +4,7 @@ import { fetchData, selectSyncTime, removeTillId } from '../actions'
 import DataList from './DataList'
 import { Alert } from 'react-bootstrap'
 import {SyncTimeControl} from './SyncTimeControl'
+import _ from 'lodash'
 
 const mapStateToProps = state => {
     return {
@@ -35,10 +36,18 @@ function DataListContainer(props) {
         </Alert>)
     }
 
+    let toShow = _.take(props.data.data.hits, 20)
+
     return (<div>
-        <SyncTimeControl synctimes={props.synctimes} acked={props.data.data.acked} shown={props.data.data.hits.length} onSyncSelected={props.onSyncSelected}/>
+        <SyncTimeControl 
+            synctimes={props.synctimes} 
+            acked={props.data.data.acked} 
+            shown={toShow.length} 
+            notAcked={props.data.data.hits.length} 
+            onSyncSelected={props.onSyncSelected}
+            />
         {error}
-        <DataList data={props.data.data} removeTillId={props.removeTillId} />
+        <DataList data={toShow} removeTillId={props.removeTillId} />
     </div>)
 }
 

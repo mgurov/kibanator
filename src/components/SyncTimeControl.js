@@ -44,6 +44,13 @@ export function SyncTimeControl(props) {
         </span>)
         
     }
+    if (props.notAcked) {
+        stuff.push(<span key="notAcked">
+            &nbsp;from&nbsp;
+                <Badge>{props.notAcked}</Badge>
+        </span>)
+        
+    }
     //props.shown
 
     return <span>{stuff}</span>
