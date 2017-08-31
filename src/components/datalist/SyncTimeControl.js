@@ -31,7 +31,7 @@ export function SyncTimeControl(props) {
         timeRangeButton,
     ]
     if (selected) {
-        stuff.push(<span key="syncfrom">Syncing from <DateTime value={new Date(selected.from)}></DateTime></span>)
+        stuff.push(<span key="syncfrom">from<DateTime value={new Date(selected.from)} className="label label-default"/></span>)
     }
     
     if (props.notAcked) {
