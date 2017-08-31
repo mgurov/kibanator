@@ -1,9 +1,11 @@
 import React from 'react'
-import { DropdownButton, MenuItem, Badge, Popover} from 'react-bootstrap'
+import { ButtonGroup, Button, Badge, Popover} from 'react-bootstrap'
 import _ from 'lodash'
 import {DateTime, ConditionalOverlayTrigger} from '../generic/'
 
 export function SyncTimeControl(props) {
+
+    const selected = props.synctimes.selected
 
     function onClickF(st) {
         return function () {
@@ -11,17 +13,24 @@ export function SyncTimeControl(props) {
         }
     }
 
-    let timeRangeButton = (<DropdownButton key="timeRangeButton" title="Sync" id="bg-nested-dropdown" disabled={!!props.synctimes.selected}>
+    let disabledButton = !!selected;
+    let visibleButtonPredicate = selected ? (e) => e === selected.entry : () => true
+
+    let timeRangeButton = (<ButtonGroup key="timeRangeButton" title="Sync" id="bg-nested-dropdown">
     {
-        _.map(props.synctimes.options, st => <MenuItem key={st.name} onClick={onClickF(st)}>{st.name}</MenuItem>)
+        _.filter(props.synctimes.options, visibleButtonPredicate).map(st => <Button 
+            key={st.name} 
+            onClick={onClickF(st)}
+            disabled={disabledButton}
+            >{st.name}</Button>)
     }
-    </DropdownButton>)
+    </ButtonGroup>)
 
     let stuff = [
         timeRangeButton,
     ]
-    if (props.synctimes.selected) {
-        stuff.push(<span key="syncfrom">Syncing from <DateTime value={new Date(props.synctimes.selected)}></DateTime></span>)
+    if (selected) {
+        stuff.push(<span key="syncfrom">Syncing from <DateTime value={new Date(selected.from)}></DateTime></span>)
     }
 
     if (props.acked.count > 0) {

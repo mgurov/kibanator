@@ -9,7 +9,14 @@ const defaultOptions = [
 const synctimes = (state = { options:defaultOptions, selected: null}, action) => {
     switch (action.type) {
         case 'SELECT_SYNC_TIME':
-            return Object.assign({}, state, {selected: action.selected.nowToStart(new Date())})
+            const now = new Date()
+            return Object.assign({}, state, {
+                selected: {
+                    entry: action.selected,
+                    from : action.selected.nowToStart(now),
+                    at: now,
+                }
+            })
         default:
             return state
     }
