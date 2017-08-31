@@ -6,6 +6,8 @@ import { Alert } from 'react-bootstrap'
 import {SyncTimeControl} from './SyncTimeControl'
 import _ from 'lodash'
 import {ViewSize} from './const.js'
+import {SelectTimeRange} from './SelectTimeRange'
+
 
 const mapStateToProps = state => {
     return {
@@ -37,16 +39,21 @@ function DataListContainer(props) {
         </Alert>)
     }
 
+    let syncControl
+    if (props.synctimes.selected) {
+        syncControl = <SyncTimeControl 
+        selected={props.synctimes.selected} 
+        acked={props.data.data.acked} 
+        notAcked={props.data.data.hits.length}
+        />
+    } else {
+        syncControl = <SelectTimeRange options={props.synctimes.options} onSelected={props.onSyncSelected}/>
+    }
+
     let toShow = _.take(props.data.data.hits, ViewSize)
 
     return (<div>
-        <SyncTimeControl 
-            synctimes={props.synctimes} 
-            acked={props.data.data.acked} 
-            shown={toShow.length} 
-            notAcked={props.data.data.hits.length} 
-            onSyncSelected={props.onSyncSelected}
-            />
+        {syncControl}
         {error}
         <DataList data={toShow} removeTillId={props.removeTillId} />
     </div>)
