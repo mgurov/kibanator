@@ -1,27 +1,14 @@
 import React from 'react'
-import { ButtonGroup, Button, Badge, Popover} from 'react-bootstrap'
-import _ from 'lodash'
+import {Badge, Popover} from 'react-bootstrap'
 import {DateTime, ConditionalOverlayTrigger} from '../generic/'
+import {SelectTimeRange} from './SelectTimeRange'
 
 export function SyncTimeControl(props) {
 
     const selected = props.synctimes.selected
 
     if (!selected) {
-        function onClickF(st) {
-            return function () {
-                props.onSyncSelected(st)
-            }
-        }
-        let timeRangeButton = (<ButtonGroup key="timeRangeButton" title="Sync" id="bg-nested-dropdown">
-        {
-            _.map(props.synctimes.options, st => <Button 
-                key={st.name} 
-                onClick={onClickF(st)}
-                >{st.name}</Button>)
-        }
-        </ButtonGroup>)
-        return timeRangeButton
+        return (<SelectTimeRange options={props.synctimes.options} onSelected={props.onSyncSelected}/>)
     }
 
     let stuff = [
