@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 import AddWatchContainer from './components/AddWatchContainer.js'
 import WatchListContainer from './components/WatchListContainer.js'
-import DataListContainer from './components/DataListContainer.js'
+import DataListContainer from './components/datalist/DataListContainer.js'
 import {ConfigContainer} from './components/config'
 
 let App = () => {

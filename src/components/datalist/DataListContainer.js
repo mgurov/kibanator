@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { fetchData, selectSyncTime, removeTillId } from '../actions'
+import { fetchData, selectSyncTime, removeTillId } from '../../actions'
 import DataList from './DataList'
 import { Alert } from 'react-bootstrap'
 import {SyncTimeControl} from './SyncTimeControl'
