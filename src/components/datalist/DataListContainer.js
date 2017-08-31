@@ -5,6 +5,7 @@ import DataList from './DataList'
 import { Alert } from 'react-bootstrap'
 import {SyncTimeControl} from './SyncTimeControl'
 import _ from 'lodash'
+import {ViewSize} from './const.js'
 
 const mapStateToProps = state => {
     return {
@@ -36,7 +37,7 @@ function DataListContainer(props) {
         </Alert>)
     }
 
-    let toShow = _.take(props.data.data.hits, 20)
+    let toShow = _.take(props.data.data.hits, ViewSize)
 
     return (<div>
         <SyncTimeControl 

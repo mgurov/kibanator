@@ -2,6 +2,7 @@ import React from 'react'
 import { ButtonGroup, Button, Badge, Popover} from 'react-bootstrap'
 import _ from 'lodash'
 import {DateTime, ConditionalOverlayTrigger} from '../generic/'
+import {ViewSize} from './const.js'
 
 export function SyncTimeControl(props) {
 
@@ -32,6 +33,14 @@ export function SyncTimeControl(props) {
     if (selected) {
         stuff.push(<span key="syncfrom">Syncing from <DateTime value={new Date(selected.from)}></DateTime></span>)
     }
+    
+    if (props.notAcked) {
+        stuff.push(<span key="notAcked">
+            &nbsp;pending&nbsp;
+                <Badge>{props.notAcked}</Badge>
+        </span>)
+        
+    }
 
     if (props.acked.count > 0) {
         let ackedPopover = (
@@ -46,22 +55,6 @@ export function SyncTimeControl(props) {
             </ConditionalOverlayTrigger>
         </span>)
     }
-
-    if (props.shown) {
-        stuff.push(<span key="shown">
-            &nbsp;shown&nbsp;
-                <Badge>{props.shown}</Badge>
-        </span>)
-        
-    }
-    if (props.notAcked) {
-        stuff.push(<span key="notAcked">
-            &nbsp;from&nbsp;
-                <Badge>{props.notAcked}</Badge>
-        </span>)
-        
-    }
-    //props.shown
 
     return <span>{stuff}</span>
 }
