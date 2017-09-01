@@ -15,6 +15,5 @@ Features (future):
 
 ### WIP TODO
 
-* clean error upon success fetch
 * show the last fetch stats
 * fill in the index placeholders

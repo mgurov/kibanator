@@ -15,7 +15,11 @@ const data = (state = emptyState, action) => {
     case 'FETCHING_DATA':
       return Object.assign({}, state, {isFetching: true})
     case 'RECEIVED_HITS':
-      return Object.assign({}, state, {isFetching: false, data: mergeHits(action.data.hits, state.data)})
+      return Object.assign({}, state, {
+        isFetching: false, 
+        data: mergeHits(action.data.hits, state.data), 
+        error: null,
+      })
     case 'FAILED_FETCHING_DATA':
       return Object.assign({}, state, {isFetching: false, error: action.error})
     case 'REMOVE_TILL_TICK_ID':
