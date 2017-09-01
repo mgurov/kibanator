@@ -22,15 +22,25 @@ var makeSearch = function ({serviceName, from, to=new Date(), config}) {
                                     }
                                 }
                             },
-                  {
-                    "range": {
-                      [config.timeField]: {
-                        "gte": from.getTime(),
-                        "lte": to.getTime(),
-                        "format": "epoch_millis"
-                      }
-                    }
-                  }
+                            {
+                                "query": {
+                                    "match": {
+                                        [config.levelField || "@fields.level"]: {
+                                            "query": "ERROR",
+                                            "type": "phrase"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "range": {
+                                [config.timeField]: {
+                                    "gte": from.getTime(),
+                                    "lte": to.getTime(),
+                                    "format": "epoch_millis"
+                                }
+                                }
+                            }
                         ],
                         "must_not": []
                     }
