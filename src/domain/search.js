@@ -50,7 +50,7 @@ var makeSearch = function ({serviceName, from, to=new Date(), config}) {
         //"size": 500,
         "sort": [
           {
-            "Timestamp": {
+            [config.timeField]: {
               "order": "asc",
               "unmapped_type": "boolean"
             }
