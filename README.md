@@ -12,3 +12,9 @@ Features (future):
 ### Similar art
 
 * https://github.com/sw-jung/kibana_notification_center kibana plugin based on [es watches](https://www.elastic.co/guide/en/watcher/current/introduction.html) I guess
+
+### WIP TODO
+
+* clean error upon success fetch
+* show the last fetch stats
+* fill in the index placeholders
