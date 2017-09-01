@@ -17,3 +17,5 @@ Features (future):
 
 * show the last fetch stats
 * fill in the index placeholders
+* sort on the client side? 
+* allow specific start time selection
