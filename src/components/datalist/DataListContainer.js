@@ -6,8 +6,7 @@ import { Alert } from 'react-bootstrap'
 import {SyncTimeControl} from './SyncTimeControl'
 import _ from 'lodash'
 import {ViewSize} from './const.js'
-import {SelectTimeRange} from './SelectTimeRange'
-
+import {SelectTimeRange} from '../timerange/SelectTimeRange'
 
 const mapStateToProps = state => {
     return {

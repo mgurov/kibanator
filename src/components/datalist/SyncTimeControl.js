@@ -4,8 +4,7 @@ import {DateTime, ConditionalOverlayTrigger} from '../generic/'
 
 export function SyncTimeControl({selected, notAcked, acked, lastSync}) {
 
-    let stuff = [
-    ]
+    let stuff = []
 
     let syncingFrom 
     if (lastSync) {
