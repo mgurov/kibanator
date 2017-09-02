@@ -45,6 +45,7 @@ function DataListContainer(props) {
         selected={props.synctimes.selected} 
         acked={props.data.data.acked} 
         notAcked={props.data.data.hits.length}
+        lastSync={props.data.lastSync}
         />
     } else {
         syncControl = <SelectTimeRange options={props.synctimes.options} onSelected={props.onSyncSelected}/>

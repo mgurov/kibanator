@@ -8,6 +8,7 @@ const emptyState = {
     acked: {count: 0, lastTimestamp: null}
   },
   error: null,
+  lastSync: null,
 }
 
 const data = (state = emptyState, action) => {
@@ -19,6 +20,7 @@ const data = (state = emptyState, action) => {
         isFetching: false, 
         data: mergeHits(action.data.hits, state.data), 
         error: null,
+        lastSync: new Date(),
       })
     case 'FAILED_FETCHING_DATA':
       return Object.assign({}, state, {isFetching: false, error: action.error})
