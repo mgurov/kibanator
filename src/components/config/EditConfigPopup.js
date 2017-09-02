@@ -6,18 +6,14 @@ class EditConfigPopup extends Component {
 
     constructor(props) {
         super(props)
-        let {
-            timeField='', 
-            serviceField='', 
-            serviceName='', 
-            index='',
-        } = props.config
-        this.state = {
-            timeField,
-            serviceField,
-            serviceName,
-            index,
-        }
+        this.state = Object.assign({}, {
+            timeField:'', 
+            serviceField:'', 
+            serviceName:'', 
+            levelField:'',
+            levelValue:'',
+            index:'',
+        }, props.config)
         
         this.onChange = (event) => {
             const target = event.target;
@@ -72,6 +68,24 @@ class EditConfigPopup extends Component {
                                 label="Service Name"
                                 help="e.g. wps or webfrontende"
                                 value={this.state.serviceName}
+                                onChange={this.onChange}
+                            />
+
+                            <FieldGroup
+                                id="levelField"
+                                type="text"
+                                label="Level Field"
+                                help="e.g. @fields.level"
+                                value={this.state.levelField}
+                                onChange={this.onChange}
+                            />
+
+                            <FieldGroup
+                                id="levelValue"
+                                type="text"
+                                label="Level"
+                                help="e.g. ERROR, WARN, INFO or DEBUG"
+                                value={this.state.levelValue}
                                 onChange={this.onChange}
                             />
 

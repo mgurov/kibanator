@@ -25,8 +25,8 @@ var makeSearch = function ({serviceName, from, to=new Date(), config}) {
                             {
                                 "query": {
                                     "match": {
-                                        [config.levelField || "@fields.level"]: {
-                                            "query": "ERROR",
+                                        [config.levelField]: {
+                                            "query": config.levelValue,
                                             "type": "phrase"
                                         }
                                     }

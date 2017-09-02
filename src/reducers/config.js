@@ -2,6 +2,8 @@ const defaultConfig = {
   timeField : '@timestamp',
   serviceField : '@fields.application',
   serviceName: 'yourAppHere',
+  levelField : '@fields.level',
+  levelValue: 'ERROR',
   index : 'logstash-tst-log4json-*',
 }
 
