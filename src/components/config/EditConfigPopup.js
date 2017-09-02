@@ -7,14 +7,14 @@ class EditConfigPopup extends Component {
     constructor(props) {
         super(props)
         this.state = Object.assign({}, {
-            timeField:'', 
-            serviceField:'', 
-            serviceName:'', 
-            levelField:'',
-            levelValue:'',
-            index:'',
+            timeField: '',
+            serviceField: '',
+            serviceName: '',
+            levelField: '',
+            levelValue: '',
+            index: '',
         }, props.config)
-        
+
         this.onChange = (event) => {
             const target = event.target;
             const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -33,69 +33,67 @@ class EditConfigPopup extends Component {
 
     render() {
 
+        let props = this.props
+        let that = this
+
+        function fieldProps(id) {
+            return {
+                id,
+                value: that.state[id],
+                onChange: that.onChange,
+                disabled: props.disabled,
+                type: "text",
+            }
+        }
+
         const modalInstance = (
             <span className="static-modal">
                 <Modal show={true} onHide={this.props.close}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Edit configuration</Modal.Title>
+                        <Modal.Title>{props.disabled ? 'Inspect' : 'Edit'} configuration</Modal.Title>
+                        {
+                            props.disabled ? <HelpBlock>Configuration cannot be changed when fetching data. Refresh the page to adjust.</HelpBlock> : null
+                        }
                     </Modal.Header>
 
                     <Modal.Body>
                         <form onSubmit={this.submit}>
 
                             <FieldGroup
-                                id="timeField"
-                                type="text"
+                                {...fieldProps("timeField")}
                                 label="Time Field"
                                 help="e.g. @timestamp"
-                                value={this.state.timeField}
-                                onChange={this.onChange}
                                 autoFocus
                             />
 
                             <FieldGroup
-                                id="serviceField"
-                                type="text"
+                                {...fieldProps("serviceField")}
                                 label="Service Field"
                                 help="e.g. @fields.application"
-                                value={this.state.serviceField}
-                                onChange={this.onChange}
                             />
 
                             <FieldGroup
-                                id="serviceName"
-                                type="text"
+                                {...fieldProps("serviceName")}
                                 label="Service Name"
                                 help="e.g. wps or webfrontende"
-                                value={this.state.serviceName}
-                                onChange={this.onChange}
                             />
 
                             <FieldGroup
-                                id="levelField"
-                                type="text"
+                                {...fieldProps("levelField")}
                                 label="Level Field"
                                 help="e.g. @fields.level"
-                                value={this.state.levelField}
-                                onChange={this.onChange}
                             />
 
                             <FieldGroup
-                                id="levelValue"
-                                type="text"
+                                {...fieldProps("levelValue")}
                                 label="Level"
                                 help="e.g. ERROR, WARN, INFO or DEBUG"
-                                value={this.state.levelValue}
-                                onChange={this.onChange}
                             />
 
                             <FieldGroup
-                                id="index"
-                                type="text"
+                                {...fieldProps("index")}
                                 label="Index"
                                 help="e.g. logstash-tst-log4json-*"
-                                value={this.state.index}
-                                onChange={this.onChange}
                             />
 
                         </form>
@@ -103,7 +101,13 @@ class EditConfigPopup extends Component {
 
                     <Modal.Footer>
                         <Button onClick={this.props.close}>Close</Button>
-                        <Button bsStyle="primary" onClick={this.submit}>Save changes</Button>
+                        <Button bsStyle="primary"
+                            onClick={this.submit}
+                            disabled={this.props.disabled}
+                            title="Save the changes"
+                        >
+                            Save changes
+                        </Button>
                     </Modal.Footer>
 
                 </Modal>
@@ -114,11 +118,11 @@ class EditConfigPopup extends Component {
     }
 }
 
-function FieldGroup({ id, label, help, ...props }) {
+function FieldGroup({ id, label, help, ...rest }) {
     return (
         <FormGroup controlId={id}>
             <ControlLabel>{label}</ControlLabel>
-            <FormControl {...props} />
+            <FormControl {...rest} />
             {help && <HelpBlock>{help}</HelpBlock>}
         </FormGroup>
     );

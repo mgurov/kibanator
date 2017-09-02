@@ -16,9 +16,13 @@ class EditConfigButton extends Component {
                 config={this.props.config}
                 close={this.toggleEditor}
                 onSave={this.props.setConfig}
+                disabled={this.props.fetchStarted}
              />)
         } else {
-            return (<Button className="btn btn-xs glyphicon glyphicon-wrench" onClick={this.toggleEditor}></Button>)
+            return (<Button 
+                className="btn btn-xs glyphicon glyphicon-wrench" 
+                onClick={this.toggleEditor}
+                />)
         }
     }
 }

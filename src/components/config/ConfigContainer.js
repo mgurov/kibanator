@@ -4,7 +4,8 @@ import EditConfigButton from './EditConfigButton'
 
 const mapStateToProps = state => {
     return {
-        config: state.config
+        config: state.config,
+        fetchStarted: !!state.synctimes.selected,
     }
 }
 
