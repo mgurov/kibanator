@@ -15,7 +15,7 @@ Features (future):
 
 ### WIP TODO
 
-* show the last fetch stats
 * fill in the index placeholders
 * sort on the client side? 
 * allow specific start time selection
+* warning on hitting the 10K limit
