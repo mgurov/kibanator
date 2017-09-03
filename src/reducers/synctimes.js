@@ -28,7 +28,6 @@ const synctimes = (state = startingState, action) => {
         case 'FETCH_STOP_TIMER' : 
             window.clearInterval(state.intervaldId)
             return startingState
-        return Object.assign({}, state, {timerStopFunction: action.timerStopFunction})
         default:
             return state
     }
