@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import LogHit from '../domain/LogHit'
 
 const emptyState = {
   isFetching: false, 
@@ -18,19 +19,19 @@ const data = (state = emptyState, action) => {
     case 'RECEIVED_HITS':
       return Object.assign({}, state, {
         isFetching: false, 
-        data: mergeHits(action.data.hits, state.data), 
+        data: mergeHits(action.data.hits, state.data, h => new LogHit(h, action.config)), 
         error: null,
         lastSync: new Date(),
       })
     case 'FAILED_FETCHING_DATA':
       return Object.assign({}, state, {isFetching: false, error: action.error})
     case 'REMOVE_TILL_TICK_ID':
-      let removeUpToIndex = _.findIndex(state.data.hits, ['_id', action.id])
+      let removeUpToIndex = _.findIndex(state.data.hits, ['id', action.id])
       if (removeUpToIndex >= 0) {
         let startFromIndex = removeUpToIndex + 1
         let acked = {
           count : state.data.acked.count + removeUpToIndex + 1,
-          lastTimestamp : state.data.hits[removeUpToIndex]._source.Timestamp
+          lastTimestamp : state.data.hits[removeUpToIndex].getTimestamp()
         }
         return Object.assign({}, state, {
           data : Object.assign({}, state.data, {
@@ -49,7 +50,7 @@ const data = (state = emptyState, action) => {
   }
 }
 
-function mergeHits(hits, originalData) {
+function mergeHits(hits, originalData, newHitsTransformer = _.identity) {
   let needClone = true
   let result = originalData
   _.forEach(hits, h => {
@@ -61,7 +62,7 @@ function mergeHits(hits, originalData) {
       needClone = false
     }
     result.knownIds[h._id] = 1
-    result.hits.push(h)
+    result.hits.push(newHitsTransformer(h))
   })
   return result
 }

@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { Grid, Col, Row } from 'react-bootstrap'
-import {flattenMap} from '../../domain/maps'
 import _ from 'lodash'
 import DateTime from '../generic/DateTime'
 
@@ -15,16 +14,16 @@ class DataRow extends Component {
     }
 
     render() {
-        let { Timestamp: timestamp, Message: message, ...restFields } = this.props.data._source;
+        const h = this.props.data
 
-        timestamp = timestamp || restFields['@timestamp']
-        message = message || restFields['@message']
+        let timestamp = h.getTimestamp()
+        let message = h.getMessage() // message || restFields['@message']
 
         let chevronDirection, expandedRow;
 
         if (this.state.expanded) {
             chevronDirection = 'glyphicon glyphicon-chevron-down'
-            let fields = _.map(flattenMap(restFields), (value, key) => {
+            let fields = _.map(h.getFields(), (value, key) => {
                 return <p key={key} >{key}: {value}</p>
             })
 
@@ -52,7 +51,7 @@ class DataRow extends Component {
 
 function DataList(props) {
     return (<Grid fluid={true}>
-        {_.map(props.data, o => <DataRow key={o._id} data={o} removeTillThis={() => props.removeTillId(o._id)} />)}
+        {_.map(props.data, o => <DataRow key={o.id} data={o} removeTillThis={() => props.removeTillId(o.id)} />)}
     </Grid>)
 }
 

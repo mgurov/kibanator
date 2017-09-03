@@ -6,10 +6,11 @@ export const fetchingData = () => {
     }
 }
 
-export const receiveData = (data) => {
+export const receiveData = (data, config) => {
     return {
         type: 'RECEIVED_HITS',
-        data: data.hits
+        data: data.hits,
+        config: config,
     }
 }
 
@@ -49,10 +50,8 @@ export function fetchData(fromTimestamp, config) {
             }
             )
             .then(
-            responseJson => dispatch(receiveData(responseJson)),
-            error => {
-                dispatch(failedFetchingData(error))
-            }
+            responseJson => dispatch(receiveData(responseJson, config)),
+            error => {dispatch(failedFetchingData(error))}
             )
     }
 }
