@@ -1,5 +1,6 @@
 const defaultConfig = {
   timeField : '@timestamp',
+  messageField : '@message',
   serviceField : '@fields.application',
   serviceName: 'yourAppHere',
   levelField : '@fields.level',

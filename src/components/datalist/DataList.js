@@ -17,7 +17,7 @@ class DataRow extends Component {
         const h = this.props.data
 
         let timestamp = h.getTimestamp()
-        let message = h.getMessage() // message || restFields['@message']
+        let message = h.getMessage()
 
         let chevronDirection, expandedRow;
 

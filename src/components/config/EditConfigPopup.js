@@ -8,6 +8,7 @@ class EditConfigPopup extends Component {
         super(props)
         this.state = Object.assign({}, {
             timeField: '',
+            messageField: '',
             serviceField: '',
             serviceName: '',
             levelField: '',
@@ -64,6 +65,12 @@ class EditConfigPopup extends Component {
                                 label="Time Field"
                                 help="e.g. @timestamp"
                                 autoFocus
+                            />
+
+                            <FieldGroup
+                                {...fieldProps("messageField")}
+                                label="Message Field"
+                                help="e.g. @message"
                             />
 
                             <FieldGroup

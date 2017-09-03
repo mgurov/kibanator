@@ -5,8 +5,8 @@ class LogHit {
     constructor(h, config) {
         this.id = h._id
         this.fields = flattenMap(h._source)
-        this.timestamp = this.fields[config.timeField];
-        this.message = '';
+        this.timestamp = this.fields[config.timeField]
+        this.message = this.fields[config.messageField];
     }
 
     getId() {
@@ -18,7 +18,7 @@ class LogHit {
     }
 
     getMessage() {
-        return this.fields.Message
+        return this.message
     }
 
     getFields() {
