@@ -15,6 +15,9 @@ Features (future):
 
 ### WIP TODO
 
+* better view real life log lines
 * fill in the index placeholders
+* client-side filters
+
 * sort on the client side? 
 * warning on hitting the 10K limit
