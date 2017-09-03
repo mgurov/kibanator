@@ -20,16 +20,23 @@ export const failedFetchingData = (error) => {
     }
 }
 
-//hack from
-//let from = -10;
 export function fetchData(fromTimestamp, config) {
     return function (dispatch) {
         dispatch(fetchingData())
 
-        //hack from
-        //from = from + 10
-        //?size=10&from=' + from
-        return fetch('/' + config.index +'/_search?size=10000', {
+        let index = config.index
+        let ignoreMissingIndex = false
+        if (index.indexOf("*") >= 0) {
+            let dates = [
+                "2017.08.30",
+                "2017.08.31",
+                "2017.09.01",
+                "2017.09.02",
+            ]
+            index = dates.map(d => index.replace("*", d)).join(",")
+            ignoreMissingIndex = true
+        }
+        return fetch('/' + index + '/_search?size=10000&ignore_unavailable=' + ignoreMissingIndex, {
             method: "POST",
             body: JSON.stringify(makeSearch({ serviceName: config.serviceName, from: fromTimestamp, config }))
         })
