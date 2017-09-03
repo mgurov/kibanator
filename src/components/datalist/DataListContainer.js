@@ -43,7 +43,7 @@ function DataListContainer(props) {
         syncControl = <SyncTimeControl 
         selected={props.synctimes.selected} 
         acked={props.data.data.acked} 
-        notAcked={props.data.data.hits.length}
+        notAcked={props.data.data.hitStats}
         lastSync={props.data.lastSync}
         />
     } else {

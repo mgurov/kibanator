@@ -6,6 +6,11 @@ const emptyState = {
   data: {
     knownIds: {}, 
     hits: [], 
+    hitStats: {
+      count: 0,
+      firstTimestamp: null,
+      lastTimestamp: null,
+    },
     acked: {count: 0, lastTimestamp: null}
   },
   error: null,
@@ -17,12 +22,24 @@ const data = (state = emptyState, action) => {
     case 'FETCHING_DATA':
       return Object.assign({}, state, {isFetching: true})
     case 'RECEIVED_HITS':
-      return Object.assign({}, state, {
+      let newState = {
         isFetching: false, 
-        data: mergeHits(action.data.hits, state.data, h => new LogHit(h, action.config)), 
         error: null,
         lastSync: new Date(),
-      })
+      }
+      let mergedHits = mergeHits(action.data.hits, state.data, h => new LogHit(h, action.config))
+      if (!mergedHits) {
+        return Object.assign({}, state, newState)
+      }
+      let {hits, knownIds} = mergedHits
+
+      let hitStats = {count: hits.length}
+      if (hitStats.count > 0) {
+        hitStats.firstTimestamp = hits[0].getTimestamp()
+        hitStats.lastTimestamp = hits[hits.length - 1].getTimestamp()
+      }
+      newState.data = Object.assign({}, state.data, {hits, knownIds, hitStats})
+      return Object.assign({}, state, newState)
     case 'FAILED_FETCHING_DATA':
       return Object.assign({}, state, {isFetching: false, error: action.error})
     case 'REMOVE_TILL_TICK_ID':
@@ -31,7 +48,8 @@ const data = (state = emptyState, action) => {
         let startFromIndex = removeUpToIndex + 1
         let acked = {
           count : state.data.acked.count + removeUpToIndex + 1,
-          lastTimestamp : state.data.hits[removeUpToIndex].getTimestamp()
+          lastTimestamp : state.data.hits[removeUpToIndex].getTimestamp(),
+          firstTimestamp : state.data.acked.firstTimestamp || state.data.hits[0].getTimestamp(),
         }
         return Object.assign({}, state, {
           data : Object.assign({}, state.data, {
@@ -50,21 +68,27 @@ const data = (state = emptyState, action) => {
   }
 }
 
-function mergeHits(hits, originalData, newHitsTransformer = _.identity) {
+function mergeHits(newHits, {hits, knownIds}, newHitsTransformer = _.identity) {
   let needClone = true
-  let result = originalData
-  _.forEach(hits, h => {
-    if (result.knownIds[h._id]) {
+  let changed = false
+  _.forEach(newHits, h => {
+    if (knownIds[h._id]) {
       return
     }
     if (needClone) {
-      result = _.cloneDeep(result)
+      hits = _.cloneDeep(hits)
+      knownIds = _.cloneDeep(knownIds)
       needClone = false
+      changed = true
     }
-    result.knownIds[h._id] = 1
-    result.hits.push(newHitsTransformer(h))
+    knownIds[h._id] = 1
+    hits.push(newHitsTransformer(h))
   })
-  return result
+  if (!changed) {
+    return null
+  } else {
+    return {knownIds, hits}
+  }
 }
 
 export {mergeHits}

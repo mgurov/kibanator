@@ -26,8 +26,7 @@ describe('some hits present, new received', () => {
                     {_id : "2"},
                     {_id : "3"},
                 ],
-                knownIds : {"1": 1, "2": 1, "3": 1},
-                propertyWeDontCareAbout: 'valueWeDontCareAbout',
+                knownIds : {"1": 1, "2": 1, "3": 1}
             }
         )
     })
@@ -53,9 +52,8 @@ describe('some hits present, nothing new received', () => {
     ]
 
     test('should remain the same', () => {
-        expect(mergeHits(arrivedHits, given)).toBe(
-            given
-        )    
+        let merged = mergeHits(arrivedHits, given)
+        expect(merged).toBe(null)    
     })    
 });
 

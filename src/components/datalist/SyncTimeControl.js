@@ -15,7 +15,7 @@ export function SyncTimeControl({selected, notAcked, acked, lastSync}) {
 
     let timesPopover = (
         <Popover id="sync-times" title="Sync times">
-            <p>Fetching from <DateTime value={new Date(selected.from)}></DateTime></p>
+            <p>Fetching from <DateTime value={new Date(selected.from)}/></p>
             <p>Last sync <DateTime value={lastSync}/></p>
         </Popover>
     );
@@ -30,9 +30,18 @@ export function SyncTimeControl({selected, notAcked, acked, lastSync}) {
     )
     
     if (notAcked) {
+        let pendingTimesPopover = (
+            <Popover id="pending-times" title="Pending">
+                <p>First <DateTime value={notAcked.firstTimestamp}/></p>
+                <p>Last <DateTime value={notAcked.lastTimestamp}/></p>
+            </Popover>
+        );
+    
         stuff.push(<span key="notAcked">
             &nbsp;pending&nbsp;
-                <Badge>{notAcked}</Badge>
+                <ConditionalOverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={pendingTimesPopover} visible={true}>
+                    <Badge>{notAcked.count}</Badge>
+                </ConditionalOverlayTrigger>
         </span>)
         
     }
@@ -40,7 +49,8 @@ export function SyncTimeControl({selected, notAcked, acked, lastSync}) {
     if (acked.count > 0) {
         let ackedPopover = (
             <Popover id="popover-acked-count" title="Acknowledged">
-                latest <DateTime value={new Date(acked.lastTimestamp)}></DateTime>
+                <p>First <DateTime value={acked.firstTimestamp}/></p>
+                <p>Last <DateTime value={acked.lastTimestamp}/></p>
             </Popover>
         );
         stuff.push(<span key="acked">
