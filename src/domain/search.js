@@ -3,12 +3,12 @@ var makeSearch = function ({serviceName, from, to=new Date(), config}) {
     return {
         "query": {
             "filtered": {
-                "query": {
-                    "query_string": {
-                        "analyze_wildcard": true,
-                        "query": "*"
-                    }
-                },
+                // "query": {
+                //     "query_string": {
+                //         "analyze_wildcard": true,
+                //         "query": "*"
+                //     }
+                // },
                 "filter": {
                     "bool": {
                         "must": [
@@ -56,13 +56,13 @@ var makeSearch = function ({serviceName, from, to=new Date(), config}) {
             }
           }
         ],
-        "fields": [
-          "*",
-          "_source"
-        ],
-        "fielddata_fields": [
-            config.timeField
-        ]
+        // "fields": [
+        //   "*",
+        //   "_source"
+        // ],
+        // "fielddata_fields": [
+        //     config.timeField
+        // ]
     }
 }
 
