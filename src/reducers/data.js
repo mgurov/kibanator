@@ -42,6 +42,8 @@ const data = (state = emptyState, action) => {
         console.error('Could not find id to delete to: ', action.id, data)
         return state
       }
+    case 'FETCH_STOP_TIMER' : 
+      return emptyState
     default:
       return state
   }

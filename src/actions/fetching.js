@@ -63,5 +63,18 @@ export function startFetching(fromTimestamp, dispatch) {
 
     let doFetch = () => dispatch(fetchData(fromTimestamp, config))
     doFetch()
-    setInterval(doFetch, 5000)
+    let intervaldId = setInterval(doFetch, 5000)
+    dispatch(startedFetchTimer(intervaldId))
+}
+
+export function stopFetchTimer() {
+    return {
+        type: 'FETCH_STOP_TIMER',
+    }
+}
+export function startedFetchTimer(intervaldId) {
+    return {
+        type: 'FETCH_STARTED_TIMER',
+        intervaldId
+    }
 }

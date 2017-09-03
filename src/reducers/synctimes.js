@@ -6,7 +6,13 @@ const defaultOptions = [
     { name: '1 month', nowToStart: now => now.setMonth(now.getMonth() - 1) },
 ]
 
-const synctimes = (state = { options:defaultOptions, selected: null}, action) => {
+const startingState = {
+    options:defaultOptions, 
+    selected: null,
+    intervaldId: null,
+}
+
+const synctimes = (state = startingState, action) => {
     switch (action.type) {
         case 'SELECT_SYNC_TIME':
             const now = new Date()
@@ -17,6 +23,12 @@ const synctimes = (state = { options:defaultOptions, selected: null}, action) =>
                     at: now,
                 }
             })
+        case 'FETCH_STARTED_TIMER':
+            return Object.assign({}, state, {intervaldId: action.intervaldId})
+        case 'FETCH_STOP_TIMER' : 
+            window.clearInterval(state.intervaldId)
+            return startingState
+        return Object.assign({}, state, {timerStopFunction: action.timerStopFunction})
         default:
             return state
     }
