@@ -32,12 +32,7 @@ const data = (state = emptyState, action) => {
         return Object.assign({}, state, newState)
       }
       let {hits, knownIds} = mergedHits
-
-      let hitStats = {count: hits.length}
-      if (hitStats.count > 0) {
-        hitStats.firstTimestamp = hits[0].getTimestamp()
-        hitStats.lastTimestamp = hits[hits.length - 1].getTimestamp()
-      }
+      let hitStats = collectHitStats(hits)
       newState.data = Object.assign({}, state.data, {hits, knownIds, hitStats})
       return Object.assign({}, state, newState)
     case 'FAILED_FETCHING_DATA':
@@ -51,10 +46,13 @@ const data = (state = emptyState, action) => {
           lastTimestamp : state.data.hits[removeUpToIndex].getTimestamp(),
           firstTimestamp : state.data.acked.firstTimestamp || state.data.hits[0].getTimestamp(),
         }
+        let hits = state.data.hits.slice(startFromIndex)
+        let hitStats = collectHitStats(hits)
         return Object.assign({}, state, {
           data : Object.assign({}, state.data, {
-            hits: state.data.hits.slice(startFromIndex),
-            acked
+            hits,
+            acked,
+            hitStats
           })
         })
       } else {
@@ -89,6 +87,15 @@ function mergeHits(newHits, {hits, knownIds}, newHitsTransformer = _.identity) {
   } else {
     return {knownIds, hits}
   }
+}
+
+function collectHitStats(hits) {
+  let result = {count: hits.length}
+  if (result.count > 0) {
+    result.firstTimestamp = hits[0].getTimestamp()
+    result.lastTimestamp = hits[hits.length - 1].getTimestamp()
+  }
+  return result
 }
 
 export {mergeHits}
