@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import LogHit from '../domain/LogHit'
+import update from 'immutability-helper';
 
 const emptyState = {
   isFetching: false, 
@@ -27,7 +28,7 @@ const data = (state = emptyState, action) => {
         error: null,
         lastSync: new Date(),
       }
-      let mergedHits = mergeHits(action.data.hits, state.data, h => new LogHit(h, action.config))
+      let mergedHits = mergeHits(action.data.hits, state.data, h => LogHit(h, action.config))
       if (!mergedHits) {
         return Object.assign({}, state, newState)
       }
@@ -40,13 +41,13 @@ const data = (state = emptyState, action) => {
     case 'REMOVE_TILL_TICK_ID':
       let removeUpToIndex = _.findIndex(state.data.hits, ['id', action.id])
       if (removeUpToIndex >= 0) {
-        let startFromIndex = removeUpToIndex + 1
+        let hits = _.filter(state.data.hits, ({favorite}, index) => {return favorite || index > removeUpToIndex})
+        //NB: times aren't entirely correct now for the favorites
         let acked = {
-          count : state.data.acked.count + removeUpToIndex + 1,
-          lastTimestamp : state.data.hits[removeUpToIndex].getTimestamp(),
-          firstTimestamp : state.data.acked.firstTimestamp || state.data.hits[0].getTimestamp(),
+          count : state.data.acked.count + state.data.hits.length - hits.length,
+          lastTimestamp : state.data.hits[removeUpToIndex].timestamp,
+          firstTimestamp : state.data.acked.firstTimestamp || state.data.hits[0].timestamp,
         }
-        let hits = state.data.hits.slice(startFromIndex)
         let hitStats = collectHitStats(hits)
         return Object.assign({}, state, {
           data : Object.assign({}, state.data, {
@@ -59,6 +60,17 @@ const data = (state = emptyState, action) => {
         console.error('Could not find id to delete to: ', action.id, data)
         return state
       }
+    case 'TOGGLE_FAVORITE_ID' :
+      let theIndex = _.findIndex(state.data.hits, ['id', action.id])
+      if (theIndex < 0) {
+        console.error('Could not find id to delete to: ', action.id, data)
+        return state
+      }
+      let originalItem = state.data.hits[theIndex]
+      let alteredItem = Object.assign({}, originalItem, {favorite: !originalItem.favorite})
+      return update(state, {
+        data :{hits: {[theIndex]: {$set: alteredItem}}}
+      })
     case 'FETCH_STOP_TIMER' : 
       return emptyState
     default:
@@ -92,8 +104,8 @@ function mergeHits(newHits, {hits, knownIds}, newHitsTransformer = _.identity) {
 function collectHitStats(hits) {
   let result = {count: hits.length}
   if (result.count > 0) {
-    result.firstTimestamp = hits[0].getTimestamp()
-    result.lastTimestamp = hits[hits.length - 1].getTimestamp()
+    result.firstTimestamp = hits[0].timestamp
+    result.lastTimestamp = hits[hits.length - 1].timestamp
   }
   return result
 }

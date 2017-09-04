@@ -16,14 +16,13 @@ class DataRow extends Component {
     render() {
         const h = this.props.data
 
-        let timestamp = h.getTimestamp()
-        let message = h.getMessage()
+        let {timestamp, message} = h
 
         let chevronDirection, expandedRow;
 
         if (this.state.expanded) {
             chevronDirection = 'glyphicon glyphicon-chevron-down'
-            let fields = _.map(h.getFields(), (value, key) => {
+            let fields = _.map(h.fields, (value, key) => {
                 return <p key={key} >{key}: {value}</p>
             })
 
@@ -37,9 +36,12 @@ class DataRow extends Component {
             expandedRow = null;
         }
 
+        let starClass = (h.favorite) ? 'glyphicon glyphicon-star' : 'glyphicon glyphicon-star-empty'
+
         return <Row>
             <Col sm={3} md={3} lg={3}>
                 <span className="glyphicon glyphicon-ok" onClick={this.props.removeTillThis} title="remove everything down to and including this"></span>
+                <span className={starClass} onClick={this.props.toggleFavorite} title="save this"></span>
                 <span className={chevronDirection} onClick={this.toggle}></span>
                 <DateTime value={timestamp} />
             </Col>
@@ -51,7 +53,12 @@ class DataRow extends Component {
 
 function DataList(props) {
     return (<Grid fluid={true}>
-        {_.map(props.data, o => <DataRow key={o.id} data={o} removeTillThis={() => props.removeTillId(o.id)} />)}
+        {_.map(props.data, o => <DataRow 
+            key={o.id} 
+            data={o} 
+            removeTillThis={() => props.removeTillId(o.id)}
+            toggleFavorite={() => props.toggleFavorite(o.id)}
+             />)}
     </Grid>)
 }
 

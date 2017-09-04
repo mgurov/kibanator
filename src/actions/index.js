@@ -42,6 +42,13 @@ export const removeTillId = id => {
   }
 }
 
+export const toggleFavorite = id => {
+  return {
+    type: 'TOGGLE_FAVORITE_ID',
+    id
+  }
+}
+
 export const setConfig = newState => {
   return {
     type: 'SET_CONFIG',
