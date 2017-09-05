@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { fetchData, selectSyncTime, removeTillId, toggleFavorite } from '../../actions'
+import { fetchData, selectSyncTime, ackTillId, toggleFavorite, ackAll } from '../../actions'
 import DataList from './DataList'
 import { Alert } from 'react-bootstrap'
 import {SyncTimeControl} from './SyncTimeControl'
@@ -23,8 +23,11 @@ const mapDispatchToProps = dispatch => {
         onSyncSelected: (st) => {
             dispatch(selectSyncTime(st))
         },
-        removeTillId: (id) => {
-            dispatch(removeTillId(id))
+        ackTillId: (id) => {
+            dispatch(ackTillId(id))
+        },
+        ackAll: () => {
+            dispatch(ackAll())
         },
         toggleFavorite: (id) => {
             dispatch(toggleFavorite(id))
@@ -48,6 +51,7 @@ function DataListContainer(props) {
         acked={props.data.data.acked} 
         notAcked={props.data.data.hitStats}
         lastSync={props.data.lastSync}
+        ackAll={props.ackAll}
         />
     } else {
         syncControl = <SelectTimeRange options={props.synctimes.options} onSelected={props.onSyncSelected}/>
@@ -58,7 +62,7 @@ function DataListContainer(props) {
     return (<div>
         {syncControl}
         {error}
-        <DataList data={toShow} removeTillId={props.removeTillId} toggleFavorite={props.toggleFavorite} />
+        <DataList data={toShow} ackTillId={props.ackTillId} toggleFavorite={props.toggleFavorite} />
     </div>)
 }
 

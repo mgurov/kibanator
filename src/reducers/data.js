@@ -38,28 +38,19 @@ const data = (state = emptyState, action) => {
       return Object.assign({}, state, newState)
     case 'FAILED_FETCHING_DATA':
       return Object.assign({}, state, {isFetching: false, error: action.error})
-    case 'REMOVE_TILL_TICK_ID':
+    case 'ACK_ALL' :
+      return Object.assign({}, state, {
+        data : Object.assign({}, state.data, removeNonFavoriteAfterIndex(state.data, state.data.hits.length - 1))
+      })
+    case 'ACK_TILL_ID':
       let removeUpToIndex = _.findIndex(state.data.hits, ['id', action.id])
-      if (removeUpToIndex >= 0) {
-        let hits = _.filter(state.data.hits, ({favorite}, index) => {return favorite || index > removeUpToIndex})
-        //NB: times aren't entirely correct now for the favorites
-        let acked = {
-          count : state.data.acked.count + state.data.hits.length - hits.length,
-          lastTimestamp : state.data.hits[removeUpToIndex].timestamp,
-          firstTimestamp : state.data.acked.firstTimestamp || state.data.hits[0].timestamp,
-        }
-        let hitStats = collectHitStats(hits)
-        return Object.assign({}, state, {
-          data : Object.assign({}, state.data, {
-            hits,
-            acked,
-            hitStats
-          })
-        })
-      } else {
+      if (removeUpToIndex < 0) {
         console.error('Could not find id to delete to: ', action.id, data)
         return state
       }
+      return Object.assign({}, state, {
+        data : Object.assign({}, state.data, removeNonFavoriteAfterIndex(state.data, removeUpToIndex))
+      })
     case 'TOGGLE_FAVORITE_ID' :
       let theIndex = _.findIndex(state.data.hits, ['id', action.id])
       if (theIndex < 0) {
@@ -108,6 +99,22 @@ function collectHitStats(hits) {
     result.lastTimestamp = hits[hits.length - 1].timestamp
   }
   return result
+}
+
+function removeNonFavoriteAfterIndex({hits:originalHits, acked:originalAck}, removeUpToIndex) {
+  let hits = _.filter(originalHits, ({favorite}, index) => {return favorite || index > removeUpToIndex})
+  //NB: times aren't entirely correct now for the favorites
+  let acked = {
+      count : originalAck.count + originalHits.length - hits.length,
+      lastTimestamp : originalHits[removeUpToIndex].timestamp,
+      firstTimestamp : originalAck.firstTimestamp || originalHits[0].timestamp,
+    }
+    let hitStats = collectHitStats(hits)
+    return {
+      hits,
+      acked,
+      hitStats
+    }
 }
 
 export {mergeHits}

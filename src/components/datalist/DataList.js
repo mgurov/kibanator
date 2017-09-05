@@ -56,7 +56,7 @@ function DataList(props) {
         {_.map(props.data, o => <DataRow 
             key={o.id} 
             data={o} 
-            removeTillThis={() => props.removeTillId(o.id)}
+            removeTillThis={() => props.ackTillId(o.id)}
             toggleFavorite={() => props.toggleFavorite(o.id)}
              />)}
     </Grid>)

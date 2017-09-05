@@ -1,8 +1,8 @@
 import React from 'react'
-import {Badge, Popover} from 'react-bootstrap'
+import {Badge, Popover, Button} from 'react-bootstrap'
 import {DateTime, ConditionalOverlayTrigger} from '../generic/'
 
-export function SyncTimeControl({selected, notAcked, acked, lastSync}) {
+export function SyncTimeControl({selected, notAcked, acked, lastSync, ackAll}) {
 
     let stuff = []
 
@@ -19,7 +19,6 @@ export function SyncTimeControl({selected, notAcked, acked, lastSync}) {
             <p>Last sync <DateTime value={lastSync}/></p>
         </Popover>
     );
-
 
     stuff.push(
         <span key="syncTimes">
@@ -44,6 +43,13 @@ export function SyncTimeControl({selected, notAcked, acked, lastSync}) {
                 </ConditionalOverlayTrigger>
         </span>)
         
+        if (notAcked.count > 0) {
+            stuff.push(<Button 
+                className="btn btn-xs glyphicon glyphicon-ok" 
+                title="Ack all"
+                onClick={ackAll}
+                />)
+        }
     }
 
     if (acked.count > 0) {

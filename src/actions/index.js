@@ -35,10 +35,16 @@ export const selectSyncTime = selected => {
   }  
 }
 
-export const removeTillId = id => {
+export const ackTillId = id => {
   return {
-    type: 'REMOVE_TILL_TICK_ID',
+    type: 'ACK_TILL_ID',
     id
+  }
+}
+
+export const ackAll = id => {
+  return {
+    type: 'ACK_ALL'
   }
 }
 
