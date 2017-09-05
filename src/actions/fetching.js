@@ -22,6 +22,8 @@ export const failedFetchingData = (error) => {
     }
 }
 
+const API_PATH=process.env.REACT_APP_API_PATH || ''
+
 export function fetchData(fromTimestamp, config) {
     return function (dispatch) {
         dispatch(fetchingData())
@@ -35,7 +37,7 @@ export function fetchData(fromTimestamp, config) {
             ignoreMissingIndex = true
         }
         let body = makeSearch({ serviceName: config.serviceName, from: fromTimestamp, to: now, config })
-        return fetch('/' + index + '/_search?size=10000&ignore_unavailable=' + ignoreMissingIndex, {
+        return fetch(API_PATH + '/' + index + '/_search?size=10000&ignore_unavailable=' + ignoreMissingIndex, {
             method: "POST",
             body: JSON.stringify(body),
         })
