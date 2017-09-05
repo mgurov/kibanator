@@ -1,4 +1,5 @@
 import makeSearch from '../domain/search'
+import {selectIndexInterval} from '../domain/elasticsearch'
 
 export const fetchingData = () => {
     return {
@@ -27,19 +28,16 @@ export function fetchData(fromTimestamp, config) {
 
         let index = config.index
         let ignoreMissingIndex = false
+        let now = new Date()
         if (index.indexOf("*") >= 0) {
-            let dates = [
-                "2017.08.30",
-                "2017.08.31",
-                "2017.09.01",
-                "2017.09.02",
-            ]
+            let dates = selectIndexInterval('', fromTimestamp, now)
             index = dates.map(d => index.replace("*", d)).join(",")
             ignoreMissingIndex = true
         }
+        let body = makeSearch({ serviceName: config.serviceName, from: fromTimestamp, to: now, config })
         return fetch('/' + index + '/_search?size=10000&ignore_unavailable=' + ignoreMissingIndex, {
             method: "POST",
-            body: JSON.stringify(makeSearch({ serviceName: config.serviceName, from: fromTimestamp, config }))
+            body: JSON.stringify(body),
         })
             .then(
             response => {
