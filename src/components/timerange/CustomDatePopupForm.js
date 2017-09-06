@@ -12,7 +12,8 @@ import _ from 'lodash'
 class CustomDatePopupForm extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {value: props.value}
+        let {value, onSubmit} = props
+        this.state = {value}
 
         let that = this
 
@@ -24,7 +25,7 @@ class CustomDatePopupForm extends React.Component {
             event.preventDefault();
             let d = Date.parse(this.state.value)
             if (!_.isNaN(d)) {
-                that.props.onSubmit(d)
+                onSubmit(d)
             }
         }
     }
