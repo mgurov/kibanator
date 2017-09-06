@@ -9,7 +9,7 @@ import {
 import DateTime from '../generic/DateTime'
 import _ from 'lodash'
 
-class FormExample extends React.Component {
+class CustomDatePopupForm extends React.Component {
     constructor(props) {
         super(props)
         this.state = {value: props.value}
@@ -59,4 +59,4 @@ class FormExample extends React.Component {
     }
   }
 
-  export default FormExample
+  export default CustomDatePopupForm
