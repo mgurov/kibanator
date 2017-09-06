@@ -22,6 +22,7 @@ export const failedFetchingData = (error) => {
     }
 }
 
+const refreshInterval = process.env.REACT_APP_INTERVAL || 60000
 const API_PATH=process.env.REACT_APP_API_PATH || ''
 
 export function fetchData(fromTimestamp, config) {
@@ -69,7 +70,7 @@ export function startFetching(fromTimestamp, dispatch) {
 
     let doFetch = () => dispatch(fetchData(fromTimestamp, config))
     doFetch()
-    let intervaldId = setInterval(doFetch, 5000)
+    let intervaldId = setInterval(doFetch, refreshInterval)
     dispatch(startedFetchTimer(intervaldId))
 }
 
