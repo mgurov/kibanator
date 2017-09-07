@@ -5,7 +5,7 @@ const defaultConfig = {
   serviceName: 'yourAppHere',
   levelField : '@fields.level',
   levelValue: 'ERROR',
-  index : 'logstash-tst-log4json-*',
+  index : 'logstash-pro-log4json-*',
 }
 
 const config = (state = defaultConfig, action) => {

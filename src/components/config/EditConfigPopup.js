@@ -100,7 +100,7 @@ class EditConfigPopup extends Component {
                             <FieldGroup
                                 {...fieldProps("index")}
                                 label="Index"
-                                help="e.g. logstash-tst-log4json-*"
+                                help="e.g. logstash-pro-log4json-*"
                             />
 
                         </form>
