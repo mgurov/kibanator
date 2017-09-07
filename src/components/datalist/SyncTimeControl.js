@@ -45,6 +45,7 @@ export function SyncTimeControl({selected, notAcked, acked, lastSync, ackAll}) {
         
         if (notAcked.count > 0) {
             stuff.push(<Button 
+                key="ack_all" 
                 className="btn btn-xs glyphicon glyphicon-ok" 
                 title="Ack all"
                 onClick={ackAll}
