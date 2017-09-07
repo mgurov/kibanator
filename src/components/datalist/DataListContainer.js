@@ -11,7 +11,7 @@ import {SelectTimeRange} from '../timerange/SelectTimeRange'
 const mapStateToProps = state => {
     return {
         data: state.data,
-        synctimes: state.synctimes
+        synctimes: state.synctimes,
     }
 }
 

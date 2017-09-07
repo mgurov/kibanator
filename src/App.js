@@ -5,6 +5,7 @@ import WatchListContainer from './components/WatchListContainer.js'
 import DataListContainer from './components/datalist/DataListContainer.js'
 import {ConfigContainer} from './components/config'
 import Reset from './components/timerange/Reset'
+import DocumentTitleContainer from './components/title/DocumentTitleContainer'
 
 let App = () => {
 
@@ -18,8 +19,9 @@ let App = () => {
 
   return (
     <div className="App">
+      <DocumentTitleContainer />
       <div className="App-header">
-        <h2>Kibanator <ConfigContainer />&nbsp;<Reset /></h2>
+        <ConfigContainer />&nbsp;<Reset />
       </div>
       {watches}
       <DataListContainer />
