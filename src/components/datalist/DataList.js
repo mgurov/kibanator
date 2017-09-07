@@ -23,7 +23,7 @@ class DataRow extends Component {
         if (this.state.expanded) {
             chevronDirection = 'glyphicon glyphicon-chevron-down'
             let fields = _.map(h.fields, (value, key) => {
-                return <p key={key} >{key}: {value}</p>
+                return <p key={key} ><label>{key}:</label> {value}</p>
             })
 
             expandedRow = <Row>
