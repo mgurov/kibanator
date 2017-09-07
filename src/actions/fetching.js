@@ -57,21 +57,13 @@ export function fetchData(fromTimestamp, config) {
     }
 }
 
-export function startFetching(fromTimestamp, dispatch) {
-    //hack, need to learn how to pass the config conveniently instead
-
-    let config
-    let localConfig = localStorage.getItem('config')
-    if (localConfig) {
-        config = JSON.parse(localConfig)
-    } else {
-        throw Error('need some config before fetching')
+export function startFetching(fromTimestamp, config) {
+    return function(dispatch) {
+        let doFetch = () => dispatch(fetchData(fromTimestamp, config))
+        doFetch()
+        let intervaldId = setInterval(doFetch, refreshInterval)
+        dispatch(startedFetchTimer(intervaldId))
     }
-
-    let doFetch = () => dispatch(fetchData(fromTimestamp, config))
-    doFetch()
-    let intervaldId = setInterval(doFetch, refreshInterval)
-    dispatch(startedFetchTimer(intervaldId))
 }
 
 export function stopFetchTimer() {

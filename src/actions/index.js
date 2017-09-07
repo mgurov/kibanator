@@ -1,5 +1,3 @@
-import {startFetching} from './fetching'
-
 let nextId = 1
 export const getNextId = () => nextId++
 
@@ -27,11 +25,8 @@ export const deleteWatch = id => {
 }
 
 export const selectSyncTime = selected => {
-  
   return function(dispatch) {
     dispatch({type: 'SELECT_SYNC_TIME', selected})
-    
-    startFetching(new Date(selected.nowToStart(new Date())), dispatch)    
   }  
 }
 

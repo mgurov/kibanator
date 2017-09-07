@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { fetchData, selectSyncTime, ackTillId, toggleFavorite, ackAll } from '../../actions'
+import { fetchData, selectSyncTime, ackTillId, toggleFavorite, ackAll, startFetching } from '../../actions'
 import DataList from './DataList'
 import { Alert } from 'react-bootstrap'
 import {SyncTimeControl} from './SyncTimeControl'
@@ -12,16 +12,19 @@ const mapStateToProps = state => {
     return {
         data: state.data,
         synctimes: state.synctimes,
+        config: state.config,
     }
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
     return {
         onDataAsked: () => {
             dispatch(fetchData())
         },
-        onSyncSelected: (st) => {
+        onSyncSelected: (st, config) => {
             dispatch(selectSyncTime(st))
+            let from = new Date(st.nowToStart(new Date()))
+            dispatch(startFetching(from, config))
         },
         ackTillId: (id) => {
             dispatch(ackTillId(id))
@@ -54,7 +57,7 @@ function DataListContainer(props) {
         ackAll={props.ackAll}
         />
     } else {
-        syncControl = <SelectTimeRange options={props.synctimes.options} onSelected={props.onSyncSelected}/>
+        syncControl = <SelectTimeRange options={props.synctimes.options} onSelected={st => props.onSyncSelected(st, props.config)}/>
     }
 
     let toShow = _.take(props.data.data.hits, ViewSize)
