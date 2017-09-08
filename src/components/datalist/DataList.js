@@ -23,13 +23,22 @@ class DataRow extends Component {
 
         if (this.state.expanded) {
             chevronDirection = 'glyphicon glyphicon-chevron-down'
-            let fields = _.map(h.fields, (value, key) => {
-                return <p key={key} className="keep-lines"><label>{key}:</label> {value}</p>
+
+            let oneLineFields = []
+            let multiLineFields = []
+
+            _.forEach(h.fields, (value, key) => {
+                if (value.indexOf && value.indexOf('\n') > 0) {
+                    multiLineFields.push(<div key={key}><label>{key}:</label> <pre>{value}</pre></div>)
+                } else {
+                    oneLineFields.push(<span key={key}><label>{key}:</label> {value}</span>)
+                }
             })
 
             expandedRow = <Row>
-            <Col xs={8} md={8} lg={8}>
-                {fields}    
+            <Col xs={12} md={12} lg={12}>
+                {oneLineFields}    
+                {multiLineFields}    
             </Col>
         </Row>
         } else {
