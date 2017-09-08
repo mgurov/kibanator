@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Grid, Col, Row } from 'react-bootstrap'
 import _ from 'lodash'
 import DateTime from '../generic/DateTime'
+import './DataList.css'
 
 class DataRow extends Component {
     constructor(props) {
@@ -23,7 +24,7 @@ class DataRow extends Component {
         if (this.state.expanded) {
             chevronDirection = 'glyphicon glyphicon-chevron-down'
             let fields = _.map(h.fields, (value, key) => {
-                return <p key={key} ><label>{key}:</label> {value}</p>
+                return <p key={key} className="keep-lines"><label>{key}:</label> {value}</p>
             })
 
             expandedRow = <Row>
