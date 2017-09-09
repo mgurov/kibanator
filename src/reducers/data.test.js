@@ -1,5 +1,6 @@
 import {mergeHits} from './data'
 import _ from 'lodash'
+import {messageContainsCaptor} from '../domain/Captor'
 
 describe('some hits present, new received', () => {
     let given = {
@@ -26,7 +27,8 @@ describe('some hits present, new received', () => {
                     {_id : "2"},
                     {_id : "3"},
                 ],
-                knownIds : {"1": 1, "2": 1, "3": 1}
+                knownIds : {"1": 1, "2": 1, "3": 1},
+                captures: {}
             }
         )
     })
@@ -74,7 +76,36 @@ describe('duplicates received', () => {
                 hits: [
                     {_id : "2"},
                 ],
-                knownIds : {"2": 1}
+                knownIds : {"2": 1},
+                captures: {}
+            }
+        )    
+    })
+});
+
+describe('client side filtering', () => {
+    let given = {
+        hits: [],
+        knownIds : {}
+    }
+
+    let arrivedHits = [
+        {_id : "1", message : "catch me"},
+        {_id : "2", message : "leave me"},
+    ]
+
+    let captors = [messageContainsCaptor("catch", "catch")]
+
+    test('one taken another caught', () => {
+        expect(mergeHits(arrivedHits, given, {captors})).toEqual(
+            {
+                hits: [
+                    arrivedHits[1],
+                ],
+                knownIds : {"1": 1, "2": 1},
+                captures: {
+                    "catch" : [arrivedHits[0]]
+                }
             }
         )    
     })

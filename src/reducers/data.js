@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import LogHit from '../domain/LogHit'
 import update from 'immutability-helper';
+import {captorToPredicate} from '../domain/Captor'
 
 const emptyState = {
   isFetching: false, 
@@ -12,6 +13,7 @@ const emptyState = {
       firstTimestamp: null,
       lastTimestamp: null,
     },
+    captures: {},
     acked: {count: 0, lastTimestamp: null}
   },
   error: null,
@@ -28,13 +30,15 @@ const data = (state = emptyState, action) => {
         error: null,
         lastSync: new Date(),
       }
-      let mergedHits = mergeHits(action.data.hits, state.data, h => LogHit(h, action.config))
+      let mergeParams = {newHitsTransformer: h => LogHit(h, action.config), captors: action.captors || {}}
+      let mergedHits = mergeHits(action.data.hits, state.data, mergeParams)
       if (!mergedHits) {
         return Object.assign({}, state, newState)
       }
-      let {hits, knownIds} = mergedHits
+      let {hits, knownIds, captures: newCaptures} = mergedHits
+      let captures = _.mergeWith(state.data.captures, newCaptures, (a, b) => (a||[]).concat(b||[]))
       let hitStats = collectHitStats(hits)
-      newState.data = Object.assign({}, state.data, {hits, knownIds, hitStats})
+      newState.data = Object.assign({}, state.data, {hits, knownIds, hitStats, captures})
       return Object.assign({}, state, newState)
     case 'FAILED_FETCHING_DATA':
       return Object.assign({}, state, {isFetching: false, error: action.error})
@@ -64,14 +68,28 @@ const data = (state = emptyState, action) => {
       })
     case 'FETCH_STOP_TIMER' : 
       return emptyState
+    case 'ADD_CAPTOR' : 
+      //TODO: need to recalc the stats.
+      let [captured, remaining] = _.partition(state.data.hits, captorToPredicate(action.captor))
+      if (_.isEmpty(captured)) {
+        return state;
+      }
+      return update(state, {data :{hits: {$set: remaining}, captures: {[action.captor.key]: {$set: captured}}}})
+    case 'REMOVE_CAPTOR': 
+      return update(state, {data :{captures: {$unset: [action.captorKey]}}})
     default:
       return state
   }
 }
 
-function mergeHits(newHits, {hits, knownIds}, newHitsTransformer = _.identity) {
+function mergeHits(newHits, {hits, knownIds}, {newHitsTransformer = _.identity, captors = {}} = {}) {
+  //TODO: I do not actually need the initial hits, those could've been merged outside.
   let needClone = true
   let changed = false
+  let captures = {}
+
+  let captorPredicates = _.map(captors, c => { let p = captorToPredicate(c); p.key = c.key; return p} )
+
   _.forEach(newHits, h => {
     if (knownIds[h._id]) {
       return
@@ -83,12 +101,24 @@ function mergeHits(newHits, {hits, knownIds}, newHitsTransformer = _.identity) {
       changed = true
     }
     knownIds[h._id] = 1
-    hits.push(newHitsTransformer(h))
+    let newHit = newHitsTransformer(h)
+
+    for (var i = 0; i < captors.length; i++) {
+      let p = captorPredicates[i]
+      if (p(newHit)) {
+        if (!captures[p.key]) {
+          captures[p.key] = []
+        }
+        captures[p.key].push(newHit)
+        return //hit processing, do not want it to be pushed to the main hits 
+      }
+    }
+    hits.push(newHit)
   })
   if (!changed) {
     return null
   } else {
-    return {knownIds, hits}
+    return {knownIds, hits, captures}
   }
 }
 

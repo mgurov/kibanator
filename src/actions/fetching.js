@@ -12,6 +12,7 @@ export const receiveData = (data, config) => {
         type: 'RECEIVED_HITS',
         data: data.hits,
         config: config,
+        captors: config.captors
     }
 }
 

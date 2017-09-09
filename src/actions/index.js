@@ -57,4 +57,18 @@ export const setConfig = newState => {
   }
 }
 
+export const addCaptor = (captor) => {
+  return {
+    type: 'ADD_CAPTOR',
+    captor,
+  }
+}
+
+export const removeCaptor = (captorKey) => {
+  return {
+    type: 'REMOVE_CAPTOR',
+    captorKey,
+  }
+}
+
 export * from "./fetching"

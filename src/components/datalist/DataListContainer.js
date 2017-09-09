@@ -7,6 +7,7 @@ import {SyncTimeControl} from './SyncTimeControl'
 import _ from 'lodash'
 import {ViewSize} from './const.js'
 import {SelectTimeRange} from '../timerange/SelectTimeRange'
+import CapturesLine from '../capture/CapturesLine'
 
 const mapStateToProps = state => {
     return {
@@ -64,6 +65,7 @@ function DataListContainer(props) {
 
     return (<div>
         {syncControl}
+        <CapturesLine value={props.data.data.captures} />
         {error}
         <DataList data={toShow} ackTillId={props.ackTillId} toggleFavorite={props.toggleFavorite} />
     </div>)

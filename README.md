@@ -15,6 +15,5 @@ Features (future):
 
 ### WIP TODO
 
-* client-side filters
 * multi-app
 * warning on hitting the 10K limit
