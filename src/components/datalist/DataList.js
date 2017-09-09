@@ -31,7 +31,7 @@ class DataRow extends Component {
                 if (value.indexOf && value.indexOf('\n') > 0) {
                     multiLineFields.push(<div key={key}><label>{key}:</label> <pre>{value}</pre></div>)
                 } else {
-                    oneLineFields.push(<span key={key}><label>{key}:</label> {value}</span>)
+                    oneLineFields.push(<span key={key}><label>{key}:</label> {value} </span>)
                 }
             })
 
