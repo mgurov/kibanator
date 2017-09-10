@@ -8,11 +8,6 @@ const emptyState = {
   data: {
     knownIds: {}, 
     hits: [], 
-    hitStats: {
-      count: 0,
-      firstTimestamp: null,
-      lastTimestamp: null,
-    },
     captures: {},
     acked: {count: 0, lastTimestamp: null}
   },
@@ -37,8 +32,7 @@ const data = (state = emptyState, action) => {
       }
       let {hits, knownIds, captures: newCaptures} = mergedHits
       let captures = _.mergeWith(state.data.captures, newCaptures, (a, b) => (a||[]).concat(b||[]))
-      let hitStats = collectHitStats(hits)
-      newState.data = Object.assign({}, state.data, {hits, knownIds, hitStats, captures})
+      newState.data = Object.assign({}, state.data, {hits, knownIds,  captures})
       return Object.assign({}, state, newState)
     case 'FAILED_FETCHING_DATA':
       return Object.assign({}, state, {isFetching: false, error: action.error})
@@ -122,15 +116,6 @@ function mergeHits(newHits, {hits, knownIds}, {newHitsTransformer = _.identity, 
   }
 }
 
-function collectHitStats(hits) {
-  let result = {count: hits.length}
-  if (result.count > 0) {
-    result.firstTimestamp = hits[0].timestamp
-    result.lastTimestamp = hits[hits.length - 1].timestamp
-  }
-  return result
-}
-
 function removeNonFavoriteAfterIndex({hits:originalHits, acked:originalAck}, removeUpToIndex) {
   let hits = _.filter(originalHits, ({favorite}, index) => {return favorite || index > removeUpToIndex})
   //NB: times aren't entirely correct now for the favorites
@@ -139,11 +124,9 @@ function removeNonFavoriteAfterIndex({hits:originalHits, acked:originalAck}, rem
       lastTimestamp : originalHits[removeUpToIndex].timestamp,
       firstTimestamp : originalAck.firstTimestamp || originalHits[0].timestamp,
     }
-    let hitStats = collectHitStats(hits)
     return {
       hits,
       acked,
-      hitStats
     }
 }
 

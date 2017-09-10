@@ -2,7 +2,7 @@ import React from 'react'
 import {Badge, Popover, Button} from 'react-bootstrap'
 import {DateTime, ConditionalOverlayTrigger} from '../generic/'
 
-export function SyncTimeControl({selected, notAcked, acked, lastSync, ackAll}) {
+export function SyncTimeControl({selected, pendingCount, acked, lastSync, ackAll}) {
 
     let stuff = []
 
@@ -28,29 +28,16 @@ export function SyncTimeControl({selected, notAcked, acked, lastSync, ackAll}) {
         </span>
     )
     
-    if (notAcked) {
-        let pendingTimesPopover = (
-            <Popover id="pending-times" title="Pending">
-                <p>First <DateTime value={notAcked.firstTimestamp}/></p>
-                <p>Last <DateTime value={notAcked.lastTimestamp}/></p>
-            </Popover>
-        );
-    
-        stuff.push(<span key="notAcked">
-            &nbsp;pending&nbsp;
-                <ConditionalOverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={pendingTimesPopover} visible={true}>
-                    <Badge>{notAcked.count}</Badge>
-                </ConditionalOverlayTrigger>
-        </span>)
+    if (pendingCount > 0) {
+        stuff.push(<span key="pending">
+            &nbsp;pending&nbsp;<Badge>{pendingCount}</Badge></span>)
         
-        if (notAcked.count > 0) {
-            stuff.push(<Button 
-                key="ack_all" 
-                className="btn btn-xs glyphicon glyphicon-ok" 
-                title="Ack all"
-                onClick={ackAll}
-                />)
-        }
+        stuff.push(<Button 
+            key="ack_all" 
+            className="btn btn-xs glyphicon glyphicon-ok" 
+            title="Ack all"
+            onClick={ackAll}
+            />)
     }
 
     if (acked.count > 0) {

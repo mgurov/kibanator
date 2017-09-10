@@ -3,10 +3,10 @@ import { connect } from 'react-redux'
 import { fetchData, selectSyncTime, ackTillId, toggleFavorite, ackAll, startFetching } from '../../actions'
 import DataList from './DataList'
 import { Alert } from 'react-bootstrap'
-import {SyncTimeControl} from './SyncTimeControl'
+import { SyncTimeControl } from './SyncTimeControl'
 import _ from 'lodash'
-import {ViewSize} from './const.js'
-import {SelectTimeRange} from '../timerange/SelectTimeRange'
+import { ViewSize } from './const.js'
+import { SelectTimeRange } from '../timerange/SelectTimeRange'
 import CapturesLine from '../capture/CapturesLine'
 
 const mapStateToProps = state => {
@@ -50,15 +50,16 @@ function DataListContainer(props) {
 
     let syncControl
     if (props.synctimes.selected) {
-        syncControl = <SyncTimeControl 
-        selected={props.synctimes.selected} 
-        acked={props.data.data.acked} 
-        notAcked={props.data.data.hitStats}
-        lastSync={props.data.lastSync}
-        ackAll={props.ackAll}
+
+        syncControl = <SyncTimeControl
+            selected={props.synctimes.selected}
+            acked={props.data.data.acked}
+            pendingCount={props.data.data.hits.length}
+            lastSync={props.data.lastSync}
+            ackAll={props.ackAll}
         />
     } else {
-        syncControl = <SelectTimeRange options={props.synctimes.options} onSelected={st => props.onSyncSelected(st, props.config)}/>
+        syncControl = <SelectTimeRange options={props.synctimes.options} onSelected={st => props.onSyncSelected(st, props.config)} />
     }
 
     let toShow = _.take(props.data.data.hits, ViewSize)
