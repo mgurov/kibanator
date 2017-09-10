@@ -18,7 +18,7 @@ function CustomSelectionButton(props) {
         </Popover>
     );
 
-    return (<OverlayTrigger trigger="click" placement="left" overlay={customSelectionPopover}>
+    return (<OverlayTrigger trigger="click" rootClose placement="left" overlay={customSelectionPopover}>
         <Button>Custom...</Button>
     </OverlayTrigger>)
 }

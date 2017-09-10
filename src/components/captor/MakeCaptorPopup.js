@@ -31,10 +31,10 @@ class MakeCaptorPopup extends Component {
         this.validateKey = (defaultProps = {}) => {
             let key = that.state.key
             if (!key) {
-                return Object.assign({}, defaultProps, {help: "Should not be empty", validationState: "error"}) 
+                return Object.assign({}, defaultProps, {help: "Should not be empty", validationState: "error"})
             }
             if (existingCaptorNames[key]) {
-                return Object.assign({}, defaultProps, {help: "Captor with this name already exists", validationState: "error"}) 
+                return Object.assign({}, defaultProps, {help: "Captor with this name already exists", validationState: "error"})
             }
             return defaultProps
         }
@@ -42,10 +42,10 @@ class MakeCaptorPopup extends Component {
         this.validateMessageContains = (defaultProps = {}) => {
             let value = that.state.messageContains
             if (!value) {
-                return Object.assign({}, defaultProps, {help: "Should not be empty", validationState: "error"}) 
+                return Object.assign({}, defaultProps, {help: "Should not be empty", validationState: "error"})
             }
             if (exampleMessage.indexOf(value) === -1) {
-                return Object.assign({}, defaultProps, {help: "Would not match current message", validationState: "warning"}) 
+                return Object.assign({}, defaultProps, {help: "Would not match current message", validationState: "warning"})
             }
             return defaultProps
         }
@@ -70,7 +70,7 @@ class MakeCaptorPopup extends Component {
         }
 
         this.onKeyPress = (e) => {
-            //somehow it doesn't cause form submit this dialog. Did better in other ones. Ok, some manual work. 
+            //somehow it doesn't cause form submit this dialog. Did better in other ones. Ok, some manual work.
             if ((e.keyCode === 13) && (e.target.type !== "textarea")) {
                 that.submit(e)
             }
