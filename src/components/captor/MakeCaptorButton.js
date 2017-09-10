@@ -35,6 +35,7 @@ class MakeCaptorButtonComponent extends React.Component {
                 close={this.togglePopupVisibility}
                 onSave={this.onSave}
                 hit={this.props.hit}
+                captors={this.props.captors}
             ></MakeCaptorPopup>
         } else {
             return <div><button className="btn btn-default btn-xs" onClick={this.togglePopupVisibility}>make captor</button></div>
