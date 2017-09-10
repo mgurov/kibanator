@@ -17,3 +17,4 @@ Features (future):
 
 * multi-app
 * warning on hitting the 10K limit
+* log: received _id earlier than already known
