@@ -71,6 +71,7 @@ export function stopFetchTimer() {
         type: 'FETCH_STOP_TIMER',
     }
 }
+
 export function startedFetchTimer(intervaldId) {
     return {
         type: 'FETCH_STARTED_TIMER',
