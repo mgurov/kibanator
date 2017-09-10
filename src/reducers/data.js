@@ -31,7 +31,7 @@ const data = (state = emptyState, action) => {
         return Object.assign({}, state, newState)
       }
       let {hits, knownIds, captures: newCaptures} = mergedHits
-      let captures = _.mergeWith(state.data.captures, newCaptures, (a, b) => (a||[]).concat(b||[]))
+      let captures = _.mergeWith(_.clone(state.data.captures), newCaptures, (a, b) => (a||[]).concat(b||[]))
       newState.data = Object.assign({}, state.data, {hits, knownIds,  captures})
       return Object.assign({}, state, newState)
     case 'FAILED_FETCHING_DATA':
@@ -61,6 +61,7 @@ const data = (state = emptyState, action) => {
         data :{hits: {[theIndex]: {$set: alteredItem}}}
       })
     case 'FETCH_STOP_TIMER' : 
+      console.log('would return', emptyState)
       return emptyState
     case 'ADD_CAPTOR' : 
       //TODO: need to recalc the stats.
