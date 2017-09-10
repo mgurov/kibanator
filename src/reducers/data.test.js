@@ -1,6 +1,6 @@
 import {mergeHits} from './data'
 import _ from 'lodash'
-import {messageContainsCaptor} from '../domain/Captor'
+import {messageContainsCaptor, captorToPredicate} from '../domain/Captor'
 
 describe('some hits present, new received', () => {
     let given = {
@@ -94,10 +94,10 @@ describe('client side filtering', () => {
         {_id : "2", message : "leave me"},
     ]
 
-    let captors = [messageContainsCaptor("catch", "catch")]
+    let captorPredicates = [messageContainsCaptor("catch", "catch")].map(captorToPredicate)
 
     test('one taken another caught', () => {
-        expect(mergeHits(arrivedHits, given, {captors})).toEqual(
+        expect(mergeHits(arrivedHits, given, {captorPredicates})).toEqual(
             {
                 hits: [
                     arrivedHits[1],

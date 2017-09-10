@@ -13,6 +13,7 @@ const emptyState = {
   },
   error: null,
   lastSync: null,
+  captorPredicates: [], //hackishly copied here upon config update. see captorPredicatesUpdater
 }
 
 const data = (state = emptyState, action) => {
@@ -25,7 +26,7 @@ const data = (state = emptyState, action) => {
         error: null,
         lastSync: new Date(),
       }
-      let mergeParams = {newHitsTransformer: h => LogHit(h, action.config), captors: action.captors || {}}
+      let mergeParams = {newHitsTransformer: h => LogHit(h, action.config), captorPredicates: state.captorPredicates}
       let mergedHits = mergeHits(action.data.hits, state.data, mergeParams)
       if (!mergedHits) {
         return Object.assign({}, state, newState)
@@ -64,8 +65,7 @@ const data = (state = emptyState, action) => {
       console.log('would return', emptyState)
       return emptyState
     case 'ADD_CAPTOR' : 
-      //TODO: need to recalc the stats.
-      let [captured, remaining] = _.partition(state.data.hits, captorToPredicate(action.captor))
+      let [captured, remaining] = _.partition(state.data.hits, captorToPredicate(action.captor).predicate)
       if (_.isEmpty(captured)) {
         return state;
       }
@@ -77,13 +77,11 @@ const data = (state = emptyState, action) => {
   }
 }
 
-function mergeHits(newHits, {hits, knownIds}, {newHitsTransformer = _.identity, captors = {}} = {}) {
+function mergeHits(newHits, {hits, knownIds}, {newHitsTransformer = _.identity, captorPredicates = []} = {}) {
   //TODO: I do not actually need the initial hits, those could've been merged outside.
   let needClone = true
   let changed = false
   let captures = {}
-
-  let captorPredicates = _.map(captors, c => { let p = captorToPredicate(c); p.key = c.key; return p} )
 
   _.forEach(newHits, h => {
     if (knownIds[h._id]) {
@@ -98,9 +96,9 @@ function mergeHits(newHits, {hits, knownIds}, {newHitsTransformer = _.identity, 
     knownIds[h._id] = 1
     let newHit = newHitsTransformer(h)
 
-    for (var i = 0; i < captors.length; i++) {
+    for (var i = 0; i < captorPredicates.length; i++) {
       let p = captorPredicates[i]
-      if (p(newHit)) {
+      if (p.predicate(newHit)) {
         if (!captures[p.key]) {
           captures[p.key] = []
         }

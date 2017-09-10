@@ -19,6 +19,7 @@ let store = createStore(
     {watches, config},
     applyMiddleware(thunkMiddleware /* , createLogger() */)
 )
+store.dispatch({type: 'ON_INIT'})
 let [currentWatches, currentConfig] = [null, null]
 store.subscribe(() => {
     let state = store.getState()
