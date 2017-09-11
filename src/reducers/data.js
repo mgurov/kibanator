@@ -3,7 +3,7 @@ import LogHit from '../domain/LogHit'
 import update from 'immutability-helper';
 import {captorToPredicate} from '../domain/Captor'
 
-const emptyState = {
+export const emptyState = {
   isFetching: false, 
   data: {
     knownIds: {}, 
@@ -20,11 +20,15 @@ const data = (state = emptyState, action) => {
   switch (action.type) {
     case 'FETCHING_DATA':
       return Object.assign({}, state, {isFetching: true})
+    case 'FAILED_FETCHING_DATA':
+      return Object.assign({}, state, {isFetching: false, error: action.error})
+    case 'FETCH_STOP_TIMER' : //reset all
+      return {...emptyState, captorPredicates: state.captorPredicates}
     case 'RECEIVED_HITS':
       let newState = {
         isFetching: false, 
         error: null,
-        lastSync: new Date(),
+        lastSync: new Date(), //<---- side-effect, shouldn't take place within reducer IMHO. Move to the action.
       }
       let mergeParams = {newHitsTransformer: h => LogHit(h, action.config), captorPredicates: state.captorPredicates}
       let mergedHits = mergeHits(action.data.hits, state.data, mergeParams)
@@ -35,8 +39,6 @@ const data = (state = emptyState, action) => {
       let captures = _.mergeWith(_.clone(state.data.captures), newCaptures, (a, b) => (a||[]).concat(b||[]))
       newState.data = Object.assign({}, state.data, {hits, knownIds,  captures})
       return Object.assign({}, state, newState)
-    case 'FAILED_FETCHING_DATA':
-      return Object.assign({}, state, {isFetching: false, error: action.error})
     case 'ACK_ALL' :
       return Object.assign({}, state, {
         data : Object.assign({}, state.data, removeNonFavoriteAfterIndex(state.data, state.data.hits.length - 1))
@@ -61,9 +63,6 @@ const data = (state = emptyState, action) => {
       return update(state, {
         data :{hits: {[theIndex]: {$set: alteredItem}}}
       })
-    case 'FETCH_STOP_TIMER' : 
-      console.log('would return', emptyState)
-      return emptyState
     case 'ADD_CAPTOR' : 
       let [captured, remaining] = _.partition(state.data.hits, captorToPredicate(action.captor).predicate)
       if (_.isEmpty(captured)) {
