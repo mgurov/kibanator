@@ -12,6 +12,8 @@ const toLogHit = (h) => LogHit(h, testConfig)
 
 const captorForMessage = (key, messageSub) => captorToPredicate(messageContainsCaptor(key, messageSub))
 
+const favorite = h => { h.favorite = true; return h }
+
 describe('data reducer', () => {
     it('intial state is empty state', () => {
         expect(dataReducer(undefined, {}))
@@ -19,9 +21,9 @@ describe('data reducer', () => {
     })
     it('resets back to empty state, except for the captors hack', () => {
         expect(dataReducer({
-            data: {hits:[1,2,3]},
+            data: { hits: [1, 2, 3] },
             captorPredicates: ['a', 'b', 'c']
-        }, {type: 'FETCH_STOP_TIMER'}))
+        }, { type: 'FETCH_STOP_TIMER' }))
             .toEqual({
                 ...emptyState,
                 captorPredicates: ['a', 'b', 'c'],
@@ -153,17 +155,17 @@ describe('data reducer', () => {
             })
     })
 
-    it('shall ack all except favourite when asked to', () => {
+    it('shall ack all except favorite', () => {
         const hits = [
-            { _id: "1", _source: {timestamp: 1} },
+            { _id: "1", _source: { timestamp: 1 } },
             { _id: "2", _source: {} },
-            { _id: "3", _source: {timestamp: 3} },
+            { _id: "3", _source: { timestamp: 3 } },
         ]
 
         let secondHitIsMarked = toLogHit(hits[1]);
         secondHitIsMarked.favorite = true;
 
-        let initialState = { 
+        let initialState = {
             ...emptyState,
             data: {
                 ...emptyState.data,
@@ -171,8 +173,8 @@ describe('data reducer', () => {
                     toLogHit(hits[0]),
                     secondHitIsMarked,
                     toLogHit(hits[2]),
-                ], 
-                knownIds: {"1": 1, "2": 1, "3": 1},
+                ],
+                knownIds: { "1": 1, "2": 1, "3": 1 },
             }
         }
         expect(dataReducer(initialState, {
@@ -183,10 +185,159 @@ describe('data reducer', () => {
                 data: {
                     ...initialState.data,
                     hits: [secondHitIsMarked],
-                    acked: {count: 2, firstTimestamp: 1, lastTimestamp: 3},
+                    acked: { count: 2, firstTimestamp: 1, lastTimestamp: 3 },
                 }
             })
     })
 
+    it('shall ack till id except favorite', () => {
+        const hits = [
+            { _id: "1", _source: { timestamp: 1 } }, // <- favorite
+            { _id: "2", _source: { timestamp: 2 } },
+            { _id: "3", _source: { timestamp: 3 } },
+        ]
+
+        let initialState = {
+            ...emptyState,
+            data: {
+                ...emptyState.data,
+                hits: [
+                    favorite(toLogHit(hits[0])),
+                    toLogHit(hits[1]),
+                    toLogHit(hits[2]),
+                ],
+                knownIds: { "1": 1, "2": 1, "3": 1 },
+            }
+        }
+        expect(dataReducer(initialState, {
+            type: 'ACK_TILL_ID',
+            id: '2',
+        }))
+            .toEqual({
+                ...initialState,
+                data: {
+                    ...initialState.data,
+                    hits: [favorite(toLogHit(hits[0])), toLogHit(hits[2])],
+                    acked: {
+                        count: 1,
+                        firstTimestamp: 1,  // <- bug because we don't filter out favs
+                        lastTimestamp: 2
+                    },
+                }
+            })
+    })
+
+    it('shall mark as favorite', () => {
+        const hits = [
+            { _id: "1", _source: { timestamp: 1 } },
+            { _id: "2", _source: { timestamp: 2 } },
+            { _id: "3", _source: { timestamp: 3 } },
+        ]
+
+        let initialState = {
+            ...emptyState,
+            data: {
+                ...emptyState.data,
+                hits: [
+                    toLogHit(hits[0]),
+                    toLogHit(hits[1]),
+                    toLogHit(hits[2]),
+                ],
+                knownIds: { "1": 1, "2": 1, "3": 1 },
+            }
+        }
+        expect(dataReducer(initialState, {
+            type: 'TOGGLE_FAVORITE_ID',
+            id: '2',
+        }))
+            .toEqual({
+                ...initialState,
+                data: {
+                    ...initialState.data,
+                    hits: [
+                        toLogHit(hits[0]),
+                        favorite(toLogHit(hits[1])),
+                        toLogHit(hits[2])
+                    ],
+                }
+            })
+    })
+
+    it('moves hits to capture upon captor addition', () => {
+        const hits = [
+            { _id: "1", _source: { timestamp: 1 } },
+            { _id: "2", _source: { timestamp: 2, message: "catch me" } },
+            { _id: "3", _source: { timestamp: 3, message: "leave me" } },
+        ]
+
+        let initialState = {
+            ...emptyState,
+            data: {
+                ...emptyState.data,
+                hits: [
+                    toLogHit(hits[1]),
+                    toLogHit(hits[2]),
+                ],
+                captures: {
+                    'old': [toLogHit(hits[0])],
+                }
+            }
+        }
+        expect(dataReducer(initialState, {
+            type: 'ADD_CAPTOR',
+            captor: messageContainsCaptor("new", "catch"),
+        }))
+            .toEqual({
+                ...initialState,
+                data: {
+                    ...initialState.data,
+                    hits: [
+                        toLogHit(hits[2])
+                    ],
+                    captures: {
+                        'old': [toLogHit(hits[0])],
+                        'new': [toLogHit(hits[1])],
+                    }
+                }
+            })
+    })
+
+    it('forgets the captures upon captor removal', () => {
+        const hits = [
+            { _id: "1", _source: { timestamp: 1 } },
+            { _id: "2", _source: { timestamp: 2 } },
+            { _id: "3", _source: { timestamp: 3 } },
+        ]
+
+        let initialState = {
+            ...emptyState,
+            data: {
+                ...emptyState.data,
+                hits: [
+                    toLogHit(hits[2]),
+                ],
+                captures: {
+                    'cap1': [toLogHit(hits[0])],
+                    'cap2': [toLogHit(hits[1])],
+                }
+            }
+        }
+        expect(dataReducer(initialState, {
+            type: 'REMOVE_CAPTOR',
+            captorKey: 'cap2',
+        }))
+            .toEqual({
+                ...initialState,
+                data: {
+                    ...initialState.data,
+                    hits: [
+                        toLogHit(hits[2])
+                    ],
+                    captures: {
+                        'cap1': [toLogHit(hits[0])],
+                    }
+                }
+            })
+    })
 
 });

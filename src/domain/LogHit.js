@@ -7,7 +7,7 @@ function LogHit(h, config) {
     }
     r.timestamp = r.fields[config.timeField]
     r.message = r.fields[config.messageField]
-    r.favourite = false
+    r.favorite = false
     return r
 }
 
