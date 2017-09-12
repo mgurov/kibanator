@@ -45,6 +45,7 @@ describe('data reducer', () => {
         expect(dataReducer({ ...emptyState, isFetching: true }, {
             type: 'RECEIVED_HITS',
             data: { hits: [] },
+            timestamp: new Date(),
         }))
             .toEqual({
                 ...emptyState,
@@ -59,6 +60,7 @@ describe('data reducer', () => {
             type: 'RECEIVED_HITS',
             data: { hits },
             config: testConfig,
+            timestamp: new Date(),
         }))
             .toEqual({
                 ...emptyState,
@@ -78,6 +80,7 @@ describe('data reducer', () => {
             type: 'RECEIVED_HITS',
             data: { hits },
             config: testConfig,
+            timestamp: new Date(),
         }))
             .toEqual({
                 ...initialState,
@@ -96,6 +99,7 @@ describe('data reducer', () => {
             type: 'RECEIVED_HITS',
             data: { hits },
             config: testConfig,
+            timestamp: new Date(),
         }))
             .toEqual({
                 ...initialState,
@@ -124,6 +128,7 @@ describe('data reducer', () => {
             type: 'RECEIVED_HITS',
             data: { hits },
             config: testConfig,
+            timestamp: new Date(),
         }))
             .toEqual({
                 ...initialState,
@@ -143,6 +148,7 @@ describe('data reducer', () => {
             type: 'RECEIVED_HITS',
             data: { hits },
             config: testConfig,
+            timestamp: new Date(),
         }))
             .toEqual({
                 ...initialState,

@@ -28,7 +28,7 @@ const data = (state = emptyState, action) => {
       let newState = {
         isFetching: false, 
         error: null,
-        lastSync: new Date(), //<---- side-effect, shouldn't take place within reducer IMHO. Move to the action.
+        lastSync: action.timestamp,
       }
       let mergeParams = {newHitsTransformer: h => LogHit(h, action.config), captorPredicates: state.captorPredicates}
       let newHits = selectNewHits(action.data.hits, state.data.knownIds, mergeParams)
