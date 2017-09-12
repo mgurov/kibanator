@@ -31,12 +31,13 @@ const data = (state = emptyState, action) => {
         lastSync: new Date(), //<---- side-effect, shouldn't take place within reducer IMHO. Move to the action.
       }
       let mergeParams = {newHitsTransformer: h => LogHit(h, action.config), captorPredicates: state.captorPredicates}
-      let mergedHits = mergeHits(action.data.hits, state.data, mergeParams)
-      if (!mergedHits) {
+      let newHits = selectNewHits(action.data.hits, state.data.knownIds, mergeParams)
+      if (!newHits) {
         return Object.assign({}, state, newState)
       }
-      let {hits, knownIds, captures: newCaptures} = mergedHits
-      let captures = _.mergeWith(_.clone(state.data.captures), newCaptures, (a, b) => (a||[]).concat(b||[]))
+      let captures = _.mergeWith(_.clone(state.data.captures), newHits.captures, (a, b) => (a||[]).concat(b||[]))
+      let hits = state.data.hits.concat(newHits.hits)
+      let knownIds = {...state.data.knownIds, ...newHits.knownIds}
       newState.data = Object.assign({}, state.data, {hits, knownIds,  captures})
       return Object.assign({}, state, newState)
     case 'ACK_ALL' :
@@ -76,21 +77,14 @@ const data = (state = emptyState, action) => {
   }
 }
 
-function mergeHits(newHits, {hits, knownIds}, {newHitsTransformer = _.identity, captorPredicates = []} = {}) {
-  //TODO: I do not actually need the initial hits, those could've been merged outside.
-  let needClone = true
-  let changed = false
+function selectNewHits(receivedHits, previouslyKnownIds, {newHitsTransformer = _.identity, captorPredicates = []} = {}) {
   let captures = {}
+  let hits = []
+  let knownIds = {}
 
-  _.forEach(newHits, h => {
-    if (knownIds[h._id]) {
+  _.forEach(receivedHits, h => {
+    if (previouslyKnownIds[h._id] || knownIds[h._id]) {
       return
-    }
-    if (needClone) {
-      hits = _.cloneDeep(hits)
-      knownIds = _.cloneDeep(knownIds)
-      needClone = false
-      changed = true
     }
     knownIds[h._id] = 1
     let newHit = newHitsTransformer(h)
@@ -107,7 +101,7 @@ function mergeHits(newHits, {hits, knownIds}, {newHitsTransformer = _.identity, 
     }
     hits.push(newHit)
   })
-  if (!changed) {
+  if (knownIds.length === 0) {
     return null
   } else {
     return {knownIds, hits, captures}
@@ -127,7 +121,5 @@ function removeNonFavoriteAfterIndex({hits:originalHits, acked:originalAck}, rem
       acked,
     }
 }
-
-export {mergeHits}
 
 export default data
