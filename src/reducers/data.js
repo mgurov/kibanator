@@ -4,28 +4,30 @@ import update from 'immutability-helper';
 import {captorToPredicate} from '../domain/Captor'
 
 export const emptyState = {
-  isFetching: false, 
   data: {
     knownIds: {}, 
     hits: [], 
     captures: {},
     acked: {count: 0, lastTimestamp: null}
   },
-  error: null,
-  lastSync: null,
+  fetchStatus: {
+    isFetching: false, 
+    error: null,
+    lastSync: null,
+  },
   captorPredicates: [], //hackishly copied here upon config update. see captorPredicatesUpdater
 }
 
 const data = (state = emptyState, action) => {
   switch (action.type) {
     case 'FETCHING_DATA':
-      return Object.assign({}, state, {isFetching: true})
+      return update(state, {fetchStatus: {isFetching: {$set: true}}})
     case 'FAILED_FETCHING_DATA':
-      return Object.assign({}, state, {isFetching: false, error: action.error})
+      return update(state, {fetchStatus: {isFetching: {$set: false}, error: {$set: action.error}}})
     case 'FETCH_STOP_TIMER' : //reset all
       return {...emptyState, captorPredicates: state.captorPredicates}
     case 'RECEIVED_HITS':
-      let newState = {
+      let fetchStatus = {
         isFetching: false, 
         error: null,
         lastSync: action.timestamp,
@@ -33,8 +35,9 @@ const data = (state = emptyState, action) => {
       let mergeParams = {newHitsTransformer: h => LogHit(h, action.config), captorPredicates: state.captorPredicates}
       let newHits = selectNewHits(action.data.hits, state.data.knownIds, mergeParams)
       if (!newHits) {
-        return Object.assign({}, state, newState)
+        return {...state, fetchStatus}
       }
+      let newState = {fetchStatus}      
       let captures = _.mergeWith(_.clone(state.data.captures), newHits.captures, (a, b) => (a||[]).concat(b||[]))
       let hits = state.data.hits.concat(newHits.hits)
       let knownIds = {...state.data.knownIds, ...newHits.knownIds}

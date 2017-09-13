@@ -31,26 +31,28 @@ describe('data reducer', () => {
     })
     it('set isFetching', () => {
         expect(dataReducer(emptyState, { type: 'FETCHING_DATA' }))
-            .toEqual({ ...emptyState, isFetching: true })
+            .toHaveProperty('fetchStatus.isFetching', true)
     })
     it('Error set upon error', () => {
-        expect(dataReducer({ ...emptyState, isFetching: true }, { type: 'FAILED_FETCHING_DATA', error: 'Error' }))
-            .toEqual({
-                ...emptyState,
+        expect(dataReducer({ ...emptyState, fetchStatus: {isFetching: true} }, { type: 'FAILED_FETCHING_DATA', error: 'Error' }))
+            .toHaveProperty('fetchStatus', {
                 isFetching: false,
                 error: 'Error',
             })
     })
     it('should reset isFetching and last sync upon empty data list received', () => {
-        expect(dataReducer({ ...emptyState, isFetching: true }, {
+        expect(dataReducer({ ...emptyState, fetchStatus: {...emptyState.fetchStatus, isFetching: true} }, {
             type: 'RECEIVED_HITS',
             data: { hits: [] },
             timestamp: new Date(),
         }))
             .toEqual({
                 ...emptyState,
-                isFetching: false,
-                lastSync: expect.any(Date)
+                fetchStatus: {
+                    ...emptyState.fetchStatus, 
+                    isFetching: false,
+                    lastSync: expect.any(Date),
+                }
             })
     })
 
@@ -64,11 +66,14 @@ describe('data reducer', () => {
         }))
             .toEqual({
                 ...emptyState,
-                lastSync: expect.any(Date),
                 data: {
                     ...emptyState.data,
                     knownIds: { "1": 1 },
                     hits: [toLogHit(hits[0])],
+                },
+                fetchStatus: {
+                    ...emptyState.fetchStatus,
+                    lastSync: expect.any(Date),
                 }
             })
     })
@@ -84,10 +89,13 @@ describe('data reducer', () => {
         }))
             .toEqual({
                 ...initialState,
-                lastSync: expect.any(Date),
                 data: {
                     ...initialState.data,
                     hits: [],
+                },
+                fetchStatus: {
+                    ...emptyState.fetchStatus,
+                    lastSync: expect.any(Date),
                 }
             })
     })
@@ -103,11 +111,14 @@ describe('data reducer', () => {
         }))
             .toEqual({
                 ...initialState,
-                lastSync: expect.any(Date),
                 data: {
                     ...initialState.data,
                     knownIds: { "1": 1 },
                     captures: { 'm': [toLogHit(hits[0])] }
+                },
+                fetchStatus: {
+                    ...emptyState.fetchStatus,
+                    lastSync: expect.any(Date),
                 }
             })
     })
@@ -132,11 +143,14 @@ describe('data reducer', () => {
         }))
             .toEqual({
                 ...initialState,
-                lastSync: expect.any(Date),
                 data: {
                     ...initialState.data,
                     knownIds: { "1": 1, "2": 1 },
                     captures: { 'm': [toLogHit(hits[0]), toLogHit(hits[1])] }
+                },
+                fetchStatus: {
+                    ...emptyState.fetchStatus,
+                    lastSync: expect.any(Date),
                 }
             })
     })
@@ -152,11 +166,14 @@ describe('data reducer', () => {
         }))
             .toEqual({
                 ...initialState,
-                lastSync: expect.any(Date),
                 data: {
                     ...initialState.data,
                     knownIds: { "1": 1 },
                     hits: [toLogHit(hits[0])]
+                },
+                fetchStatus: {
+                    ...emptyState.fetchStatus,
+                    lastSync: expect.any(Date),
                 }
             })
     })

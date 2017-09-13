@@ -55,7 +55,7 @@ function DataListContainer(props) {
             selected={props.synctimes.selected}
             acked={props.data.data.acked}
             pendingCount={props.data.data.hits.length}
-            lastSync={props.data.lastSync}
+            lastSync={props.data.fetchStatus.lastSync}
             ackAll={props.ackAll}
         />
     } else {
