@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { fetchData, selectSyncTime, ackTillId, toggleFavorite, ackAll, startFetching } from '../../actions'
+import { fetchData, selectSyncTime, ackTillId, markHit, unmarkHit, ackAll, startFetching } from '../../actions'
 import DataList from './DataList'
 import { Alert } from 'react-bootstrap'
 import { SyncTimeControl } from './SyncTimeControl'
@@ -33,9 +33,13 @@ const mapDispatchToProps = (dispatch) => {
         ackAll: () => {
             dispatch(ackAll())
         },
-        toggleFavorite: (id) => {
-            dispatch(toggleFavorite(id))
-        },
+        setHitMark: (hit, marked) => {
+            if (marked) {
+                dispatch(markHit(hit.id))
+            } else {
+                dispatch(unmarkHit(hit.id))
+            }
+        }
     }
 }
 
@@ -68,7 +72,9 @@ function DataListContainer(props) {
         {syncControl}
         <CapturesLine value={props.data.data.captures} />
         {error}
-        <DataList data={toShow} ackTillId={props.ackTillId} toggleFavorite={props.toggleFavorite} />
+        <DataList data={props.data.data.marked} setHitMark={props.setHitMark} showAsMarked={true} />
+        { props.data.data.marked.length > 0 && <hr/> }
+        <DataList data={toShow} ackTillId={props.ackTillId} setHitMark={props.setHitMark} showAsMarked={false}/>
     </div>)
 }
 

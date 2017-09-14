@@ -43,10 +43,17 @@ export const ackAll = id => {
   }
 }
 
-export const toggleFavorite = id => {
+export const markHit = id => {
   return {
-    type: 'TOGGLE_FAVORITE_ID',
-    id
+    type: 'MARK_HIT',
+    payload: {id}
+  }
+}
+
+export const unmarkHit = id => {
+  return {
+    type: 'UNMARK_HIT',
+    payload: {id}
   }
 }
 

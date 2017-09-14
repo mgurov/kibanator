@@ -13,6 +13,9 @@ class DataRow extends Component {
         this.toggle = function() {
             that.setState({expanded: !that.state.expanded})
         }
+        this.toggleHitMark = () => {
+            that.props.setHitMark(that.props.data, !that.props.showAsMarked)
+        } 
     }
 
     render() {
@@ -48,12 +51,17 @@ class DataRow extends Component {
             expandedRow = null;
         }
 
-        let starClass = (h.favorite) ? 'glyphicon glyphicon-star' : 'glyphicon glyphicon-star-empty'
+        let mark;
+        if (this.props.showAsMarked) {
+            mark = <span className="glyphicon glyphicon-star" onClick={this.toggleHitMark} title="unmark"></span>
+        } else {
+            mark = <span className="glyphicon glyphicon-star-empty" onClick={this.toggleHitMark} title="mark"></span>
+        }
 
         return <Row>
             <Col sm={3} md={3} lg={3}>
-                <span className="glyphicon glyphicon-ok" onClick={this.props.removeTillThis} title="remove everything down to and including this"></span>
-                <span className={starClass} onClick={this.props.toggleFavorite} title="save this"></span>
+                {this.props.removeTillThis && <span className="glyphicon glyphicon-ok" onClick={this.props.removeTillThis} title="remove everything down to and including this"></span>}
+                {mark}
                 <span className={chevronDirection} onClick={this.toggle}></span>
                 <DateTime value={timestamp} />
             </Col>

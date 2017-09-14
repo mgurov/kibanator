@@ -1,17 +1,18 @@
 import _ from 'lodash'
 import LogHit from '../domain/LogHit'
 import update from 'immutability-helper';
-import {captorToPredicate} from '../domain/Captor'
+import { captorToPredicate } from '../domain/Captor'
 
 export const emptyState = {
   data: {
-    knownIds: {}, 
-    hits: [], 
+    knownIds: {},
+    hits: [],
     captures: {},
-    acked: {count: 0, lastTimestamp: null}
+    marked: [],
+    acked: { count: 0, lastTimestamp: null }
   },
   fetchStatus: {
-    isFetching: false, 
+    isFetching: false,
     error: null,
     lastSync: null,
   },
@@ -21,31 +22,31 @@ export const emptyState = {
 const data = (state = emptyState, action) => {
   switch (action.type) {
     case 'FETCHING_DATA':
-      return update(state, {fetchStatus: {isFetching: {$set: true}}})
+      return update(state, { fetchStatus: { isFetching: { $set: true } } })
     case 'FAILED_FETCHING_DATA':
-      return update(state, {fetchStatus: {isFetching: {$set: false}, error: {$set: action.error}}})
-    case 'FETCH_STOP_TIMER' : //reset all
-      return {...emptyState, captorPredicates: state.captorPredicates}
+      return update(state, { fetchStatus: { isFetching: { $set: false }, error: { $set: action.error } } })
+    case 'FETCH_STOP_TIMER': //reset all
+      return { ...emptyState, captorPredicates: state.captorPredicates }
     case 'RECEIVED_HITS':
       let fetchStatus = {
-        isFetching: false, 
+        isFetching: false,
         error: null,
         lastSync: action.timestamp,
       }
-      let mergeParams = {newHitsTransformer: h => LogHit(h, action.config), captorPredicates: state.captorPredicates}
+      let mergeParams = { newHitsTransformer: h => LogHit(h, action.config), captorPredicates: state.captorPredicates }
       let newHits = selectNewHits(action.data.hits, state.data.knownIds, mergeParams)
       if (!newHits) {
-        return {...state, fetchStatus}
+        return { ...state, fetchStatus }
       }
-      let newState = {fetchStatus}      
-      let captures = _.mergeWith(_.clone(state.data.captures), newHits.captures, (a, b) => (a||[]).concat(b||[]))
+      let newState = { fetchStatus }
+      let captures = _.mergeWith(_.clone(state.data.captures), newHits.captures, (a, b) => (a || []).concat(b || []))
       let hits = state.data.hits.concat(newHits.hits)
-      let knownIds = {...state.data.knownIds, ...newHits.knownIds}
-      newState.data = Object.assign({}, state.data, {hits, knownIds,  captures})
+      let knownIds = { ...state.data.knownIds, ...newHits.knownIds }
+      newState.data = Object.assign({}, state.data, { hits, knownIds, captures })
       return Object.assign({}, state, newState)
-    case 'ACK_ALL' :
+    case 'ACK_ALL':
       return Object.assign({}, state, {
-        data : Object.assign({}, state.data, removeNonFavoriteAfterIndex(state.data, state.data.hits.length - 1))
+        data: Object.assign({}, state.data, removeAfterIndex(state.data, state.data.hits.length - 1))
       })
     case 'ACK_TILL_ID':
       let removeUpToIndex = _.findIndex(state.data.hits, ['id', action.id])
@@ -54,33 +55,44 @@ const data = (state = emptyState, action) => {
         return state
       }
       return Object.assign({}, state, {
-        data : Object.assign({}, state.data, removeNonFavoriteAfterIndex(state.data, removeUpToIndex))
+        data: Object.assign({}, state.data, removeAfterIndex(state.data, removeUpToIndex))
       })
-    case 'TOGGLE_FAVORITE_ID' :
-      let theIndex = _.findIndex(state.data.hits, ['id', action.id])
-      if (theIndex < 0) {
-        console.error('Could not find id to delete to: ', action.id, data)
-        return state
+    case 'MARK_HIT':
+      {
+        let [selected, rest] = _.partition(state.data.hits, ['id', action.payload.id])
+        if (selected.length === 0) {
+          console.error('Could not find id: ', action.payload.id)
+          return state
+        }
+        return update(state, {
+          data: { hits: { $set: rest }, marked: { $push: selected } }
+        })
       }
-      let originalItem = state.data.hits[theIndex]
-      let alteredItem = Object.assign({}, originalItem, {favorite: !originalItem.favorite})
-      return update(state, {
-        data :{hits: {[theIndex]: {$set: alteredItem}}}
-      })
-    case 'ADD_CAPTOR' : 
+    case 'UNMARK_HIT':
+      {
+        let [selected, rest] = _.partition(state.data.marked, ['id', action.payload.id])
+        if (selected.length === 0) {
+          console.error('Could not find id: ', action.payload.id)
+          return state
+        }
+        return update(state, {
+          data: { marked: { $set: rest }, hits: { $set: selected.concat(state.data.hits) } }
+        })
+      }
+    case 'ADD_CAPTOR':
       let [captured, remaining] = _.partition(state.data.hits, captorToPredicate(action.captor).predicate)
       if (_.isEmpty(captured)) {
         return state;
       }
-      return update(state, {data :{hits: {$set: remaining}, captures: {[action.captor.key]: {$set: captured}}}})
-    case 'REMOVE_CAPTOR': 
-      return update(state, {data :{captures: {$unset: [action.captorKey]}}})
+      return update(state, { data: { hits: { $set: remaining }, captures: { [action.captor.key]: { $set: captured } } } })
+    case 'REMOVE_CAPTOR':
+      return update(state, { data: { captures: { $unset: [action.captorKey] } } })
     default:
       return state
   }
 }
 
-function selectNewHits(receivedHits, previouslyKnownIds, {newHitsTransformer = _.identity, captorPredicates = []} = {}) {
+function selectNewHits(receivedHits, previouslyKnownIds, { newHitsTransformer = _.identity, captorPredicates = [] } = {}) {
   let captures = {}
   let hits = []
   let knownIds = {}
@@ -107,22 +119,21 @@ function selectNewHits(receivedHits, previouslyKnownIds, {newHitsTransformer = _
   if (knownIds.length === 0) {
     return null
   } else {
-    return {knownIds, hits, captures}
+    return { knownIds, hits, captures }
   }
 }
 
-function removeNonFavoriteAfterIndex({hits:originalHits, acked:originalAck}, removeUpToIndex) {
-  let hits = _.filter(originalHits, ({favorite}, index) => {return favorite || index > removeUpToIndex})
-  //NB: times aren't entirely correct now for the favorites
+function removeAfterIndex({ hits: originalHits, acked: originalAck }, removeUpToIndex) {
+  let hits = _.filter(originalHits, (_, index) => { return index > removeUpToIndex })
   let acked = {
-      count : originalAck.count + originalHits.length - hits.length,
-      lastTimestamp : originalHits[removeUpToIndex].timestamp,
-      firstTimestamp : originalAck.firstTimestamp || originalHits[0].timestamp,
-    }
-    return {
-      hits,
-      acked,
-    }
+    count: originalAck.count + originalHits.length - hits.length,
+    lastTimestamp: originalHits[removeUpToIndex].timestamp,
+    firstTimestamp: originalAck.firstTimestamp || originalHits[0].timestamp,
+  }
+  return {
+    hits,
+    acked,
+  }
 }
 
 export default data

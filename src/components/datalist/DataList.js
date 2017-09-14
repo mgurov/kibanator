@@ -4,12 +4,13 @@ import _ from 'lodash'
 import DataRow from './DataRow'
 
 function DataList(props) {
+    let {ackTillId, data, ...rest} = props
     return (<Grid fluid={true}>
-        {_.map(props.data, o => <DataRow 
+        {_.map(data, o => <DataRow 
             key={o.id} 
             data={o} 
-            removeTillThis={() => props.ackTillId(o.id)}
-            toggleFavorite={() => props.toggleFavorite(o.id)}
+            removeTillThis={() => ackTillId(o.id)}
+            {...rest}
              />)}
     </Grid>)
 }

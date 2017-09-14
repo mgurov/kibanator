@@ -12,8 +12,6 @@ const toLogHit = (h) => LogHit(h, testConfig)
 
 const captorForMessage = (key, messageSub) => captorToPredicate(messageContainsCaptor(key, messageSub))
 
-const favorite = h => { h.favorite = true; return h }
-
 describe('data reducer', () => {
     it('intial state is empty state', () => {
         expect(dataReducer(undefined, {}))
@@ -178,15 +176,12 @@ describe('data reducer', () => {
             })
     })
 
-    it('shall ack all except favorite', () => {
+    it('shall ack all', () => {
         const hits = [
             { _id: "1", _source: { timestamp: 1 } },
-            { _id: "2", _source: {} },
+            { _id: "2", _source: { timestamp: 2 } },
             { _id: "3", _source: { timestamp: 3 } },
         ]
-
-        let secondHitIsMarked = toLogHit(hits[1]);
-        secondHitIsMarked.favorite = true;
 
         let initialState = {
             ...emptyState,
@@ -194,7 +189,7 @@ describe('data reducer', () => {
                 ...emptyState.data,
                 hits: [
                     toLogHit(hits[0]),
-                    secondHitIsMarked,
+                    toLogHit(hits[1]),
                     toLogHit(hits[2]),
                 ],
                 knownIds: { "1": 1, "2": 1, "3": 1 },
@@ -207,15 +202,15 @@ describe('data reducer', () => {
                 ...initialState,
                 data: {
                     ...initialState.data,
-                    hits: [secondHitIsMarked],
-                    acked: { count: 2, firstTimestamp: 1, lastTimestamp: 3 },
+                    hits: [],
+                    acked: { count: 3, firstTimestamp: 1, lastTimestamp: 3 },
                 }
             })
     })
 
-    it('shall ack till id except favorite', () => {
+    it('shall ack till id', () => {
         const hits = [
-            { _id: "1", _source: { timestamp: 1 } }, // <- favorite
+            { _id: "1", _source: { timestamp: 1 } },
             { _id: "2", _source: { timestamp: 2 } },
             { _id: "3", _source: { timestamp: 3 } },
         ]
@@ -225,7 +220,7 @@ describe('data reducer', () => {
             data: {
                 ...emptyState.data,
                 hits: [
-                    favorite(toLogHit(hits[0])),
+                    toLogHit(hits[0]),
                     toLogHit(hits[1]),
                     toLogHit(hits[2]),
                 ],
@@ -240,9 +235,9 @@ describe('data reducer', () => {
                 ...initialState,
                 data: {
                     ...initialState.data,
-                    hits: [favorite(toLogHit(hits[0])), toLogHit(hits[2])],
+                    hits: [toLogHit(hits[2])],
                     acked: {
-                        count: 1,
+                        count: 2,
                         firstTimestamp: 1,  // <- bug because we don't filter out favs
                         lastTimestamp: 2
                     },
@@ -250,7 +245,7 @@ describe('data reducer', () => {
             })
     })
 
-    it('shall mark as favorite', () => {
+    it('shall move marked separate place', () => {
         const hits = [
             { _id: "1", _source: { timestamp: 1 } },
             { _id: "2", _source: { timestamp: 2 } },
@@ -266,12 +261,13 @@ describe('data reducer', () => {
                     toLogHit(hits[1]),
                     toLogHit(hits[2]),
                 ],
-                knownIds: { "1": 1, "2": 1, "3": 1 },
             }
         }
         expect(dataReducer(initialState, {
-            type: 'TOGGLE_FAVORITE_ID',
-            id: '2',
+            type: 'MARK_HIT',
+            payload: {
+                id: '2',
+            }
         }))
             .toEqual({
                 ...initialState,
@@ -279,9 +275,48 @@ describe('data reducer', () => {
                     ...initialState.data,
                     hits: [
                         toLogHit(hits[0]),
-                        favorite(toLogHit(hits[1])),
-                        toLogHit(hits[2])
+                        toLogHit(hits[2]),
                     ],
+                    marked: [toLogHit(hits[1])]
+                }
+            })
+    })
+
+    it('shall move marked back tot he list. Can be simply prepending. for now', () => {
+        const hits = [
+            { _id: "1", _source: { timestamp: 1 } },
+            { _id: "2", _source: { timestamp: 2 } },
+            { _id: "3", _source: { timestamp: 3 } },
+        ]
+
+        let initialState = {
+            ...emptyState,
+            data: {
+                ...emptyState.data,
+                hits: [
+                    toLogHit(hits[0]),
+                ],
+                marked: [
+                    toLogHit(hits[1]),
+                    toLogHit(hits[2]),
+                ]
+            }
+        }
+        expect(dataReducer(initialState, {
+            type: 'UNMARK_HIT',
+            payload: {
+                id: '2',
+            }
+        }))
+            .toEqual({
+                ...initialState,
+                data: {
+                    ...initialState.data,
+                    hits: [
+                        toLogHit(hits[1]),
+                        toLogHit(hits[0]),                        
+                    ],
+                    marked: [toLogHit(hits[2])]
                 }
             })
     })
