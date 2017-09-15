@@ -40,18 +40,9 @@ export function SyncTimeControl({selected, pendingCount, acked, lastSync, ackAll
             />)
     }
 
-    if (acked.count > 0) {
-        let ackedPopover = (
-            <Popover id="popover-acked-count" title="Acknowledged">
-                <p>First <DateTime value={acked.firstTimestamp}/></p>
-                <p>Last <DateTime value={acked.lastTimestamp}/></p>
-            </Popover>
-        );
+    if (acked.length > 0) {
         stuff.push(<span key="acked">
-            &nbsp;acked&nbsp;
-            <ConditionalOverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={ackedPopover} visible={null != ackedPopover}>
-                <Badge>{acked.count}</Badge>
-            </ConditionalOverlayTrigger>
+            &nbsp;acked&nbsp;<Badge>{acked.length}</Badge>
         </span>)
     }
 

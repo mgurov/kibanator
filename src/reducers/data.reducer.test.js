@@ -32,14 +32,14 @@ describe('data reducer', () => {
             .toHaveProperty('fetchStatus.isFetching', true)
     })
     it('Error set upon error', () => {
-        expect(dataReducer({ ...emptyState, fetchStatus: {isFetching: true} }, { type: 'FAILED_FETCHING_DATA', error: 'Error' }))
+        expect(dataReducer({ ...emptyState, fetchStatus: { isFetching: true } }, { type: 'FAILED_FETCHING_DATA', error: 'Error' }))
             .toHaveProperty('fetchStatus', {
                 isFetching: false,
                 error: 'Error',
             })
     })
     it('should reset isFetching and last sync upon empty data list received', () => {
-        expect(dataReducer({ ...emptyState, fetchStatus: {...emptyState.fetchStatus, isFetching: true} }, {
+        expect(dataReducer({ ...emptyState, fetchStatus: { ...emptyState.fetchStatus, isFetching: true } }, {
             type: 'RECEIVED_HITS',
             data: { hits: [] },
             timestamp: new Date(),
@@ -47,7 +47,7 @@ describe('data reducer', () => {
             .toEqual({
                 ...emptyState,
                 fetchStatus: {
-                    ...emptyState.fetchStatus, 
+                    ...emptyState.fetchStatus,
                     isFetching: false,
                     lastSync: expect.any(Date),
                 }
@@ -203,7 +203,11 @@ describe('data reducer', () => {
                 data: {
                     ...initialState.data,
                     hits: [],
-                    acked: { count: 3, firstTimestamp: 1, lastTimestamp: 3 },
+                    acked: [
+                        toLogHit(hits[0]),
+                        toLogHit(hits[1]),
+                        toLogHit(hits[2]),
+                    ],
                 }
             })
     })
@@ -236,11 +240,45 @@ describe('data reducer', () => {
                 data: {
                     ...initialState.data,
                     hits: [toLogHit(hits[2])],
-                    acked: {
-                        count: 2,
-                        firstTimestamp: 1,  // <- bug because we don't filter out favs
-                        lastTimestamp: 2
-                    },
+                    acked: [                    
+                        toLogHit(hits[0]),
+                        toLogHit(hits[1]),
+                    ],
+                }
+            })
+    })
+
+    it('shall ack id', () => {
+        const hits = [
+            { _id: "1", _source: { timestamp: 1 } },
+            { _id: "2", _source: { timestamp: 2 } },
+            { _id: "3", _source: { timestamp: 3 } },
+        ]
+
+        let initialState = {
+            ...emptyState,
+            data: {
+                ...emptyState.data,
+                hits: [
+                    toLogHit(hits[0]),
+                    toLogHit(hits[1]),
+                    toLogHit(hits[2]),
+                ],
+            }
+        }
+        expect(dataReducer(initialState, {
+            type: 'ACK_ID',
+            id: '2',
+        }))
+            .toEqual({
+                ...initialState,
+                data: {
+                    ...initialState.data,
+                    hits: [
+                        toLogHit(hits[0]),
+                        toLogHit(hits[2]),
+                    ],
+                    acked: [toLogHit(hits[1])],
                 }
             })
     })
@@ -314,7 +352,7 @@ describe('data reducer', () => {
                     ...initialState.data,
                     hits: [
                         toLogHit(hits[1]),
-                        toLogHit(hits[0]),                        
+                        toLogHit(hits[0]),
                     ],
                     marked: [toLogHit(hits[2])]
                 }

@@ -9,7 +9,7 @@ export const emptyState = {
     hits: [],
     captures: {},
     marked: [],
-    acked: { count: 0, lastTimestamp: null }
+    acked: [],
   },
   fetchStatus: {
     isFetching: false,
@@ -45,18 +45,43 @@ const data = (state = emptyState, action) => {
       newState.data = Object.assign({}, state.data, { hits, knownIds, captures })
       return Object.assign({}, state, newState)
     case 'ACK_ALL':
-      return Object.assign({}, state, {
-        data: Object.assign({}, state.data, removeAfterIndex(state.data, state.data.hits.length - 1))
-      })
-    case 'ACK_TILL_ID':
-      let removeUpToIndex = _.findIndex(state.data.hits, ['id', action.id])
-      if (removeUpToIndex < 0) {
-        console.error('Could not find id to delete to: ', action.id, data)
-        return state
+      return {...state, 
+        data: {...state.data,
+          hits:[],
+          acked: state.data.acked.concat(state.data.hits),
+        }
       }
-      return Object.assign({}, state, {
-        data: Object.assign({}, state.data, removeAfterIndex(state.data, removeUpToIndex))
-      })
+    case 'ACK_ID':
+      {
+        let [byId, hits] = _.partition(state.data.hits, ["id", action.id])
+        return {...state, 
+          data: {...state.data,
+            hits,
+            acked: state.data.acked.concat(byId),
+          }
+        }
+      }
+    case 'ACK_TILL_ID':
+      {
+        let removeUntilId = (id) => {
+          let stillLooking = true
+          return (h) => {
+            if (h.id === id) {
+              stillLooking = false
+              return true //exclude this
+            } else {
+              return stillLooking
+            }
+          } 
+        }
+        let [acked, hits] = _.partition(state.data.hits, removeUntilId(action.id))
+        return {...state, 
+          data: {...state.data,
+            hits,
+            acked: state.data.acked.concat(acked),
+          }
+        }
+      }
     case 'MARK_HIT':
       {
         let [selected, rest] = _.partition(state.data.hits, ['id', action.payload.id])
@@ -120,19 +145,6 @@ function selectNewHits(receivedHits, previouslyKnownIds, { newHitsTransformer = 
     return null
   } else {
     return { knownIds, hits, captures }
-  }
-}
-
-function removeAfterIndex({ hits: originalHits, acked: originalAck }, removeUpToIndex) {
-  let hits = _.filter(originalHits, (_, index) => { return index > removeUpToIndex })
-  let acked = {
-    count: originalAck.count + originalHits.length - hits.length,
-    lastTimestamp: originalHits[removeUpToIndex].timestamp,
-    firstTimestamp: originalAck.firstTimestamp || originalHits[0].timestamp,
-  }
-  return {
-    hits,
-    acked,
   }
 }
 

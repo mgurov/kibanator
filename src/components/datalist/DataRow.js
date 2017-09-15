@@ -15,7 +15,12 @@ class DataRow extends Component {
         }
         this.toggleHitMark = () => {
             that.props.setHitMark(that.props.data, !that.props.showAsMarked)
-        } 
+        }
+        if (props.ackHit) {
+            this.ack = (e) => {
+                that.props.ackHit(that.props.data, e.metaKey ? 'till' : 'this')
+            }
+        }
     }
 
     render() {
@@ -60,7 +65,7 @@ class DataRow extends Component {
 
         return <Row>
             <Col sm={3} md={3} lg={3}>
-                {this.props.removeTillThis && <span className="glyphicon glyphicon-ok" onClick={this.props.removeTillThis} title="remove everything down to and including this"></span>}
+                {this.ack && <span className="glyphicon glyphicon-ok-sign" onClick={this.ack} title="Acknlowledge. Use cmd to ack all up to this."></span>}
                 {mark}
                 <span className={chevronDirection} onClick={this.toggle}></span>
                 <DateTime value={timestamp} />

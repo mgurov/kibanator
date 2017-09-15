@@ -37,6 +37,13 @@ export const ackTillId = id => {
   }
 }
 
+export const ackId = id => {
+  return {
+    type: 'ACK_ID',
+    id
+  }
+}
+
 export const ackAll = id => {
   return {
     type: 'ACK_ALL'
