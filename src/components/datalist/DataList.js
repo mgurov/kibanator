@@ -9,7 +9,7 @@ function DataList(props) {
         {_.map(data, o => <DataRow 
             key={o.id} 
             data={o} 
-            removeTillThis={() => ackTillId(o.id)}
+            removeTillThis={ackTillId && (() => ackTillId(o.id))}
             {...rest}
              />)}
     </Grid>)
