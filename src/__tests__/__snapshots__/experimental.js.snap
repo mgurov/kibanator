@@ -1,0 +1,87 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapshot testing example 1`] = `
+<div
+  className="App"
+>
+  <div
+    className="App-header"
+  >
+    <button
+      className="btn btn-xs glyphicon glyphicon-wrench btn btn-default"
+      disabled={false}
+      onClick={[Function]}
+      type="button"
+    />
+     
+    <button
+      className="btn btn-xs glyphicon glyphicon-repeat btn btn-default"
+      disabled={true}
+      onClick={[Function]}
+      title="Reset"
+      type="button"
+    />
+  </div>
+  <div>
+    <div
+      className="btn-group"
+      title="Sync"
+    >
+      <button
+        className="preselected-time-range btn btn-default"
+        disabled={false}
+        onClick={[Function]}
+        type="button"
+      >
+        15 mins
+      </button>
+      <button
+        className="preselected-time-range btn btn-default"
+        disabled={false}
+        onClick={[Function]}
+        type="button"
+      >
+        1 hour
+      </button>
+      <button
+        className="preselected-time-range btn btn-default"
+        disabled={false}
+        onClick={[Function]}
+        type="button"
+      >
+        1 day
+      </button>
+      <button
+        className="preselected-time-range btn btn-default"
+        disabled={false}
+        onClick={[Function]}
+        type="button"
+      >
+        1 week
+      </button>
+      <button
+        className="preselected-time-range btn btn-default"
+        disabled={false}
+        onClick={[Function]}
+        type="button"
+      >
+        1 month
+      </button>
+      <button
+        className="btn btn-default"
+        disabled={false}
+        onClick={[Function]}
+        type="button"
+      >
+        Custom...
+      </button>
+    </div>
+    <div
+      className="container-fluid"
+    />
+    <div
+      className="container-fluid"
+    />
+  </div>
+</div>
+`;

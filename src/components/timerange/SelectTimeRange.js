@@ -8,7 +8,7 @@ import CustomSelectionButton from './CustomSelectionButton'
 
 export function SelectTimeRange(props) {
 
-    let options = _.map(props.options, st => <Button 
+    let options = _.map(props.options, st => <Button className="preselected-time-range"
         key={st.name} 
         onClick={() => props.onSelected(st)}
         >{st.name}</Button>)

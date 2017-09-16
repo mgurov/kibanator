@@ -1,5 +1,5 @@
 import makeSearch from '../domain/search'
-import {selectIndexInterval} from '../domain/elasticsearch'
+import { selectIndexInterval } from '../domain/elasticsearch'
 
 export const fetchingData = () => {
     return {
@@ -24,7 +24,7 @@ export const failedFetchingData = (error) => {
 }
 
 const refreshInterval = process.env.REACT_APP_INTERVAL || 60000
-const API_PATH=process.env.REACT_APP_API_PATH || ''
+const API_PATH = process.env.REACT_APP_API_PATH || ''
 
 export function fetchData(fromTimestamp, config) {
     return function (dispatch) {
@@ -53,13 +53,13 @@ export function fetchData(fromTimestamp, config) {
             )
             .then(
             responseJson => dispatch(receiveData(responseJson, config)),
-            error => {dispatch(failedFetchingData(error))}
+            error => dispatch(failedFetchingData(error))
             )
     }
 }
 
 export function startFetching(fromTimestamp, config) {
-    return function(dispatch) {
+    return function (dispatch) {
         let doFetch = () => dispatch(fetchData(fromTimestamp, config))
         doFetch()
         let intervaldId = setInterval(doFetch, refreshInterval)

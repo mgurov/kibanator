@@ -46,9 +46,9 @@ const mapDispatchToProps = (dispatch) => {
 function DataListContainer(props) {
 
     let error = null;
-    if (props.data.error) {
-        error = (<Alert bsStyle="warning">
-            {props.data.error.name} {props.data.error.message}
+    if (props.data.fetchStatus.error) {
+        error = (<Alert id="dataFetchErrorAlert" bsStyle="warning">
+            {props.data.fetchStatus.error.name} {props.data.fetchStatus.error.message}
         </Alert>)
     }
 
