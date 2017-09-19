@@ -6,6 +6,7 @@ import DataListContainer from './components/datalist/DataListContainer.js'
 import {ConfigContainer} from './components/config'
 import Reset from './components/timerange/Reset'
 import DocumentTitleContainer from './components/title/DocumentTitleContainer'
+import VersionWidget from './components/version/VersionWidget'
 
 let App = () => {
 
@@ -21,7 +22,7 @@ let App = () => {
     <div className="App">
       <DocumentTitleContainer />
       <div className="App-header">
-        <ConfigContainer />&nbsp;<Reset />
+        <VersionWidget/> &nbsp; <ConfigContainer />&nbsp;<Reset />
       </div>
       {watches}
       <DataListContainer />

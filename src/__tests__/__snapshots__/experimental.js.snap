@@ -7,6 +7,11 @@ exports[`snapshot testing example 1`] = `
   <div
     className="App-header"
   >
+    <span>
+      v
+      DEV
+    </span>
+       
     <button
       className="btn btn-xs glyphicon glyphicon-wrench btn btn-default"
       disabled={false}

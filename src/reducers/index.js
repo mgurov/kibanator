@@ -3,6 +3,7 @@ import watches from './watches'
 import data from './data'
 import synctimes from './synctimes'
 import config from './config'
+import versions from './versions'
 import captorPredicatesUpdater from './captorPredicatesUpdater'
 
 const combinedReducers = combineReducers({
@@ -10,6 +11,7 @@ const combinedReducers = combineReducers({
   data,
   synctimes,
   config,
+  versions,
 })
 
 function kibanatorApp(state, action) {

@@ -45,6 +45,7 @@ export function fetchData(fromTimestamp, config) {
         })
             .then(
             response => {
+                dispatch(uiVersionAtServer(response.headers.get('Kibanator-UI-Version')))
                 if (response.ok) {
                     return response.json();
                 }
@@ -77,5 +78,12 @@ export function startedFetchTimer(intervaldId) {
     return {
         type: 'FETCH_STARTED_TIMER',
         intervaldId
+    }
+}
+
+export function uiVersionAtServer(version) {
+    return {
+        type: 'VERSION_UI_AT_SERVER',
+        payload: version
     }
 }
