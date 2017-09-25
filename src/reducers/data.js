@@ -111,7 +111,10 @@ const data = (state = emptyState, action) => {
       }
       return update(state, { data: { hits: { $set: remaining }, captures: { [action.captor.key]: { $set: captured } } } })
     case 'REMOVE_CAPTOR':
-      return update(state, { data: { captures: { $unset: [action.captorKey] } } })
+      {
+        let hits = state.data.captures[action.captorKey].concat(state.data.hits)
+        return update(state, { data: { captures: { $unset: [action.captorKey] }, hits: {$set: hits} } })
+      }
     default:
       return state
   }

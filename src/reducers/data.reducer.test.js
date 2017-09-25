@@ -427,7 +427,8 @@ describe('data reducer', () => {
                 data: {
                     ...initialState.data,
                     hits: [
-                        toLogHit(hits[2])
+                        toLogHit(hits[1]),
+                        toLogHit(hits[2]),
                     ],
                     captures: {
                         'cap1': [toLogHit(hits[0])],

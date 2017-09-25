@@ -5,6 +5,7 @@ import synctimes from './synctimes'
 import config from './config'
 import versions from './versions'
 import captorPredicatesUpdater from './captorPredicatesUpdater'
+import view from './view'
 
 const combinedReducers = combineReducers({
   watches,
@@ -12,6 +13,7 @@ const combinedReducers = combineReducers({
   synctimes,
   config,
   versions,
+  view,
 })
 
 function kibanatorApp(state, action) {

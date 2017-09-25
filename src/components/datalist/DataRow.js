@@ -13,8 +13,10 @@ class DataRow extends Component {
         this.toggle = function() {
             that.setState({expanded: !that.state.expanded})
         }
-        this.toggleHitMark = () => {
-            that.props.setHitMark(that.props.data, !that.props.showAsMarked)
+        if (props.setHitMark) {
+            this.toggleHitMark = () => {
+                that.props.setHitMark(that.props.data, !that.props.showAsMarked)
+            }
         }
         if (props.ackHit) {
             this.ack = (e) => {
@@ -57,10 +59,14 @@ class DataRow extends Component {
         }
 
         let mark;
-        if (this.props.showAsMarked) {
-            mark = <span className="glyphicon glyphicon-star" onClick={this.toggleHitMark} title="unmark"></span>
+        if (this.toggleHitMark) {
+            if (this.props.showAsMarked) {
+                mark = <span className="glyphicon glyphicon-star" onClick={this.toggleHitMark} title="unmark"></span>
+            } else {
+                mark = <span className="glyphicon glyphicon-star-empty" onClick={this.toggleHitMark} title="mark"></span>
+            }
         } else {
-            mark = <span className="glyphicon glyphicon-star-empty" onClick={this.toggleHitMark} title="mark"></span>
+            mark = null
         }
 
         return <Row>

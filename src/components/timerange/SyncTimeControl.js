@@ -1,8 +1,8 @@
 import React from 'react'
-import {Badge, Popover, Button} from 'react-bootstrap'
+import {Popover} from 'react-bootstrap'
 import {DateTime, ConditionalOverlayTrigger} from '../generic/'
 
-export function SyncTimeControl({selected, pendingCount, acked, lastSync, ackAll}) {
+export function SyncTimeControl({selected, lastSync}) {
 
     let stuff = []
 
@@ -28,23 +28,5 @@ export function SyncTimeControl({selected, pendingCount, acked, lastSync, ackAll
         </span>
     )
     
-    if (pendingCount > 0) {
-        stuff.push(<span key="pending">
-            &nbsp;pending&nbsp;<Badge>{pendingCount}</Badge></span>)
-        
-        stuff.push(<Button 
-            key="ack_all" 
-            className="btn btn-xs glyphicon glyphicon-ok" 
-            title="Ack all"
-            onClick={ackAll}
-            />)
-    }
-
-    if (acked.length > 0) {
-        stuff.push(<span key="acked">
-            &nbsp;acked&nbsp;<Badge>{acked.length}</Badge>
-        </span>)
-    }
-
     return <span>{stuff}</span>
 }
