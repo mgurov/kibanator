@@ -21,7 +21,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "REACT_APP_VERSION=$(git rev-parse --short HEAD) react-scripts build && echo $(git rev-parse --short HEAD) > ./build/REACT_APP_VERSION ",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
