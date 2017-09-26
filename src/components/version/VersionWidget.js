@@ -11,13 +11,13 @@ const mapStateToProps = state => {
 function VersionWidget({versions}) {
 
     if (!versions.server || versions.current === versions.server) {
-        return <span>v{versions.current}</span>
+        return <span>{versions.current}</span>
     } else {
         let reload = () => window.location.reload(true)
         const versionPopover = (
             <Popover id="popover-version" title="Server version differs">
               <Alert>
-              Server is ready to serve <strong>v{versions.server}</strong> Consider <Button bsStyle="xs" onClick={reload}>reloading</Button> the window.
+              Server is ready to serve <strong>{versions.server}</strong> Consider <Button bsStyle="xs" onClick={reload}>reloading</Button> the window.
               </Alert>
               <Alert bsStyle="warning">
               Acks will be lost upon reload.
@@ -28,7 +28,7 @@ function VersionWidget({versions}) {
             </Popover>
         );
         return <OverlayTrigger trigger="click" rootClose placement="right" overlay={versionPopover}>
-                    <span className="btn btn-xs btn-warning">v{versions.current}</span>
+                    <span className="btn btn-xs btn-warning">{versions.current}</span>
                 </OverlayTrigger>
     }
 
