@@ -1,10 +1,12 @@
 import React from 'react'
 import _ from 'lodash'
 import { connect } from 'react-redux'
-import { ButtonGroup, Button, Alert, Well } from 'react-bootstrap'
-import { showView } from '../../actions/'
-import DataList from '../datalist/DataList'
+import { ButtonGroup, Button, Alert } from 'react-bootstrap'
+
 import * as actions from '../../actions'
+
+import DataList from './DataList'
+import AndNMoreNoPagingExplained from './AndNMoreNoPagingExplained'
 
 const mapStateToProps = state => {
     return {
@@ -17,7 +19,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        showViewClick: (key) => () => dispatch(showView(keyToView(key))),
+        showViewClick: (key) => () => dispatch(actions.showView(keyToView(key))),
         ackHit: (h, mode) => {
             if (mode === 'till') {
                 dispatch(actions.ackTillId(h.id))
@@ -130,46 +132,12 @@ function DataListContainer(props) {
                 >{a.title}</Button>
         )}
             lastRowContent={
-                <HiddenItems count={hiddenItemsCount}/>
+                <AndNMoreNoPagingExplained count={hiddenItemsCount}/>
             }
         />
     </div>
 }
 
-class HiddenItems extends React.Component {
-
-    constructor(props) {
-        super(props)
-        this.state = {show:false}
-        let that = this
-        this.toggle = (e) => {
-            e.preventDefault()
-            that.setState({show: !that.state.show})
-        } 
-    }
-
-    render() {
-        let {count} = this.props
-        if (count <= 0) {
-            return null
-        }
-    
-        return <div>
-            <em>And {count} <a href="#readMore" onClick={this.toggle}>more...<span className="caret"></span></a></em>
-            {this.state.show &&
-            <Well>
-                  <button type="button" className="close" aria-label="Close" onClick={this.toggle}><span aria-hidden="true">&times;</span></button>
-                  <p>Why do we not show more? 
-                  Kibanator helps you to react on events in <abbr title="First In First Out" className="initialism">FIFO</abbr> manner. Like your mail inbox.
-                  For other use cases you would probably switch to more suitable tools. Think kibana (which kibanator isn't supposed to replace fully).
-                  </p><p>
-                  Drop us a line with a good counter-example for kibanator to support paging.
-                  </p>
-            </Well>
-            }
-        </div>
-    }
-}
 
 function viewData(view, data) {
     return _.get(data, view.dataKey || view.key)
