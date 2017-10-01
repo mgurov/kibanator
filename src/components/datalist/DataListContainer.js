@@ -1,7 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 import { connect } from 'react-redux'
-import { ButtonGroup, Button, Alert } from 'react-bootstrap'
+import { ButtonGroup, Button, Alert, Well } from 'react-bootstrap'
 import { showView } from '../../actions/'
 import DataList from '../datalist/DataList'
 import * as actions from '../../actions'
@@ -97,7 +97,7 @@ function DataListContainer(props) {
     if (!currentView) {
         throw new Error('Could not find view:' + props.view)
     }
-    const viewSize = 20
+    const viewSize = 100
     let allViewData = viewData(currentView, props.data)
     let hiddenItemsCount = Math.max(0, allViewData.length - viewSize)
    
@@ -130,10 +130,45 @@ function DataListContainer(props) {
                 >{a.title}</Button>
         )}
             lastRowContent={
-                (hiddenItemsCount > 0) && <em>{`And ${hiddenItemsCount} more...`}</em>
+                <HiddenItems count={hiddenItemsCount}/>
             }
         />
     </div>
+}
+
+class HiddenItems extends React.Component {
+
+    constructor(props) {
+        super(props)
+        this.state = {show:false}
+        let that = this
+        this.toggle = (e) => {
+            e.preventDefault()
+            that.setState({show: !that.state.show})
+        } 
+    }
+
+    render() {
+        let {count} = this.props
+        if (count <= 0) {
+            return null
+        }
+    
+        return <div>
+            <em>And {count} <a href="#readMore" onClick={this.toggle}>more...<span className="caret"></span></a></em>
+            {this.state.show &&
+            <Well>
+                  <button type="button" className="close" aria-label="Close" onClick={this.toggle}><span aria-hidden="true">&times;</span></button>
+                  <p>Why do we not show more? 
+                  Kibanator helps you to react on events in <abbr title="First In First Out" className="initialism">FIFO</abbr> manner. Like your mail inbox.
+                  For other use cases you would probably switch to more suitable tools. Think kibana (which kibanator isn't supposed to replace fully).
+                  </p><p>
+                  Drop us a line with a good counter-example for kibanator to support paging.
+                  </p>
+            </Well>
+            }
+        </div>
+    }
 }
 
 function viewData(view, data) {
