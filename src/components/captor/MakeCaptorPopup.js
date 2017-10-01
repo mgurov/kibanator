@@ -97,6 +97,7 @@ class MakeCaptorPopup extends Component {
                 <Modal show={this.props.visible} onHide={this.props.close}>
                     <Modal.Header closeButton>
                         <Modal.Title>Make captor</Modal.Title>
+                        <HelpBlock>Captor is a client-side filter that captures log lines to unclutter the pending view</HelpBlock>
                     </Modal.Header>
 
                     <Modal.Body>

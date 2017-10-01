@@ -1,87 +1,173 @@
 import React from 'react'
-import { connect } from 'react-redux'
-import { fetchData, selectSyncTime, ackTillId, ackId, markHit, unmarkHit, ackAll, startFetching } from '../../actions'
-import DataList from './DataList'
-import { Alert } from 'react-bootstrap'
-import { SyncTimeControl } from './SyncTimeControl'
 import _ from 'lodash'
-import { ViewSize } from './const.js'
-import { SelectTimeRange } from '../timerange/SelectTimeRange'
-import CapturesLine from '../capture/CapturesLine'
+import { connect } from 'react-redux'
+import { ButtonGroup, Button, Alert } from 'react-bootstrap'
+import { showView } from '../../actions/'
+import DataList from '../datalist/DataList'
+import * as actions from '../../actions'
 
 const mapStateToProps = state => {
     return {
-        data: state.data,
-        synctimes: state.synctimes,
-        config: state.config,
+        data: state.data.data,
+        error: state.data.fetchStatus.error,
+        view: viewToKey(state.view),
+        syncStarted: !!state.synctimes.selected,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onDataAsked: () => {
-            dispatch(fetchData())
-        },
-        onSyncSelected: (st, config) => {
-            dispatch(selectSyncTime(st))
-            let from = new Date(st.nowToStart(new Date()))
-            dispatch(startFetching(from, config))
-        },
+        showViewClick: (key) => () => dispatch(showView(keyToView(key))),
         ackHit: (h, mode) => {
             if (mode === 'till') {
-                dispatch(ackTillId(h.id))
+                dispatch(actions.ackTillId(h.id))
             } else {
-                dispatch(ackId(h.id))
+                dispatch(actions.ackId(h.id))
             }
         },
         ackAll: () => {
-            dispatch(ackAll())
+            dispatch(actions.ackAll())
         },
         setHitMark: (hit, marked) => {
             if (marked) {
-                dispatch(markHit(hit.id))
+                dispatch(actions.markHit(hit.id))
             } else {
-                dispatch(unmarkHit(hit.id))
+                dispatch(actions.unmarkHit(hit.id))
             }
-        }
+        },
+        removeCaptor: (captorKey) => () => {
+            dispatch(actions.removeCaptor(captorKey))
+        },
     }
 }
 
 function DataListContainer(props) {
 
-    let error = null;
-    if (props.data.fetchStatus.error) {
-        error = (<Alert id="dataFetchErrorAlert" bsStyle="warning">
-            {props.data.fetchStatus.error.name} {props.data.fetchStatus.error.message}
-        </Alert>)
+    if (!props.syncStarted) {
+        return null
     }
 
-    let syncControl
-    if (props.synctimes.selected) {
+    let pendingView = {
+        name: 'Pending',
+        key: 'pending',
+        dataKey: 'hits',
+        ackHit: props.ackHit,
+        setHitMark: props.setHitMark,
+        actions: [
+            {
+                title: 'ack all',
+                action: props.ackAll,
+                disabled: props.data.hits.length === 0,
+            }
+        ]
+    }
 
-        syncControl = <SyncTimeControl
-            selected={props.synctimes.selected}
-            acked={props.data.data.acked}
-            pendingCount={props.data.data.hits.length}
-            lastSync={props.data.fetchStatus.lastSync}
-            ackAll={props.ackAll}
+    let stdViews = [
+        pendingView,
+        {
+            name: 'Marked',
+            key: 'marked',
+            setHitMark: props.setHitMark,
+            showAsMarked: true,
+        },
+        {
+            name: 'Acked',
+            key: 'acked',
+        },
+    ]
+    let captureViews = _.map(props.data.captures, (v, k) => {
+        return {
+            name: k,
+            key: `captures.${k}`,
+            actions: [
+                {
+                    title: 'remove',
+                    action: props.removeCaptor(k),
+                }
+            ]
+        }
+    }
+    )
+
+    function buttons(views) {
+        return _.map(views, toButton(props))
+    }
+
+    let currentView = _.find(stdViews.concat(captureViews), ["key", props.view])
+    if (!currentView) {
+        throw new Error('Could not find view:' + props.view)
+    }
+    const viewSize = 20
+    let allViewData = viewData(currentView, props.data)
+    let hiddenItemsCount = Math.max(0, allViewData.length - viewSize)
+   
+    return <div>
+        <ButtonGroup bsSize="xsmall" bsStyle="default">
+            {buttons(stdViews)}
+            <span className="btn"></span>
+            {buttons(captureViews)}
+        </ButtonGroup>
+        {props.error &&
+            <Alert id="dataFetchErrorAlert" bsStyle="warning">
+                {props.error.name} {props.error.message}
+            </Alert>
+        }
+        <div>
+        
+        </div>
+        <DataList 
+            data={_.take(allViewData, viewSize)} 
+            ackHit={currentView.ackHit} 
+            setHitMark={currentView.setHitMark} 
+            showAsMarked={currentView.showAsMarked}
+            firstRowContent={(currentView.actions || []).map( a => 
+            <Button 
+                bsSize="xsmall" 
+                bsStyle="default" 
+                key={'current-view-action-' + a.action} 
+                onClick={a.action} 
+                disabled={a.disabled}
+                >{a.title}</Button>
+        )}
+            lastRowContent={
+                (hiddenItemsCount > 0) && <em>{`And ${hiddenItemsCount} more...`}</em>
+            }
         />
-    } else {
-        syncControl = <SelectTimeRange options={props.synctimes.options} onSelected={st => props.onSyncSelected(st, props.config)} />
-    }
-
-    let toShow = _.take(props.data.data.hits, ViewSize)
-
-    return (<div>
-        {syncControl}
-        <CapturesLine value={props.data.data.captures} />
-        {error}
-        <DataList data={props.data.data.marked} setHitMark={props.setHitMark} showAsMarked={true} />
-        { props.data.data.marked.length > 0 && <hr/> }
-        <DataList data={toShow} ackHit={props.ackHit} setHitMark={props.setHitMark} showAsMarked={false}/>
-    </div>)
+    </div>
 }
 
-let WatchListContainer = connect(mapStateToProps, mapDispatchToProps)(DataListContainer)
+function viewData(view, data) {
+    return _.get(data, view.dataKey || view.key)
+}
 
-export default WatchListContainer
+let toButton = (props) => (v) => {
+    return <Button
+        key={v.key}
+        active={v.key === props.view}
+        onClick={props.showViewClick(v.key)}
+    >
+        {v.name} <span className="badge">{viewData(v, props.data).length}</span>
+    </Button>
+}
+
+function keyToView(key) {
+    if (key.indexOf('captures.') === 0) {
+        return {
+            type: 'capture',
+            captorKey: key.substring('captures.'.length),
+        }
+    } else {
+        return { type: key }
+    }
+}
+
+function viewToKey(view) {
+    if (view.type === 'capture') {
+        return 'captures.' + view.captorKey
+    } else {
+        return view.type
+    }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(DataListContainer)

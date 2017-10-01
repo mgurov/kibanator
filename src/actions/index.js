@@ -85,4 +85,11 @@ export const removeCaptor = (captorKey) => {
   }
 }
 
+export const showView = (payload) => {
+  return {
+    type: 'SHOW_VIEW',
+    payload
+  }
+}
+
 export * from "./fetching"

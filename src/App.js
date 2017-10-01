@@ -7,6 +7,7 @@ import {ConfigContainer} from './components/config'
 import Reset from './components/timerange/Reset'
 import DocumentTitleContainer from './components/title/DocumentTitleContainer'
 import VersionWidget from './components/version/VersionWidget'
+import TimeRangeControl from './components/timerange/TimeRangeControl'
 
 let App = () => {
 
@@ -22,7 +23,7 @@ let App = () => {
     <div className="App">
       <DocumentTitleContainer />
       <div className="App-header">
-        <VersionWidget/> &nbsp; <ConfigContainer />&nbsp;<Reset />
+        <VersionWidget/> &nbsp; <ConfigContainer />&nbsp;<Reset />&nbsp;<TimeRangeControl/>
       </div>
       {watches}
       <DataListContainer />

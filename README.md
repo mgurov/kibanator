@@ -16,5 +16,5 @@ Features (future):
 ### WIP TODO
 
 * multi-app
-* warning on hitting the 10K limit
+* error on hitting the 10K limit
 * log: received _id earlier than already known
