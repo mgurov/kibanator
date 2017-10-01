@@ -1,4 +1,6 @@
-const view = (state = { type: 'pending' }, action) => {
+const initialState = { type: 'pending' }
+
+const view = (state = initialState, action) => {
   switch (action.type) {
     case 'SHOW_VIEW':
       return Object.assign({}, state, action.payload)
@@ -8,6 +10,8 @@ const view = (state = { type: 'pending' }, action) => {
       } else {
         return state
       }
+    case 'FETCH_STOP_TIMER': //reset all
+      return initialState //although maybe it would be nice to show the captor we were looking at
     default:
       return state
   }
