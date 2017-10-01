@@ -11,7 +11,7 @@ const view = (state = initialState, action) => {
         return state
       }
     case 'FETCH_STOP_TIMER': //reset all
-      return initialState //although maybe it would be nice to show the captor we were looking at
+      return initialState
     default:
       return state
   }
