@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Modal, FormGroup, ControlLabel, FormControl, HelpBlock } from 'react-bootstrap';
 import _ from 'lodash'
+import * as FormHelper from '../generic/FormHelper'
 
 class MakeCaptorPopup extends Component {
 
@@ -68,13 +69,6 @@ class MakeCaptorPopup extends Component {
             that.props.onSave(this.state)
             that.props.close()
         }
-
-        this.onKeyPress = (e) => {
-            //somehow it doesn't cause form submit this dialog. Did better in other ones. Ok, some manual work.
-            if ((e.keyCode === 13) && (e.target.type !== "textarea")) {
-                that.submit(e)
-            }
-        }
     }
 
     render() {
@@ -94,14 +88,14 @@ class MakeCaptorPopup extends Component {
 
         const modalInstance = (
             <span className="static-modal">
-                <Modal show={this.props.visible} onHide={this.props.close}>
+                <Modal show={this.props.visible} onHide={this.props.close} onKeyDown={FormHelper.handleEnterKey(this.submit)}>
                     <Modal.Header closeButton>
                         <Modal.Title>Make captor</Modal.Title>
                         <HelpBlock>Captor is a client-side filter that captures log lines to unclutter the pending view</HelpBlock>
                     </Modal.Header>
 
                     <Modal.Body>
-                        <form onSubmit={this.submit} onKeyDown={this.onKeyPress}>
+                        <form onSubmit={this.submit}>
 
                             <FieldGroup
                                 {...fieldProps("key") }

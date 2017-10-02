@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Modal, FormGroup, ControlLabel, FormControl, HelpBlock } from 'react-bootstrap';
+import * as FormHelper from '../generic/FormHelper'
 
 class EditConfigPopup extends Component {
 
@@ -49,7 +50,7 @@ class EditConfigPopup extends Component {
 
         const modalInstance = (
             <span className="static-modal">
-                <Modal show={true} onHide={this.props.close}>
+                <Modal show={true} onHide={this.props.close} onKeyDown={FormHelper.handleEnterKey(this.submit)}>
                     <Modal.Header closeButton>
                         <Modal.Title>{props.disabled ? 'Inspect' : 'Edit'} configuration</Modal.Title>
                         {
@@ -61,44 +62,44 @@ class EditConfigPopup extends Component {
                         <form onSubmit={this.submit}>
 
                             <FieldGroup
-                                {...fieldProps("timeField")}
+                                {...fieldProps("timeField") }
                                 label="Time Field"
                                 help="e.g. @timestamp"
                                 autoFocus
                             />
 
                             <FieldGroup
-                                {...fieldProps("messageField")}
+                                {...fieldProps("messageField") }
                                 label="Message Field"
                                 help="e.g. @message"
                             />
 
                             <FieldGroup
-                                {...fieldProps("serviceField")}
+                                {...fieldProps("serviceField") }
                                 label="Service Field"
                                 help="e.g. @fields.application"
                             />
 
                             <FieldGroup
-                                {...fieldProps("serviceName")}
+                                {...fieldProps("serviceName") }
                                 label="Service Name"
                                 help="e.g. wps or webfrontende"
                             />
 
                             <FieldGroup
-                                {...fieldProps("levelField")}
+                                {...fieldProps("levelField") }
                                 label="Level Field"
                                 help="e.g. @fields.level"
                             />
 
                             <FieldGroup
-                                {...fieldProps("levelValue")}
+                                {...fieldProps("levelValue") }
                                 label="Level"
                                 help="e.g. ERROR, WARN, INFO or DEBUG"
                             />
 
                             <FieldGroup
-                                {...fieldProps("index")}
+                                {...fieldProps("index") }
                                 label="Index"
                                 help="e.g. logstash-pro-log4json-*"
                             />
