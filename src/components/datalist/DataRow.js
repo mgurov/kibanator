@@ -4,6 +4,7 @@ import _ from 'lodash'
 import DateTime from '../generic/DateTime'
 import './DataList.css'
 import MakeCaptorButton from '../captor/MakeCaptorButton'
+import MultilineField from './MultilineField'
 
 class DataRow extends Component {
     constructor(props) {
@@ -26,6 +27,7 @@ class DataRow extends Component {
     }
 
     render() {
+
         const h = this.props.data
 
         let {timestamp, message} = h
@@ -40,7 +42,7 @@ class DataRow extends Component {
 
             _.forEach(h.fields, (value, key) => {
                 if (value.indexOf && value.indexOf('\n') > 0) {
-                    multiLineFields.push(<div key={key}><label>{key}:</label> <pre>{value}</pre></div>)
+                    multiLineFields.push(<MultilineField key={key} k={key} v={value}/>)
                 } else {
                     oneLineFields.push(<span key={key}><label>{key}:</label> {value} </span>)
                 }
