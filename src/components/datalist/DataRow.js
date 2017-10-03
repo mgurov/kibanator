@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Col, Row } from 'react-bootstrap'
+import { Col, Row, Button } from 'react-bootstrap'
 import _ from 'lodash'
 import DateTime from '../generic/DateTime'
 import './DataList.css'
@@ -32,6 +32,10 @@ class DataRow extends Component {
 
         let chevronDirection, expandedRow;
 
+        function DivWithCopy({k:key, v:value}) {
+            return <div key={key}><label>{key}:</label><Button>c</Button> <pre>{value}</pre></div>
+        }
+
         if (this.state.expanded) {
             chevronDirection = 'glyphicon glyphicon-chevron-down'
 
@@ -40,7 +44,7 @@ class DataRow extends Component {
 
             _.forEach(h.fields, (value, key) => {
                 if (value.indexOf && value.indexOf('\n') > 0) {
-                    multiLineFields.push(<div key={key}><label>{key}:</label> <pre>{value}</pre></div>)
+                    multiLineFields.push(<DivWithCopy key={key} k={key} v={value}/>)
                 } else {
                     oneLineFields.push(<span key={key}><label>{key}:</label> {value} </span>)
                 }
