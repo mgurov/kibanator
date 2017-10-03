@@ -12,7 +12,7 @@ afterEach(() => {
 });
 
 test('fetch failure should be printed as an alert', () => {
-  let store = newStore()
+  let store = newStore({synctimes: {selected: "say sync period selected"}})
   let appTree = mount(<Provider store={store}><App /></Provider>)
   //no alerts yet
   expect(appTree.find('#dataFetchErrorAlert').length).toEqual(0)
@@ -26,7 +26,7 @@ test('fetch failure should be printed as an alert', () => {
 });
 
 test('fetch success should lead to a data row shown', () => {
-  let store = newStore()
+  let store = newStore({synctimes: {selected: "say sync period selected"}})
   let appTree = mount(<Provider store={store}><App /></Provider>)
 
   //no alerts, no rows yet
