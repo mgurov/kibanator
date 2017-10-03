@@ -7,6 +7,10 @@ const mapStateToProps = state => {
     if (pendingCount > 0) {
         title += ' - ' + pendingCount
     }
+    const error = state.data.fetchStatus.error
+    if (error) {
+        title += ' - error fetching ' + error
+    }
     return {
         title,
     }
