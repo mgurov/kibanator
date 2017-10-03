@@ -120,6 +120,7 @@ function DataListContainer(props) {
         </div>
         <DataList 
             data={_.take(allViewData, viewSize)} 
+            key={currentView.key}
             ackHit={currentView.ackHit} 
             setHitMark={currentView.setHitMark} 
             showAsMarked={currentView.showAsMarked}
