@@ -4,6 +4,7 @@ import _ from 'lodash'
 import DateTime from '../generic/DateTime'
 import './DataList.css'
 import MakeCaptorButton from '../captor/MakeCaptorButton'
+import {copyText} from '../generic/FormHelper'
 
 class DataRow extends Component {
     constructor(props) {
@@ -33,7 +34,7 @@ class DataRow extends Component {
         let chevronDirection, expandedRow;
 
         function DivWithCopy({k:key, v:value}) {
-            return <div key={key}><label>{key}:</label><Button>c</Button> <pre>{value}</pre></div>
+            return <div key={key}><label>{key} <Button className="glyphicon glyphicon-copy" bsSize="xsmall" onClick={copyText(value)}></Button>:</label> <pre>{value}</pre></div>
         }
 
         if (this.state.expanded) {
