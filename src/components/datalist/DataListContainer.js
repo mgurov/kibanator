@@ -52,7 +52,7 @@ function DataListContainer(props) {
     let pendingView = {
         name: 'Pending',
         key: 'pending',
-        dataKey: 'hits',
+        dataKey: ['hits'],
         ackHit: props.ackHit,
         setHitMark: props.setHitMark,
         actions: [
@@ -81,6 +81,7 @@ function DataListContainer(props) {
         return {
             name: k,
             key: `captures.${k}`,
+            dataKey: ['captures', k],
             actions: [
                 {
                     title: 'remove',
