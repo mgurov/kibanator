@@ -1,10 +1,41 @@
 import React, { Component } from 'react'
-import { Col, Row } from 'react-bootstrap'
+import { Col, Row, Button } from 'react-bootstrap'
 import _ from 'lodash'
 import DateTime from '../generic/DateTime'
 import './DataList.css'
 import MakeCaptorButton from '../captor/MakeCaptorButton'
 import CopyToClipboardButton from '../generic/CopyToClipboardButton'
+
+class DivWithCopy extends React.Component {
+    constructor(props) {
+        super(props)
+
+        let that = this
+
+        this.onSelect = function() {
+            console.log('textHolder', that.textHolder)
+
+            var selection = window.getSelection();
+            var range = document.createRange();
+    
+            range.selectNodeContents(that.textHolder);
+            selection.removeAllRanges();
+            selection.addRange(range);
+    
+            let selectedText = selection.toString();
+            console.info('selectedText', selectedText)
+            document.execCommand('copy')
+        }
+    }
+
+    render() {
+        let {k: key,v: value} = this.props 
+        return <div key={key}>
+                <label>{key} <CopyToClipboardButton value={value} /> <Button onClick={this.onSelect}>Select</Button> :</label> 
+                <pre ref={(textHolder) => { this.textHolder = textHolder; }}>{value}</pre>
+            </div>
+    }
+}
 
 class DataRow extends Component {
     constructor(props) {
@@ -27,6 +58,7 @@ class DataRow extends Component {
     }
 
     render() {
+
         const h = this.props.data
 
         let {timestamp, message} = h
@@ -41,7 +73,7 @@ class DataRow extends Component {
 
             _.forEach(h.fields, (value, key) => {
                 if (value.indexOf && value.indexOf('\n') > 0) {
-                    multiLineFields.push(<div key={key}><label>{key} <CopyToClipboardButton value={value} />:</label> <pre>{value}</pre></div>)
+                    multiLineFields.push(<DivWithCopy key={key} k={key} v={value}/>)
                 } else {
                     oneLineFields.push(<span key={key}><label>{key}:</label> {value} </span>)
                 }
