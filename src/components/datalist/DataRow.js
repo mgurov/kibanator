@@ -33,10 +33,6 @@ class DataRow extends Component {
 
         let chevronDirection, expandedRow;
 
-        function DivWithCopy({k:key, v:value}) {
-            return <div key={key}><label>{key} <CopyToClipboardButton value={value} />:</label> <pre>{value}</pre></div>
-        }
-
         if (this.state.expanded) {
             chevronDirection = 'glyphicon glyphicon-chevron-down'
 
@@ -45,7 +41,7 @@ class DataRow extends Component {
 
             _.forEach(h.fields, (value, key) => {
                 if (value.indexOf && value.indexOf('\n') > 0) {
-                    multiLineFields.push(<DivWithCopy key={key} k={key} v={value}/>)
+                    multiLineFields.push(<div key={key}><label>{key} <CopyToClipboardButton value={value} />:</label> <pre>{value}</pre></div>)
                 } else {
                     oneLineFields.push(<span key={key}><label>{key}:</label> {value} </span>)
                 }
