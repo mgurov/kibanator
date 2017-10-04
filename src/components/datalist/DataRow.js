@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-import { Col, Row, Button } from 'react-bootstrap'
+import { Col, Row } from 'react-bootstrap'
 import _ from 'lodash'
 import DateTime from '../generic/DateTime'
 import './DataList.css'
 import MakeCaptorButton from '../captor/MakeCaptorButton'
-import {copyText} from '../generic/FormHelper'
+import CopyToClipboardButton from '../generic/CopyToClipboardButton'
 
 class DataRow extends Component {
     constructor(props) {
@@ -34,7 +34,7 @@ class DataRow extends Component {
         let chevronDirection, expandedRow;
 
         function DivWithCopy({k:key, v:value}) {
-            return <div key={key}><label>{key} <Button className="glyphicon glyphicon-copy" bsSize="xsmall" onClick={copyText(value)}></Button>:</label> <pre>{value}</pre></div>
+            return <div key={key}><label>{key} <CopyToClipboardButton value={value} />:</label> <pre>{value}</pre></div>
         }
 
         if (this.state.expanded) {
