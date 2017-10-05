@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Button, Modal, FormGroup, ControlLabel, FormControl, HelpBlock } from 'react-bootstrap';
+import { Button, Modal, FormGroup, ControlLabel, FormControl, HelpBlock, ButtonGroup } from 'react-bootstrap';
 import _ from 'lodash'
 import * as FormHelper from '../generic/FormHelper'
+import { messageContainsCaptor, messageMatchesRegexCaptor, captorToPredicate } from '../../domain/Captor'
 
 class MakeCaptorPopup extends Component {
 
@@ -17,6 +18,7 @@ class MakeCaptorPopup extends Component {
             key: exampleMessage,
             keyEdited: false,
             messageContains: exampleMessage,
+            type: 'contains',
         }
 
         let that = this
@@ -47,14 +49,34 @@ class MakeCaptorPopup extends Component {
             return defaultProps
         }
 
+        this.makeCaptor = () => {
+            let state = that.state
+            if (state.type === 'contains') {
+                return messageContainsCaptor(state.key, state.messageContains)
+            } else {
+                return messageMatchesRegexCaptor(state.key, state.messageContains)
+            }
+        }
+
         this.validateMessageContains = (defaultProps = {}) => {
             let value = that.state.messageContains
             if (!value) {
                 return Object.assign({}, defaultProps, {help: "Should not be empty", validationState: "error"})
             }
-            if (exampleMessage.indexOf(value) === -1) {
+
+            let captor = that.makeCaptor()
+
+            let predicate
+            try {
+                predicate = captorToPredicate(captor)
+            } catch (e) {
+                return Object.assign({}, defaultProps, {help: "" + e, validationState: "error"})
+            }
+
+            if (!predicate.predicate({message: exampleMessage})) {
                 return Object.assign({}, defaultProps, {help: "Would not match current message", validationState: "warning"})
             }
+
             return defaultProps
         }
 
@@ -73,7 +95,8 @@ class MakeCaptorPopup extends Component {
             if (that.isInvalid()) {
                 return
             }
-            that.props.onSave(this.state)
+
+            that.props.onSave(that.makeCaptor())
             that.props.close()
         }
     }
@@ -112,11 +135,18 @@ class MakeCaptorPopup extends Component {
 
                             <FieldGroup
                                 {...fieldProps("messageContains") }
-                                label="@message contains" //TODO: take the field from the config actually
+                                label={<span>@message 
+                                    
+                                    <ButtonGroup bsSize="xsmall" bsStyle="default">
+            <Button active={this.state.type === 'contains'} onClick={() => that.setState({type:'contains'})}>contains</Button>
+            <Button active={this.state.type === 'matches'} onClick={() => that.setState({type:'matches'})}>matches js regex</Button>
+        </ButtonGroup></span>
+                                } //TODO: take the field from the config actually
                                 autoFocus
                                 {...this.validateMessageContains()}
                             />
 
+                            {this.state.type === 'matches' && <HelpBlock >e.g. <code>Hello \d+ world</code> to match <code>Hello 12 world</code> <a className="glyphicon glyphicon-education" target="_blank" rel="noopener noreferrer" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp" title="">MDN</a></HelpBlock>}
                             <HelpBlock>{this.props.hit.message}</HelpBlock>
 
                         </form>

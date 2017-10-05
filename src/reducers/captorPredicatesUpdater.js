@@ -7,7 +7,15 @@ export default function captorPredicatesUpdater(state, action) {
         case 'ON_INIT':
         case 'ADD_CAPTOR':
         case 'REMOVE_CAPTOR':
-          let captorPredicates = _.map(state.config.captors, captorToPredicate)
+          let captorPredicates = _.flatMap(state.config.captors, c => {
+            try {
+              return [captorToPredicate(c)]
+            } catch (e) {
+              console.error('error making predicate from captor', c, e)
+              return []
+            }
+          }
+          )
           return update(state, {data: {captorPredicates: {$set: captorPredicates}}} )
         default:
           return state

@@ -1,7 +1,7 @@
 import dataReducer, { emptyState } from './data'
 import _ from 'lodash'
 import LogHit from '../domain/LogHit'
-import { messageContainsCaptor, captorToPredicate } from '../domain/Captor'
+import { messageContainsCaptor, captorToPredicate, messageMatchesRegexCaptor } from '../domain/Captor'
 
 const testConfig = {
     timeField: 'timestamp',
@@ -362,7 +362,7 @@ describe('data reducer', () => {
     it('moves hits to capture upon captor addition', () => {
         const hits = [
             { _id: "1", _source: { timestamp: 1 } },
-            { _id: "2", _source: { timestamp: 2, message: "catch me" } },
+            { _id: "2", _source: { timestamp: 2, message: "catch() me" } },
             { _id: "3", _source: { timestamp: 3, message: "leave me" } },
         ]
 
@@ -381,7 +381,7 @@ describe('data reducer', () => {
         }
         expect(dataReducer(initialState, {
             type: 'ADD_CAPTOR',
-            captor: messageContainsCaptor("new", "catch"),
+            captor: messageContainsCaptor("new", "catch("),
         }))
             .toEqual({
                 ...initialState,
@@ -393,6 +393,45 @@ describe('data reducer', () => {
                     captures: {
                         'old': [toLogHit(hits[0])],
                         'new': [toLogHit(hits[1])],
+                    }
+                }
+            })
+    })
+
+    it('moves hits to capture upon regexp captor addition', () => {
+        const hits = [
+            { _id: "1", _source: { timestamp: 1 } },
+            { _id: "2", _source: { timestamp: 2, message: "catch 123 me" } },
+            { _id: "3", _source: { timestamp: 3, message: "don't cajtch me" } },
+        ]
+
+        let initialState = {
+            ...emptyState,
+            data: {
+                ...emptyState.data,
+                hits: [
+                    toLogHit(hits[1]),
+                    toLogHit(hits[2]),
+                ],
+                captures: {
+                    'old': [toLogHit(hits[0])],
+                }
+            }
+        }
+        expect(dataReducer(initialState, {
+            type: 'ADD_CAPTOR',
+            captor: messageMatchesRegexCaptor("new", "catch \\d+"),
+        }))
+            .toEqual({
+                ...initialState,
+                data: {
+                    ...initialState.data,
+                    hits: [
+                        toLogHit(hits[2])
+                    ],
+                    captures: {
+                        'new': [toLogHit(hits[1])],
+                        'old': [toLogHit(hits[0])],
                     }
                 }
             })

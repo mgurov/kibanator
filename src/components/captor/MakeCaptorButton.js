@@ -2,7 +2,6 @@ import React from 'react'
 import { addCaptor } from '../../actions'
 import MakeCaptorPopup from './MakeCaptorPopup'
 import { connect } from 'react-redux'
-import { messageContainsCaptor } from '../../domain/Captor'
 
 const mapStateToProps = state => {
     return {
@@ -24,16 +23,13 @@ class MakeCaptorButtonComponent extends React.Component {
         this.state = { popupVisible: false }
         let that = this
         this.togglePopupVisibility = () => that.setState({ popupVisible: !that.state.popupVisible })
-        this.onSave = ({ key, messageContains }) => {
-            this.props.addCaptor(messageContainsCaptor(key, messageContains))
-        }
     }
     render() {
         if (this.state.popupVisible) {
             return <MakeCaptorPopup
                 visible={this.state.popupVisible}
                 close={this.togglePopupVisibility}
-                onSave={this.onSave}
+                onSave={this.props.addCaptor}
                 hit={this.props.hit}
                 captors={this.props.captors}
             ></MakeCaptorPopup>
