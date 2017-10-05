@@ -15,6 +15,7 @@ class MakeCaptorPopup extends Component {
 
         this.state = {
             key: exampleMessage,
+            keyEdited: false,
             messageContains: exampleMessage,
         }
 
@@ -27,6 +28,12 @@ class MakeCaptorPopup extends Component {
             that.setState({
                 [name]: value
             });
+            if (name === 'messageContains' && !that.state.keyEdited) {
+                that.setState({'key': value})
+            }
+            if (name === 'key') {
+                that.setState({keyEdited: true})
+            }
         }
 
         this.validateKey = (defaultProps = {}) => {
@@ -100,13 +107,13 @@ class MakeCaptorPopup extends Component {
                             <FieldGroup
                                 {...fieldProps("key") }
                                 label="Name"
-                                autoFocus
                                 {...this.validateKey({help: "Should be unique. Preferably short."})}
                             />
 
                             <FieldGroup
                                 {...fieldProps("messageContains") }
                                 label="@message contains" //TODO: take the field from the config actually
+                                autoFocus
                                 {...this.validateMessageContains()}
                             />
 
