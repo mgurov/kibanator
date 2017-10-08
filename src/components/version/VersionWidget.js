@@ -13,17 +13,14 @@ function VersionWidget({versions}) {
     if (!versions.server || versions.current === versions.server) {
         return <span>{versions.current}</span>
     } else {
-        let reload = () => window.location.search = "build=" + versions.server
+        let reload = () => window.location.reload(true)
         const versionPopover = (
             <Popover id="popover-version" title="Server version differs">
               <Alert>
               Server is ready to serve <strong>{versions.server}</strong> Consider <Button bsStyle="xs" onClick={reload}>reloading</Button> the window.
               </Alert>
               <Alert bsStyle="warning">
-              Acks will be lost upon reload.
-              </Alert>
-              <Alert bsStyle="warning">
-              With Google Chrome you might have to click that reload button above twice. Or use <kbd><kbd>cmd</kbd> + <kbd>shift</kbd> + <kbd>R</kbd></kbd> to force reload.
+              Acks and marked lines will be lost upon reload.
               </Alert>
             </Popover>
         );
