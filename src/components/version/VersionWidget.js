@@ -13,7 +13,7 @@ function VersionWidget({versions}) {
     if (!versions.server || versions.current === versions.server) {
         return <span>{versions.current}</span>
     } else {
-        let reload = () => window.location.reload(true)
+        let reload = () => window.location.search = "build=" + versions.server
         const versionPopover = (
             <Popover id="popover-version" title="Server version differs">
               <Alert>
