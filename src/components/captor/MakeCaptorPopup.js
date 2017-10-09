@@ -23,6 +23,11 @@ class MakeCaptorPopup extends Component {
 
         let that = this
 
+        this.escapeRegex = () => {
+            let messageContains = that.state.messageContains.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")
+            that.setState({messageContains})
+        }
+
         this.onChange = (event) => {
             const target = event.target;
             const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -70,7 +75,11 @@ class MakeCaptorPopup extends Component {
             try {
                 predicate = captorToPredicate(captor)
             } catch (e) {
-                return Object.assign({}, defaultProps, {help: "" + e, validationState: "error"})
+                let help = {help: "" + e, validationState: "error"}
+                if (e instanceof SyntaxError) {
+                    help.help = <span>{help.help} <Button bsSize="xsmall" bsStyle="default" onClick={this.escapeRegex}>escape</Button></span>
+                }
+                return Object.assign({}, defaultProps, help)
             }
 
             if (!predicate.predicate({message: exampleMessage})) {
