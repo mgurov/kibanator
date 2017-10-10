@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Modal, FormGroup, ControlLabel, FormControl, HelpBlock, ButtonGroup } from 'react-bootstrap';
+import { Button, Modal, FormGroup, ControlLabel, FormControl, HelpBlock, ButtonGroup, MenuItem, DropdownButton } from 'react-bootstrap';
 import _ from 'lodash'
 import * as FormHelper from '../generic/FormHelper'
 import { messageContainsCaptor, messageMatchesRegexCaptor, captorToPredicate } from '../../domain/Captor'
@@ -19,28 +19,41 @@ class MakeCaptorPopup extends Component {
             keyEdited: false,
             messageContains: exampleMessage,
             type: 'contains',
+            field: null,
         }
 
         let that = this
 
         this.escapeRegex = () => {
             let messageContains = that.state.messageContains.replace(/[-[\]/{}()*+?.\\^$|]/g, "\\$&")
-            that.setState({messageContains})
+            that.setState(that.addKeyUpdateIfNotChanged({messageContains}))
+        }
+
+        this.addKeyUpdateIfNotChanged = (state) => {
+            if (!that.state.keyEdited && state.messageContains) {
+                state.key = state.messageContains
+            }
+            return state
         }
 
         this.onChange = (event) => {
             const target = event.target;
             const value = target.type === 'checkbox' ? target.checked : target.value;
             const name = target.id;
-            that.setState({
+
+            let newState = {
                 [name]: value
-            });
-            if (name === 'messageContains' && !that.state.keyEdited) {
-                that.setState({'key': value})
             }
+            
+            if (name === 'messageContains') {
+                that.addKeyUpdateIfNotChanged(newState)
+            }
+            
             if (name === 'key') {
-                that.setState({keyEdited: true})
+                newState.keyEdited = true
             }
+
+            that.setState(newState);
         }
 
         this.validateKey = (defaultProps = {}) => {
@@ -57,9 +70,9 @@ class MakeCaptorPopup extends Component {
         this.makeCaptor = () => {
             let state = that.state
             if (state.type === 'contains') {
-                return messageContainsCaptor(state.key, state.messageContains)
+                return messageContainsCaptor(state.key, state.messageContains, state.field)
             } else {
-                return messageMatchesRegexCaptor(state.key, state.messageContains)
+                return messageMatchesRegexCaptor(state.key, state.messageContains, state.field)
             }
         }
 
@@ -79,7 +92,7 @@ class MakeCaptorPopup extends Component {
                 return Object.assign({}, defaultProps, help)
             }
 
-            if (!predicate.predicate({message: exampleMessage})) {
+            if (!predicate.predicate(this.props.hit)) {
                 return Object.assign({}, defaultProps, {help: "Would not match current message", validationState: "warning"})
             }
 
@@ -122,6 +135,11 @@ class MakeCaptorPopup extends Component {
             }
         }
 
+        let changeField = field => {
+            let messageContains = field == null ? props.hit.message : props.hit.fields[field]
+            this.setState(this.addKeyUpdateIfNotChanged({field, messageContains}))
+        }
+
         const modalInstance = (
             <span className="static-modal">
                 <Modal show={this.props.visible} onHide={this.props.close} onKeyDown={FormHelper.handleEnterKey(this.submit)}>
@@ -141,13 +159,21 @@ class MakeCaptorPopup extends Component {
 
                             <FieldGroup
                                 {...fieldProps("messageContains") }
-                                label={<span>@message 
+                                label={<span>
+                                    
+                                    <DropdownButton bsSize="xsmall" bsStyle="default" id="filterFields" title={this.state.field == null ? 'Message' : this.state.field} onSelect={changeField}>
+                                        <MenuItem active={this.state.field == null}>Message</MenuItem>
+                                        <MenuItem divider />
+                                        {
+                                            _.map(this.props.hit.fields, (v, k) => <MenuItem key={k} active={this.state.field===k} eventKey={k}>{k}</MenuItem> )
+                                        }
+    </DropdownButton>
                                     
                                     <ButtonGroup bsSize="xsmall" bsStyle="default">
             <Button active={this.state.type === 'contains'} onClick={() => that.setState({type:'contains'})}>contains</Button>
             <Button active={this.state.type === 'matches'} onClick={() => that.setState({type:'matches'})}>matches js regex</Button>
         </ButtonGroup></span>
-                                } //TODO: take the field from the config actually
+                                }
                                 autoFocus
                                 {...this.validateMessageContains()}
                             />
