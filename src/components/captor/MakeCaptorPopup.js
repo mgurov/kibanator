@@ -24,7 +24,7 @@ class MakeCaptorPopup extends Component {
         let that = this
 
         this.escapeRegex = () => {
-            let messageContains = that.state.messageContains.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")
+            let messageContains = that.state.messageContains.replace(/[-[\]/{}()*+?.\\^$|]/g, "\\$&")
             that.setState({messageContains})
         }
 
@@ -76,9 +76,6 @@ class MakeCaptorPopup extends Component {
                 predicate = captorToPredicate(captor)
             } catch (e) {
                 let help = {help: "" + e, validationState: "error"}
-                if (e instanceof SyntaxError) {
-                    help.help = <span>{help.help} <Button bsSize="xsmall" bsStyle="default" onClick={this.escapeRegex}>escape</Button></span>
-                }
                 return Object.assign({}, defaultProps, help)
             }
 
@@ -155,7 +152,11 @@ class MakeCaptorPopup extends Component {
                                 {...this.validateMessageContains()}
                             />
 
-                            {this.state.type === 'matches' && <HelpBlock >e.g. <code>Hello \d+ world</code> to match <code>Hello 12 world</code> <a className="glyphicon glyphicon-education" target="_blank" rel="noopener noreferrer" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp" title="">MDN</a></HelpBlock>}
+                            {this.state.type === 'matches' && 
+                                <HelpBlock ><p>e.g. <code>Hello \d+ world</code> to match <code>Hello 12 world</code></p>
+                                <p><Button bsSize="xsmall" bsStyle="default" onClick={this.escapeRegex}>escape the filter</Button> <a className="glyphicon glyphicon-education" target="_blank" rel="noopener noreferrer" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp" title="">MDN</a></p>
+                                </HelpBlock>
+                            }
                             <HelpBlock>{this.props.hit.message}</HelpBlock>
 
                         </form>
