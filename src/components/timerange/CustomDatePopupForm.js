@@ -5,6 +5,8 @@ import {
     ControlLabel,
     FormControl,
     HelpBlock,
+    InputGroup,
+    Button
 } from 'react-bootstrap';
 import DateTime from '../generic/DateTime'
 import _ from 'lodash'
@@ -47,12 +49,17 @@ class CustomDatePopupForm extends React.Component {
             validationState={this.getValidationState()}
           >
             <ControlLabel>Show logs starting from:</ControlLabel>
-            <FormControl
-              type="text"
-              value={this.state.value}
-              onChange={this.handleChange}
-            />
-            <FormControl.Feedback />
+                <InputGroup>
+                    <FormControl
+                    type="text"
+                    value={this.state.value}
+                    onChange={this.handleChange}
+                    />
+                    <InputGroup.Button>
+                    <Button disabled={'error' === this.getValidationState()} onClick={this.submit}>go</Button>
+                    </InputGroup.Button>
+                </InputGroup>
+            {/* <FormControl.Feedback /> */}
             <HelpBlock><DateTime value={this.state.value}/></HelpBlock>
           </FormGroup>
         </form>
