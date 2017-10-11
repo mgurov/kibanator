@@ -6,7 +6,8 @@ const defaultOptions = [
         now.setDate(now.getDate() - 1)
         now.setHours(17)
         now.setMinutes(0)
-        now.setSeconds(0) 
+        now.setSeconds(0)
+        now.setMilliseconds(0)
         return now
     }},
     { name: 'Friday 17:00', nowToStart: now => {
@@ -16,7 +17,8 @@ const defaultOptions = [
         }
         now.setHours(17)
         now.setMinutes(0)
-        now.setSeconds(0) 
+        now.setSeconds(0)
+        now.setMilliseconds(0)
         return now
     }},
 ]
