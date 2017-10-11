@@ -2,8 +2,23 @@ const defaultOptions = [
     { name: '15 mins', nowToStart: now => now.setMinutes(now.getMinutes() - 15) },
     { name: '1 hour', nowToStart: now => now.setHours(now.getHours() - 1) },
     { name: '1 day', nowToStart: now => now.setDate(now.getDate() - 1) },
-    { name: '1 week', nowToStart: now => now.setDate(now.getDate() - 7) },
-    { name: '1 month', nowToStart: now => now.setMonth(now.getMonth() - 1) },
+    { name: 'yesterday 17:00', nowToStart: now => {
+        now.setDate(now.getDate() - 1)
+        now.setHours(17)
+        now.setMinutes(0)
+        now.setSeconds(0) 
+        return now
+    }},
+    { name: 'Friday 17:00', nowToStart: now => {
+        now.setDate(now.getDate() - 1)
+        while (now.getDay() !== 5) {
+            now.setDate(now.getDate() - 1)
+        }
+        now.setHours(17)
+        now.setMinutes(0)
+        now.setSeconds(0) 
+        return now
+    }},
 ]
 
 const startingState = {
