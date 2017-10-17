@@ -20,6 +20,7 @@ class MakeCaptorPopup extends Component {
             messageContains: exampleMessage,
             type: 'contains',
             field: null,
+            exampleMessage,
         }
 
         let that = this
@@ -137,7 +138,7 @@ class MakeCaptorPopup extends Component {
 
         let changeField = field => {
             let messageContains = field == null ? props.hit.message : props.hit.fields[field]
-            this.setState(this.addKeyUpdateIfNotChanged({field, messageContains}))
+            this.setState(this.addKeyUpdateIfNotChanged({field, messageContains, exampleMessage: messageContains}))
         }
 
         const modalInstance = (
@@ -183,7 +184,7 @@ class MakeCaptorPopup extends Component {
                                 <p><Button bsSize="xsmall" bsStyle="default" onClick={this.escapeRegex}>escape the filter</Button> <a className="glyphicon glyphicon-education" target="_blank" rel="noopener noreferrer" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp" title="">MDN</a></p>
                                 </HelpBlock>
                             }
-                            <HelpBlock>{this.props.hit.message}</HelpBlock>
+                            <HelpBlock>{this.state.exampleMessage}</HelpBlock>
 
                         </form>
                     </Modal.Body>
