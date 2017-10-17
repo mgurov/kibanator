@@ -26,7 +26,10 @@ class MakeCaptorPopup extends Component {
         let that = this
 
         this.escapeRegex = () => {
-            let messageContains = that.state.messageContains.replace(/[-[\]/{}()*+?.\\^$|]/g, "\\$&")
+            let messageContains = that.state.messageContains
+                .replace(/[-[\]/{}()*+?.\\^$|]/g, "\\$&")
+                .replace(/\n/g, "\\n")
+                .replace(/\t/g, "\\t")
             that.setState(that.addKeyUpdateIfNotChanged({messageContains}))
         }
 
