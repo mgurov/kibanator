@@ -1,7 +1,8 @@
 import dataReducer, { emptyState } from './data'
 import _ from 'lodash'
 import LogHit from '../domain/LogHit'
-import { messageContainsCaptor, captorToPredicate, messageMatchesRegexCaptor } from '../domain/Captor'
+import {messageContainsCaptor, captorToPredicate, messageMatchesRegexCaptor, messageExtractor, keepPending } from '../domain/Captor'
+import {captureConsoleError} from '../testutil/funmock'
 
 const testConfig = {
     timeField: 'timestamp',
@@ -119,6 +120,77 @@ describe('data reducer', () => {
                     lastSync: expect.any(Date),
                 }
             })
+    })
+
+    it('captor with message replacement alters the message', () => {
+        const hits = [{ _id: "1", _source: { message: 'm', timestamp: 1, otherField: 'other value' } }]
+        let captor = captorToPredicate(messageExtractor(messageContainsCaptor('m', 'm'), 'otherField'))
+        let initialState = { ...emptyState, captorPredicates: [captor] }
+        expect(dataReducer(initialState, {
+            type: 'RECEIVED_HITS',
+            data: { hits },
+            config: testConfig,
+            timestamp: new Date(),
+        }))
+            .toEqual({
+                ...initialState,
+                data: {
+                    ...initialState.data,
+                    knownIds: { "1": 1 },
+                    hits: [],
+                    captures: { 'm': [{...toLogHit(hits[0]), message: 'other value'}] }
+                },
+                fetchStatus: {
+                    ...emptyState.fetchStatus,
+                    lastSync: expect.any(Date),
+                }
+            })
+    })
+
+    it('captor with acknowledge false leaves line in the hits but adds a tag', () => {
+        const hits = [{ _id: "1", _source: { message: 'm', timestamp: 1} }]
+        let captor = captorToPredicate({...messageExtractor(messageContainsCaptor('m', 'm'), 'otherField'), acknowledge: false})
+        let initialState = { ...emptyState, captorPredicates: [captor] }
+        let expectedLogHit = {...toLogHit(hits[0]), tags: ["m"]}
+        expect(dataReducer(initialState, {
+            type: 'RECEIVED_HITS',
+            data: { hits },
+            config: testConfig,
+            timestamp: new Date(),
+        }))
+            .toEqual({
+                ...initialState,
+                data: {
+                    ...initialState.data,
+                    knownIds: { "1": 1 },
+                    hits: [expectedLogHit],
+                    captures: {"m": [expectedLogHit]}
+                },
+                fetchStatus: {
+                    ...emptyState.fetchStatus,
+                    lastSync: expect.any(Date),
+                }
+            })
+    })
+
+    it('should survive failing captor', () => {
+        let capturedErrors = captureConsoleError(() => {
+            const hits = [{ _id: "1" }]
+            let failingCaptor = {
+                captor: messageContainsCaptor('bad', 'very bad'),
+                predicate: () => {throw Error('always failing')}
+            }
+            let initialState = { ...emptyState, captorPredicates: [failingCaptor] }
+            let reduced = dataReducer(initialState, {
+                type: 'RECEIVED_HITS',
+                data: { hits },
+                config: testConfig,
+                timestamp: new Date(),
+            });
+            expect(reduced.data.hits)
+                .toEqual([toLogHit(hits[0])])
+        })
+        expect(capturedErrors.length).toEqual(1)
     })
 
     it('extend existing captures', () => {
@@ -393,6 +465,39 @@ describe('data reducer', () => {
                     captures: {
                         'old': [toLogHit(hits[0])],
                         'new': [toLogHit(hits[1])],
+                    }
+                }
+            })
+    })
+
+    it('updates the messages upon captor addition', () => {
+        const hits = [
+            { _id: "1", _source: { timestamp: 1, message: "blah", alternative: "alternativeText" } },
+        ]
+
+        let initialState = {
+            ...emptyState,
+            data: {
+                ...emptyState.data,
+                hits: [
+                    toLogHit(hits[0]),
+                ],
+            }
+        }
+        let expectedMessage = {...toLogHit(hits[0]), message: "alternativeText", tags: ["new"]}
+        expect(dataReducer(initialState, {
+            type: 'ADD_CAPTOR',
+            captor: messageExtractor(keepPending(messageContainsCaptor("new", "alt", "alternative")), "alternative"),
+        }))
+            .toEqual({
+                ...initialState,
+                data: {
+                    ...initialState.data,
+                    hits: [
+                        expectedMessage,
+                    ],
+                    captures: {
+                        "new": [expectedMessage]
                     }
                 }
             })

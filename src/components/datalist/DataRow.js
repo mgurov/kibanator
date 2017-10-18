@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Col, Row } from 'react-bootstrap'
+import { Col, Row, Badge } from 'react-bootstrap'
 import _ from 'lodash'
 import DateTime from '../generic/DateTime'
 import './DataList.css'
@@ -71,12 +71,17 @@ class DataRow extends Component {
             mark = null
         }
 
+        let tagBadges = _.map(h.tags, (tag) => <span key={tag}>&nbsp;<Badge>{tag}</Badge></span>)
+
         return <Row>
             <Col sm={3} md={3} lg={3}>
                 {this.ack && <span className="glyphicon glyphicon-ok-sign" onClick={this.ack} title="Acknlowledge. Use cmd to ack all up to this."></span>}
                 {mark}
                 <span className={chevronDirection} onClick={this.toggle}></span>
-                <DateTime value={timestamp} />
+                <DateTime value={timestamp} /> 
+                <span>
+                {tagBadges}
+                </span>
             </Col>
             <Col sm={9} md={9} lg={9}>{message}</Col>
             {expandedRow}

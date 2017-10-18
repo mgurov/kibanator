@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import { Button, Modal, FormGroup, ControlLabel, FormControl, HelpBlock, ButtonGroup, MenuItem, DropdownButton } from 'react-bootstrap';
+import { Button, Modal, FormGroup, ControlLabel, FormControl, HelpBlock, ButtonGroup, MenuItem, DropdownButton, Checkbox } from 'react-bootstrap';
 import _ from 'lodash'
 import * as FormHelper from '../generic/FormHelper'
 import { messageContainsCaptor, messageMatchesRegexCaptor, captorToPredicate } from '../../domain/Captor'
+
+const showTransformingFields = !!process.env.REACT_APP_TRANSFORM_FEATURE
 
 class MakeCaptorPopup extends Component {
 
@@ -21,6 +23,8 @@ class MakeCaptorPopup extends Component {
             type: 'contains',
             field: null,
             exampleMessage,
+            acknowledge: true,
+            transform: false,
         }
 
         let that = this
@@ -44,7 +48,7 @@ class MakeCaptorPopup extends Component {
             const target = event.target;
             const value = target.type === 'checkbox' ? target.checked : target.value;
             const name = target.id;
-
+            
             let newState = {
                 [name]: value
             }
@@ -73,11 +77,17 @@ class MakeCaptorPopup extends Component {
 
         this.makeCaptor = () => {
             let state = that.state
+            let result
             if (state.type === 'contains') {
-                return messageContainsCaptor(state.key, state.messageContains, state.field)
+                result = messageContainsCaptor(state.key, state.messageContains, state.field)
             } else {
-                return messageMatchesRegexCaptor(state.key, state.messageContains, state.field)
+                result = messageMatchesRegexCaptor(state.key, state.messageContains, state.field)
             }
+            result.acknowledge = state.acknowledge
+            if (state.transform && state.field) {
+                result.messageField = state.field
+            }
+            return result
         }
 
         this.validateMessageContains = (defaultProps = {}) => {
@@ -188,6 +198,14 @@ class MakeCaptorPopup extends Component {
                                 </HelpBlock>
                             }
                             <HelpBlock>{this.state.exampleMessage}</HelpBlock>
+
+                            {showTransformingFields && <Checkbox checked={this.state.acknowledge} onChange={() => that.setState({acknowledge: !that.state.acknowledge})}>
+                                Acknowledge
+                            </Checkbox>}
+
+                            {showTransformingFields && <Checkbox checked={this.state.transform} disabled={!this.state.field} onChange={() => that.setState({transform: !that.state.transform})}>
+                                Transform
+                            </Checkbox>}
 
                         </form>
                     </Modal.Body>

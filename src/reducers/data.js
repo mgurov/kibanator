@@ -34,7 +34,7 @@ const data = (state = emptyState, action) => {
         lastSync: action.timestamp,
       }
       let mergeParams = { newHitsTransformer: h => LogHit(h, action.config), captorPredicates: state.captorPredicates }
-      let newHits = selectNewHits(action.data.hits, state.data.knownIds, mergeParams)
+      let newHits = processHits(action.data.hits, state.data.knownIds, mergeParams)
       if (!newHits) {
         return { ...state, fetchStatus }
       }
@@ -45,17 +45,21 @@ const data = (state = emptyState, action) => {
       newState.data = Object.assign({}, state.data, { hits, knownIds, captures })
       return Object.assign({}, state, newState)
     case 'ACK_ALL':
-      return {...state, 
-        data: {...state.data,
-          hits:[],
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          hits: [],
           acked: state.data.acked.concat(state.data.hits),
         }
       }
     case 'ACK_ID':
       {
         let [byId, hits] = _.partition(state.data.hits, ["id", action.id])
-        return {...state, 
-          data: {...state.data,
+        return {
+          ...state,
+          data: {
+            ...state.data,
             hits,
             acked: state.data.acked.concat(byId),
           }
@@ -72,11 +76,13 @@ const data = (state = emptyState, action) => {
             } else {
               return stillLooking
             }
-          } 
+          }
         }
         let [acked, hits] = _.partition(state.data.hits, removeUntilId(action.id))
-        return {...state, 
-          data: {...state.data,
+        return {
+          ...state,
+          data: {
+            ...state.data,
             hits,
             acked: state.data.acked.concat(acked),
           }
@@ -105,41 +111,83 @@ const data = (state = emptyState, action) => {
         })
       }
     case 'ADD_CAPTOR':
-      let [captured, remaining] = _.partition(state.data.hits, captorToPredicate(action.captor).predicate)
-      if (_.isEmpty(captured)) {
-        return state;
+      {
+
+        let mergeParams = {
+          captorPredicates: [captorToPredicate(action.captor)],
+          idFunction: h => h.id,
+        }
+        let newHits = processHits(state.data.hits, {}, mergeParams)
+        if (!newHits) {
+          return state
+        }
+
+        let newState = {
+          ...state,
+          data: {
+            ...state.data,
+            hits: newHits.hits,
+          }
+        }
+
+        if (newHits.captures) {
+          newState.data.captures = { ...state.data.captures, ...newHits.captures }
+        }
+        return newState
       }
-      return update(state, { data: { hits: { $set: remaining }, captures: { [action.captor.key]: { $set: captured } } } })
     case 'REMOVE_CAPTOR':
+      //TODO: do not add twice upon removal non-ack captor
       {
         let hits = state.data.captures[action.captorKey].concat(state.data.hits)
-        return update(state, { data: { captures: { $unset: [action.captorKey] }, hits: {$set: hits} } })
+        return update(state, { data: { captures: { $unset: [action.captorKey] }, hits: { $set: hits } } })
       }
     default:
       return state
   }
 }
 
-function selectNewHits(receivedHits, previouslyKnownIds, { newHitsTransformer = _.identity, captorPredicates = [] } = {}) {
+//TODO: take the known ids filtering out of here.
+function processHits(receivedHits, previouslyKnownIds, { newHitsTransformer = _.identity, captorPredicates = [], idFunction = h => h._id } = {}) {
   let captures = {}
   let hits = []
   let knownIds = {}
 
   _.forEach(receivedHits, h => {
-    if (previouslyKnownIds[h._id] || knownIds[h._id]) {
+    let id = idFunction(h)
+    if (previouslyKnownIds[id] || knownIds[id]) {
       return
     }
-    knownIds[h._id] = 1
+    knownIds[id] = 1
     let newHit = newHitsTransformer(h)
 
     for (var i = 0; i < captorPredicates.length; i++) {
       let p = captorPredicates[i]
-      if (p.predicate(newHit)) {
+
+      let matchedThisCaptor = false
+      try {
+        matchedThisCaptor = p.predicate(newHit)
+      } catch (e) {
+        matchedThisCaptor = false
+        console.error('Exception matching', newHit, 'captor', p, 'e', e)
+      }
+
+      if (matchedThisCaptor) {
+
+        if (p.messageField) {
+          //TODO: clone here to avoid mutation. Or rather extract the store from the whole list
+          newHit.message = newHit.fields[p.messageField] || newHit.message
+        }
+
         if (!captures[p.key]) {
           captures[p.key] = []
         }
         captures[p.key].push(newHit)
-        return //hit processing, do not want it to be pushed to the main hits 
+        if (p.acknowledge === false) {
+          newHit.tags = [...(newHit.tags || []), p.key]
+        } else {
+          //TODO: consider marking as "no pending"
+          return //hit processing, do not want it to be pushed to the main hits 
+        }
       }
     }
     hits.push(newHit)
