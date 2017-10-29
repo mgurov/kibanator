@@ -33,15 +33,20 @@ const data = (state = emptyState, action) => {
         error: null,
         lastSync: action.timestamp,
       }
-      let mergeParams = { newHitsTransformer: h => LogHit(h, action.config), captorPredicates: state.captorPredicates }
-      let newHits = processHits(action.data.hits, state.data.knownIds, mergeParams)
-      if (!newHits) {
-        return { ...state, fetchStatus }
+
+      let idFilteringResult = takeNewHits(action.data.hits, state.data.knownIds)
+
+      if (!idFilteringResult.knownIds) {
+        return { ...state, fetchStatus } //no new stuff
       }
+
+      let transformedHits = _.map(idFilteringResult.hits, h => LogHit(h, action.config))
+
+      let newHits = processCaptures(transformedHits, state.captorPredicates)
       let newState = { fetchStatus }
       let captures = _.mergeWith(_.clone(state.data.captures), newHits.captures, (a, b) => (a || []).concat(b || []))
       let hits = state.data.hits.concat(newHits.hits)
-      let knownIds = { ...state.data.knownIds, ...newHits.knownIds }
+      let knownIds = { ...state.data.knownIds, ...idFilteringResult.knownIds }
       newState.data = Object.assign({}, state.data, { hits, knownIds, captures })
       return Object.assign({}, state, newState)
     case 'ACK_ALL':
@@ -112,28 +117,20 @@ const data = (state = emptyState, action) => {
       }
     case 'ADD_CAPTOR':
       {
+        let newHits = processCaptures(state.data.hits, [captorToPredicate(action.captor)])
 
-        let mergeParams = {
-          captorPredicates: [captorToPredicate(action.captor)],
-          idFunction: h => h.id,
-        }
-        let newHits = processHits(state.data.hits, {}, mergeParams)
-        if (!newHits) {
+        if (!newHits.captures) {
           return state
         }
 
-        let newState = {
+        return {
           ...state,
           data: {
             ...state.data,
             hits: newHits.hits,
+            captures: { ...state.data.captures, ...newHits.captures }
           }
         }
-
-        if (newHits.captures) {
-          newState.data.captures = { ...state.data.captures, ...newHits.captures }
-        }
-        return newState
       }
     case 'REMOVE_CAPTOR':
       //TODO: do not add twice upon removal non-ack captor
@@ -146,20 +143,28 @@ const data = (state = emptyState, action) => {
   }
 }
 
-//TODO: take the known ids filtering out of here.
-function processHits(receivedHits, previouslyKnownIds, { newHitsTransformer = _.identity, captorPredicates = [], idFunction = h => h._id } = {}) {
-  let captures = {}
+function takeNewHits(incomingHits, previouslyKnownIds) {
   let hits = []
   let knownIds = {}
-
-  _.forEach(receivedHits, h => {
-    let id = idFunction(h)
+  _.forEach(incomingHits, h => {
+    let id = h._id
     if (previouslyKnownIds[id] || knownIds[id]) {
       return
     }
     knownIds[id] = 1
-    let newHit = newHitsTransformer(h)
+    hits.push(h)
+  })
 
+  return {
+    hits, knownIds
+  }
+}
+
+function processCaptures(receivedHits, captorPredicates) {
+  let captures = {}
+  let hits = []
+
+  _.forEach(receivedHits, newHit => {
     for (var i = 0; i < captorPredicates.length; i++) {
       let p = captorPredicates[i]
 
@@ -192,11 +197,7 @@ function processHits(receivedHits, previouslyKnownIds, { newHitsTransformer = _.
     }
     hits.push(newHit)
   })
-  if (knownIds.length === 0) {
-    return null
-  } else {
-    return { knownIds, hits, captures }
-  }
+  return { hits, captures }
 }
 
 export default data
