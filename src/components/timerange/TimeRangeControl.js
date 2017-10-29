@@ -8,6 +8,7 @@ import { SelectTimeRange } from './SelectTimeRange'
 const mapStateToProps = state => {
     return {
         data: state.data,
+        fetchStatus: state.fetchStatus,
         synctimes: state.synctimes,
         config: state.config,
     }
@@ -28,7 +29,7 @@ function TimeRangeControl(props) {
     if (props.synctimes.selected) {    
         return <SyncTimeControl
             selected={props.synctimes.selected}
-            lastSync={props.data.fetchStatus.lastSync}
+            lastSync={props.fetchStatus.lastSync}
         />
     } else {
         return <div><h4>Select where to start from:</h4> <SelectTimeRange 

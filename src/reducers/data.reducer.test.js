@@ -28,31 +28,14 @@ describe('data reducer', () => {
                 captorPredicates: ['a', 'b', 'c'],
             })
     })
-    it('set isFetching', () => {
-        expect(dataReducer(emptyState, { type: 'FETCHING_DATA' }))
-            .toHaveProperty('fetchStatus.isFetching', true)
-    })
-    it('Error set upon error', () => {
-        expect(dataReducer({ ...emptyState, fetchStatus: { isFetching: true } }, { type: 'FAILED_FETCHING_DATA', error: 'Error' }))
-            .toHaveProperty('fetchStatus', {
-                isFetching: false,
-                error: 'Error',
-            })
-    })
-    it('should reset isFetching and last sync upon empty data list received', () => {
-        expect(dataReducer({ ...emptyState, fetchStatus: { ...emptyState.fetchStatus, isFetching: true } }, {
+
+    it('should not change anything upon empty data list received', () => {
+        expect(dataReducer(undefined, {
             type: 'RECEIVED_HITS',
             data: { hits: [] },
             timestamp: new Date(),
         }))
-            .toEqual({
-                ...emptyState,
-                fetchStatus: {
-                    ...emptyState.fetchStatus,
-                    isFetching: false,
-                    lastSync: expect.any(Date),
-                }
-            })
+            .toEqual(emptyState)
     })
 
     it('should process hit received', () => {
@@ -70,10 +53,6 @@ describe('data reducer', () => {
                     knownIds: { "1": 1 },
                     hits: [toLogHit(hits[0])],
                 },
-                fetchStatus: {
-                    ...emptyState.fetchStatus,
-                    lastSync: expect.any(Date),
-                }
             })
     })
 
@@ -92,10 +71,6 @@ describe('data reducer', () => {
                     ...initialState.data,
                     hits: [],
                 },
-                fetchStatus: {
-                    ...emptyState.fetchStatus,
-                    lastSync: expect.any(Date),
-                }
             })
     })
 
@@ -115,10 +90,6 @@ describe('data reducer', () => {
                     knownIds: { "1": 1 },
                     captures: { 'm': [toLogHit(hits[0])] }
                 },
-                fetchStatus: {
-                    ...emptyState.fetchStatus,
-                    lastSync: expect.any(Date),
-                }
             })
     })
 
@@ -140,10 +111,6 @@ describe('data reducer', () => {
                     hits: [],
                     captures: { 'm': [{...toLogHit(hits[0]), message: 'other value'}] }
                 },
-                fetchStatus: {
-                    ...emptyState.fetchStatus,
-                    lastSync: expect.any(Date),
-                }
             })
     })
 
@@ -166,10 +133,6 @@ describe('data reducer', () => {
                     hits: [expectedLogHit],
                     captures: {"m": [expectedLogHit]}
                 },
-                fetchStatus: {
-                    ...emptyState.fetchStatus,
-                    lastSync: expect.any(Date),
-                }
             })
     })
 
@@ -218,10 +181,6 @@ describe('data reducer', () => {
                     knownIds: { "1": 1, "2": 1 },
                     captures: { 'm': [toLogHit(hits[0]), toLogHit(hits[1])] }
                 },
-                fetchStatus: {
-                    ...emptyState.fetchStatus,
-                    lastSync: expect.any(Date),
-                }
             })
     })
 
@@ -241,10 +200,6 @@ describe('data reducer', () => {
                     knownIds: { "1": 1 },
                     hits: [toLogHit(hits[0])]
                 },
-                fetchStatus: {
-                    ...emptyState.fetchStatus,
-                    lastSync: expect.any(Date),
-                }
             })
     })
 

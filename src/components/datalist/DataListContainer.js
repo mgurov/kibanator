@@ -11,7 +11,7 @@ import AndNMoreNoPagingExplained from './AndNMoreNoPagingExplained'
 const mapStateToProps = state => {
     return {
         data: state.data.data,
-        error: state.data.fetchStatus.error,
+        error: state.fetchStatus.error,
         view: viewToKey(state.view),
         syncStarted: !!state.synctimes.selected,
     }

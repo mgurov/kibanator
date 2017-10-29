@@ -11,39 +11,24 @@ export const emptyState = {
     marked: [],
     acked: [],
   },
-  fetchStatus: {
-    isFetching: false,
-    error: null,
-    lastSync: null,
-  },
   captorPredicates: [], //hackishly copied here upon config update. see captorPredicatesUpdater
 }
 
 const data = (state = emptyState, action) => {
   switch (action.type) {
-    case 'FETCHING_DATA':
-      return update(state, { fetchStatus: { isFetching: { $set: true } } })
-    case 'FAILED_FETCHING_DATA':
-      return update(state, { fetchStatus: { isFetching: { $set: false }, error: { $set: action.error } } })
     case 'FETCH_STOP_TIMER': //reset all
       return { ...emptyState, captorPredicates: state.captorPredicates }
     case 'RECEIVED_HITS':
-      let fetchStatus = {
-        isFetching: false,
-        error: null,
-        lastSync: action.timestamp,
-      }
-
       let idFilteringResult = takeNewHits(action.data.hits, state.data.knownIds)
 
       if (!idFilteringResult.knownIds) {
-        return { ...state, fetchStatus } //no new stuff
+        return state //no new stuff
       }
 
       let transformedHits = _.map(idFilteringResult.hits, h => LogHit(h, action.config))
 
       let newHits = processCaptures(transformedHits, state.captorPredicates)
-      let newState = { fetchStatus }
+      let newState = {}
       let captures = _.mergeWith(_.clone(state.data.captures), newHits.captures, (a, b) => (a || []).concat(b || []))
       let hits = state.data.hits.concat(newHits.hits)
       let knownIds = { ...state.data.knownIds, ...idFilteringResult.knownIds }
