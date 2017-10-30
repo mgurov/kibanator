@@ -5,7 +5,8 @@ import EditConfigPopup from './EditConfigPopup'
 class EditConfigButton extends Component {
     constructor(props) {
         super(props)
-        this.state = {editorVisible: false}
+        this.forceShow = this.props.unitialized
+        this.state = {editorVisible: this.forceShow}
         let that = this
         this.toggleEditor = () => that.setState({editorVisible: !that.state.editorVisible})
     }
@@ -17,6 +18,7 @@ class EditConfigButton extends Component {
                 close={this.toggleEditor}
                 onSave={this.props.setConfig}
                 disabled={this.props.fetchStarted}
+                disableCancel={this.forceShow}
              />)
         } else {
             return (<Button 

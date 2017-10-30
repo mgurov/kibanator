@@ -50,8 +50,8 @@ class EditConfigPopup extends Component {
 
         const modalInstance = (
             <span className="static-modal">
-                <Modal show={true} onHide={this.props.close} onKeyDown={FormHelper.handleEnterKey(this.submit)}>
-                    <Modal.Header closeButton>
+                <Modal show={true} onHide={this.props.disableCancel ? undefined: this.props.close} onKeyDown={FormHelper.handleEnterKey(this.submit)}>
+                    <Modal.Header closeButton={!this.props.disableCancel}>
                         <Modal.Title>{props.disabled ? 'Inspect' : 'Edit'} configuration</Modal.Title>
                         {
                             props.disabled ? <HelpBlock>Configuration cannot be changed when fetching data. Refresh the page to adjust.</HelpBlock> : null
@@ -65,7 +65,6 @@ class EditConfigPopup extends Component {
                                 {...fieldProps("timeField") }
                                 label="Time Field"
                                 help="e.g. @timestamp"
-                                autoFocus
                             />
 
                             <FieldGroup
@@ -84,6 +83,7 @@ class EditConfigPopup extends Component {
                                 {...fieldProps("serviceName") }
                                 label="Service Name"
                                 help="e.g. wps or webfrontende"
+                                autoFocus
                             />
 
                             <FieldGroup
@@ -108,7 +108,7 @@ class EditConfigPopup extends Component {
                     </Modal.Body>
 
                     <Modal.Footer>
-                        <Button onClick={this.props.close}>Close</Button>
+                        <Button onClick={this.props.close} disabled={this.props.disableCancel}>Close</Button>
                         <Button bsStyle="primary"
                             onClick={this.submit}
                             disabled={this.props.disabled}

@@ -10,12 +10,16 @@ const defaultConfig = {
   levelValue: 'ERROR',
   index: 'logstash-pro-log4json-*',
   captors: {},
+  unitialized: true,
 }
 
 const config = (state = defaultConfig, action) => {
   switch (action.type) {
-    case 'SET_CONFIG':
-      return Object.assign({}, action, action.newState)
+    case 'SET_CONFIG':{
+      let newState = Object.assign({}, action, action.newState)
+      delete newState.unitialized
+      return newState
+    }
     case 'ADD_CAPTOR':
       if (_.isEmpty(state.captors)) {
         return Object.assign({}, state, { captors: [action.captor] })

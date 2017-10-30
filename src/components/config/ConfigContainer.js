@@ -6,6 +6,7 @@ const mapStateToProps = state => {
     return {
         config: state.config,
         fetchStarted: !!state.synctimes.selected,
+        unitialized: state.config.unitialized,
     }
 }
 
