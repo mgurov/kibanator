@@ -24,3 +24,22 @@ test('should reset isFetching and last sync upon data received', () => {
             lastSync: expect.any(Date),
         })
 })
+
+test('max fetch reached', () => {
+
+    let givenState = { ...emptyState, isFetching: true }
+    let whenAction = { 
+        type: 'RECEIVED_HITS', 
+        timestamp: new Date(), 
+        maxFetchReached : {
+            fetchTotal: 10,
+            fetchLimit: 5,
+        },
+    }
+    expect(fetchStatusReducer(givenState, whenAction))
+        .toEqual({...emptyState,
+            isFetching: false,
+            lastSync: expect.any(Date),
+            error: expect.objectContaining({name: expect.stringMatching(/fetch limit/)}),
+        })
+})

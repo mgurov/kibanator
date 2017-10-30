@@ -4,6 +4,7 @@ import update from 'immutability-helper';
 import { captorToPredicate } from '../domain/Captor'
 
 export const emptyState = {
+  hits: {},
   data: {
     knownIds: {},
     hits: [],

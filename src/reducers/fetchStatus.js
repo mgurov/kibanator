@@ -14,13 +14,21 @@ const fetchStatus = (state = emptyState, action) => {
                 isFetching: false,
                 error: action.error,
             };
-        case 'RECEIVED_HITS':
-            return {
+        case 'RECEIVED_HITS':{
+            let newStatus = {
                 ...state,
                 isFetching: false,
                 error: null,
                 lastSync: action.timestamp,
-            };
+            }
+            if (action.maxFetchReached) {
+                newStatus.error = {
+                    name: `Max fetch limit of ${action.maxFetchReached.fetchLimit} has been reached. ${action.maxFetchReached.fetchTotal - action.maxFetchReached.fetchLimit} records skipped.`,
+                    message: 'Reset from a later point in time to continue. Please note that the marks will be lost upon this operation.',
+                }
+            }
+            return newStatus;    
+        }
         default:
             return state
     }

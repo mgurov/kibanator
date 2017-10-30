@@ -7,12 +7,13 @@ export const fetchingData = () => {
     }
 }
 
-export const receiveData = (data, config) => {
+export const receiveData = (data, config, maxFetchReached) => {
     return {
         type: 'RECEIVED_HITS',
         data: data.hits,
         config: config,
         timestamp: new Date(),
+        maxFetchReached,
     }
 }
 
@@ -25,6 +26,7 @@ export const failedFetchingData = (error) => {
 
 const refreshInterval = process.env.REACT_APP_INTERVAL || 60000
 const API_PATH = process.env.REACT_APP_API_PATH || ''
+const MAX_FETCH_SIZE = 10000
 
 export function fetchData(fromTimestamp, config) {
     return function (dispatch) {
@@ -39,7 +41,7 @@ export function fetchData(fromTimestamp, config) {
             ignoreMissingIndex = true
         }
         let body = makeSearch({ serviceName: config.serviceName, from: fromTimestamp, to: now, config })
-        return fetch(API_PATH + '/' + index + '/_search?size=10000&ignore_unavailable=' + ignoreMissingIndex, {
+        return fetch(API_PATH + '/' + index + '/_search?size=' + MAX_FETCH_SIZE + '&ignore_unavailable=' + ignoreMissingIndex, {
             method: "POST",
             body: JSON.stringify(body),
         })
@@ -53,7 +55,16 @@ export function fetchData(fromTimestamp, config) {
             }
             )
             .then(
-            responseJson => dispatch(receiveData(responseJson, config)),
+            responseJson => {
+                let maxFetchReached = undefined
+                if (responseJson.hits.total > MAX_FETCH_SIZE) {
+                    maxFetchReached = {
+                        fetchTotal: responseJson.hits.total,
+                        fetchLimit: MAX_FETCH_SIZE,
+                    }
+                }
+                dispatch(receiveData(responseJson, config, maxFetchReached))
+            },
             error => dispatch(failedFetchingData(error))
             )
     }
