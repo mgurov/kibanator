@@ -19,7 +19,7 @@ test('fetch failure should be printed as an alert', () => {
 
   fetchMock.mock('*', 401)
 
-  return store.dispatch(fetchData(new Date(), { index: 'blah' })).then(() => {
+  return store.dispatch(fetchData({config: { index: 'blah' }})).then(() => {
     expect(appTree.find('#dataFetchErrorAlert').text())
       .toEqual("Error Unauthorized")
   })
@@ -35,7 +35,7 @@ test('fetch success should lead to a data row shown', () => {
 
   fetchMock.mock('*', { hits: { hits: [{ _id: "1" }] } })
 
-  return store.dispatch(fetchData(new Date(), { index: 'blah' })).then(() => {
+  return store.dispatch(fetchData({config: { index: 'blah' }})).then(() => {
     expect(appTree.find('#dataFetchErrorAlert').length).toEqual(0) //no alerts
     expect(appTree.find('DataRow').length).toEqual(1) //well row
   })

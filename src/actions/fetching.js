@@ -28,13 +28,13 @@ const refreshInterval = process.env.REACT_APP_INTERVAL || 60000
 const API_PATH = process.env.REACT_APP_API_PATH || ''
 const MAX_FETCH_SIZE = 10000
 
-export function fetchData(fromTimestamp, config) {
+export function fetchData({fromTimestamp=new Date(), toTimestamp=new Date(), config, onOkResponse=()=>{}}) {
     return function (dispatch) {
         dispatch(fetchingData())
 
         let index = config.index
         let ignoreMissingIndex = false
-        let now = new Date()
+        let now = toTimestamp
         if (index.indexOf("*") >= 0) {
             let dates = selectIndexInterval('', fromTimestamp, now)
             index = dates.map(d => index.replace("*", d)).join(",")
@@ -49,6 +49,7 @@ export function fetchData(fromTimestamp, config) {
             response => {
                 dispatch(uiVersionAtServer(response.headers.get('Kibanator-UI-Version')))
                 if (response.ok) {
+                    onOkResponse(response);
                     return response.json();
                 }
                 throw new Error(response.statusText);
@@ -72,7 +73,21 @@ export function fetchData(fromTimestamp, config) {
 
 export function startFetching(fromTimestamp, config) {
     return function (dispatch) {
-        let doFetch = () => dispatch(fetchData(fromTimestamp, config))
+
+        let runningFrom = fromTimestamp
+
+        let doFetch = () => {
+            let toTimestamp = new Date()
+            let onOkResponse = () => {
+                let newRunningFrom = new Date(toTimestamp)
+                newRunningFrom.setHours(newRunningFrom.getHours() - 1)
+                if (newRunningFrom > runningFrom) {
+                    runningFrom = newRunningFrom
+                }
+            }
+            dispatch(fetchData({fromTimestamp:runningFrom, toTimestamp, config, onOkResponse}))
+        }
+
         doFetch()
         let intervaldId = setInterval(doFetch, refreshInterval)
         dispatch(startedFetchTimer(intervaldId))
