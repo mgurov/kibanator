@@ -28,7 +28,7 @@ const refreshInterval = process.env.REACT_APP_INTERVAL || 60000
 const API_PATH = process.env.REACT_APP_API_PATH || ''
 const MAX_FETCH_SIZE = 10000
 
-export function fetchData(fromTimestamp, config) {
+export function fetchData(fromTimestamp, config, onOkResponse) {
     return function (dispatch) {
         dispatch(fetchingData())
 
@@ -49,6 +49,7 @@ export function fetchData(fromTimestamp, config) {
             response => {
                 dispatch(uiVersionAtServer(response.headers.get('Kibanator-UI-Version')))
                 if (response.ok) {
+                    onOkResponse(response);
                     return response.json();
                 }
                 throw new Error(response.statusText);
@@ -72,7 +73,18 @@ export function fetchData(fromTimestamp, config) {
 
 export function startFetching(fromTimestamp, config) {
     return function (dispatch) {
-        let doFetch = () => dispatch(fetchData(fromTimestamp, config))
+
+        let runningFrom = fromTimestamp
+
+        let doFetch = () => {
+            console.log('running from', runningFrom)
+            dispatch(fetchData(runningFrom, config, (response) => {
+                let newRunningFrom = new Date()
+                newRunningFrom.setHours(newRunningFrom.getHours() - 1)
+                runningFrom = newRunningFrom
+            }))
+        }
+
         doFetch()
         let intervaldId = setInterval(doFetch, refreshInterval)
         dispatch(startedFetchTimer(intervaldId))
