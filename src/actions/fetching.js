@@ -28,7 +28,7 @@ const refreshInterval = process.env.REACT_APP_INTERVAL || 60000
 const API_PATH = process.env.REACT_APP_API_PATH || ''
 const MAX_FETCH_SIZE = 10000
 
-export function fetchData(fromTimestamp, config, onOkResponse) {
+export function fetchData({fromTimestamp=new Date(), toTimestamp=new Date(), config, onOkResponse=()=>{}}) {
     return function (dispatch) {
         dispatch(fetchingData())
 
@@ -78,13 +78,15 @@ export function startFetching(fromTimestamp, config) {
 
         let doFetch = () => {
             console.log('running from', runningFrom)
-            dispatch(fetchData(runningFrom, config, (response) => {
+            //{fromTimestamp=new Date(), toTimestamp=new Date(), config, onOkResponse=()=>{}}
+            let onOkResponse = (response) => {
                 let newRunningFrom = new Date()
                 newRunningFrom.setHours(newRunningFrom.getHours() - 1)
                 if (newRunningFrom > runningFrom) {
                     runningFrom = newRunningFrom
                 }
-            }))
+            }
+            dispatch(fetchData({fromTimestamp:runningFrom, toTimestamp: new Date(), config, onOkResponse}))
         }
 
         doFetch()
