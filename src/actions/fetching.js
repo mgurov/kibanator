@@ -34,7 +34,7 @@ export function fetchData({fromTimestamp=new Date(), toTimestamp=new Date(), con
 
         let index = config.index
         let ignoreMissingIndex = false
-        let now = new Date()
+        let now = toTimestamp
         if (index.indexOf("*") >= 0) {
             let dates = selectIndexInterval('', fromTimestamp, now)
             index = dates.map(d => index.replace("*", d)).join(",")
@@ -78,15 +78,15 @@ export function startFetching(fromTimestamp, config) {
 
         let doFetch = () => {
             console.log('running from', runningFrom)
-            //{fromTimestamp=new Date(), toTimestamp=new Date(), config, onOkResponse=()=>{}}
+            let toTimestamp = new Date()
             let onOkResponse = (response) => {
-                let newRunningFrom = new Date()
+                let newRunningFrom = new Date(toTimestamp)
                 newRunningFrom.setHours(newRunningFrom.getHours() - 1)
                 if (newRunningFrom > runningFrom) {
                     runningFrom = newRunningFrom
                 }
             }
-            dispatch(fetchData({fromTimestamp:runningFrom, toTimestamp: new Date(), config, onOkResponse}))
+            dispatch(fetchData({fromTimestamp:runningFrom, toTimestamp, config, onOkResponse}))
         }
 
         doFetch()
