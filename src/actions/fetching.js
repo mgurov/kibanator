@@ -81,7 +81,9 @@ export function startFetching(fromTimestamp, config) {
             dispatch(fetchData(runningFrom, config, (response) => {
                 let newRunningFrom = new Date()
                 newRunningFrom.setHours(newRunningFrom.getHours() - 1)
-                runningFrom = newRunningFrom
+                if (newRunningFrom > runningFrom) {
+                    runningFrom = newRunningFrom
+                }
             }))
         }
 
