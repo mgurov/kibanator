@@ -85,6 +85,10 @@ export function startFetching(fromTimestamp, config) {
                 if (newRunningFrom > runningFrom) {
                     runningFrom = newRunningFrom
                 }
+                let delay = new Date() - toTimestamp
+                if (delay > 1000) {
+                    console.log('delay:', )
+                }
             }
             dispatch(fetchData({fromTimestamp:runningFrom, toTimestamp, config, onOkResponse}))
         }
