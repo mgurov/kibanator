@@ -49,7 +49,6 @@ export function fetchData({fromTimestamp=new Date(), toTimestamp=new Date(), con
             response => {
                 dispatch(uiVersionAtServer(response.headers.get('Kibanator-UI-Version')))
                 if (response.ok) {
-                    onOkResponse(response);
                     return response.json();
                 }
                 throw new Error(response.statusText);
@@ -65,6 +64,7 @@ export function fetchData({fromTimestamp=new Date(), toTimestamp=new Date(), con
                     }
                 }
                 dispatch(receiveData(responseJson, config, maxFetchReached))
+                onOkResponse(maxFetchReached);                
             },
             error => dispatch(failedFetchingData(error))
             )
@@ -75,10 +75,19 @@ export function startFetching(fromTimestamp, config) {
     return function (dispatch) {
 
         let runningFrom = fromTimestamp
+        let maxFetchReached = false
 
         let doFetch = () => {
+
+            if (maxFetchReached) {
+                return; //hack to stop getting data if too many hits encountered
+                //the reason for this is that with the introduction of the running from moment it is possible 
+                //to miss a spike
+            }
+
             let toTimestamp = new Date()
-            let onOkResponse = () => {
+            let onOkResponse = (maxFetchReachedThisTime) => {
+                maxFetchReached = !!maxFetchReachedThisTime
                 let newRunningFrom = new Date(toTimestamp)
                 newRunningFrom.setHours(newRunningFrom.getHours() - 1)
                 if (newRunningFrom > runningFrom) {

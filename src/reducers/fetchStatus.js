@@ -23,7 +23,7 @@ const fetchStatus = (state = emptyState, action) => {
             }
             if (action.maxFetchReached) {
                 newStatus.error = {
-                    name: `Max fetch limit of ${action.maxFetchReached.fetchLimit} has been reached. ${action.maxFetchReached.fetchTotal - action.maxFetchReached.fetchLimit} records skipped.`,
+                    name: `Max fetch limit of ${action.maxFetchReached.fetchLimit} has been reached. ${action.maxFetchReached.fetchTotal - action.maxFetchReached.fetchLimit} records skipped. The polling of the new lines has been stopped.`,
                     message: 'Reset from a later point in time to continue. Please note that the marks will be lost upon this operation.',
                 }
             }
