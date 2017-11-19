@@ -28,24 +28,28 @@ const refreshInterval = process.env.REACT_APP_INTERVAL || 60000
 const API_PATH = process.env.REACT_APP_API_PATH || ''
 const MAX_FETCH_SIZE = 10000
 
+function doHttpFetch({fromTimestamp, toTimestamp, config}) {
+    let index = config.index
+    let ignoreMissingIndex = false
+    let now = toTimestamp
+    if (index.indexOf("*") >= 0) {
+        let dates = selectIndexInterval('', fromTimestamp, now)
+        index = dates.map(d => index.replace("*", d)).join(",")
+        ignoreMissingIndex = true
+    }
+    let body = makeSearch({ serviceName: config.serviceName, from: fromTimestamp, to: now, config })
+    return fetch(API_PATH + '/' + index + '/_search?size=' + MAX_FETCH_SIZE + '&ignore_unavailable=' + ignoreMissingIndex, {
+        method: "POST",
+        body: JSON.stringify(body),
+    })
+}
+
 export function fetchData({fromTimestamp=new Date(), toTimestamp=new Date(), config, onOkResponse=()=>{}}) {
     return function (dispatch) {
         dispatch(fetchingData())
 
-        let index = config.index
-        let ignoreMissingIndex = false
-        let now = toTimestamp
-        if (index.indexOf("*") >= 0) {
-            let dates = selectIndexInterval('', fromTimestamp, now)
-            index = dates.map(d => index.replace("*", d)).join(",")
-            ignoreMissingIndex = true
-        }
-        let body = makeSearch({ serviceName: config.serviceName, from: fromTimestamp, to: now, config })
-        return fetch(API_PATH + '/' + index + '/_search?size=' + MAX_FETCH_SIZE + '&ignore_unavailable=' + ignoreMissingIndex, {
-            method: "POST",
-            body: JSON.stringify(body),
-        })
-            .then(
+        return doHttpFetch({fromTimestamp, toTimestamp, config})
+        .then(
             response => {
                 dispatch(uiVersionAtServer(response.headers.get('Kibanator-UI-Version')))
                 if (response.ok) {
@@ -54,7 +58,7 @@ export function fetchData({fromTimestamp=new Date(), toTimestamp=new Date(), con
                 throw new Error(response.statusText);
             }
             )
-            .then(
+        .then(
             responseJson => {
                 let maxFetchReached = undefined
                 if (responseJson.hits.total > MAX_FETCH_SIZE) {
@@ -67,7 +71,7 @@ export function fetchData({fromTimestamp=new Date(), toTimestamp=new Date(), con
                 onOkResponse(maxFetchReached);                
             },
             error => dispatch(failedFetchingData(error))
-            )
+        )
     }
 }
 
