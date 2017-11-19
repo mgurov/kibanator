@@ -1,20 +1,12 @@
+[![Build Status](https://travis-ci.org/mgurov/kibanator.svg?branch=master)](https://travis-ci.org/mgurov/kibanator)
+
 # kibanator
 
-Like kibana, but with uglier and less flexible UI. 
-
-Features (future): 
+Inbox for kibana (read elastic search) messages. Never miss a single important one.
 
 * Acknowledge and hide log lines seen. Show me what's new!
 * Group known messages to declutter the view. This one should be more flexible than kibana.
-* TTL for the "ignore" filter, e.g. "I know this issue is to be fixed in a day. Keep bugging me afterwards". 
-* First class SCM configuration support. 
 
 ### Similar art
 
 * https://github.com/sw-jung/kibana_notification_center kibana plugin based on [es watches](https://www.elastic.co/guide/en/watcher/current/introduction.html) I guess
-
-### WIP TODO
-
-* multi-app
-* error on hitting the 10K limit
-* log: received _id earlier than already known
