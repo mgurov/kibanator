@@ -7,7 +7,7 @@
 function selectIndexInterval(indexPrefix, from, to) {
     var cursor = new Date(to);
     var beginningOfTheFirstDay = new Date(from);
-    beginningOfTheFirstDay.setHours(0,0,0,0);
+    beginningOfTheFirstDay.setUTCHours(0,0,0,0);
     var result = [];
   
     while(cursor.getTime() > beginningOfTheFirstDay.getTime()) {

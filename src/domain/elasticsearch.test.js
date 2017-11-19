@@ -19,9 +19,10 @@ test('today and yesterday should return both even if beginning closer than 24h t
     new Date('Thu Jul 20 2017 13:16:48 GMT+0200 (CEST)'));
     expect(actual).toEqual(['blah-2017.07.19', 'blah-2017.07.20']);
 });
+//TODO: check the server settings our ES, hopefully they're splitting by GMT...
 test('three days should return all three', function () {
     let actual = selectIndexInterval('blah-', 
     new Date('Thu Jul 18 2017 00:00:48 GMT+0200 (CEST)'), 
     new Date('Thu Jul 20 2017 13:16:48 GMT+0200 (CEST)'));
-    expect(actual).toEqual(['blah-2017.07.18', 'blah-2017.07.19', 'blah-2017.07.20']);
+    expect(actual).toEqual(['blah-2017.07.17', 'blah-2017.07.18', 'blah-2017.07.19', 'blah-2017.07.20']);
 });
