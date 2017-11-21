@@ -17,6 +17,16 @@ export const receiveData = (data, config, maxFetchReached) => {
     }
 }
 
+export const receiveData2 = (data, config/* , maxFetchReached */) => {
+    return {
+        type: 'TMP_INCOMING_HITS',
+        payload: {
+            hits: data.hits,
+            config,
+        },
+    }
+}
+
 export const failedFetchingData = (error) => {
     return {
         type: 'FAILED_FETCHING_DATA',
@@ -68,6 +78,7 @@ export function fetchData({fromTimestamp=new Date(), toTimestamp=new Date(), con
                     }
                 }
                 dispatch(receiveData(responseJson, config, maxFetchReached))
+                dispatch(receiveData2(responseJson.hits, config))
                 onOkResponse(maxFetchReached);                
             },
             error => dispatch(failedFetchingData(error))

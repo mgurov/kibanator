@@ -7,6 +7,7 @@ import * as actions from '../../actions'
 
 import DataList from './DataList'
 import AndNMoreNoPagingExplained from './AndNMoreNoPagingExplained'
+import HitsTimeline from '../timeline/HitsTimeline'
 
 const mapStateToProps = state => {
     return {
@@ -105,6 +106,14 @@ function DataListContainer(props) {
     let hiddenItemsCount = Math.max(0, allViewData.length - viewSize)
    
     return <div>
+
+    <div>
+
+        <HitsTimeline />
+
+        <hr/>
+        </div>
+
         <ButtonGroup bsSize="xsmall" bsStyle="default">
             {buttons(stdViews)}
             <span className="btn"></span>
@@ -115,9 +124,6 @@ function DataListContainer(props) {
                 {props.error.name} {props.error.message}
             </Alert>
         }
-        <div>
-        
-        </div>
         <DataList 
             data={_.take(allViewData, viewSize)} 
             key={currentView.key}
