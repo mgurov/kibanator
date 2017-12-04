@@ -13,18 +13,18 @@ function flattenKeys(input) {
     return _.flattenDeep(mapKeyPath(input))
 }
 
-function mapFlattener(input, accumulator, prefix) {
+function mapFlattener(input, accumulator, prefix, valueTransformer) {
     return _.transform(input, (result, value, key) => {
         if (_.isPlainObject(value)) {
-            return mapFlattener(value, accumulator, prefix + key + ".")
+            return mapFlattener(value, accumulator, prefix + key + ".", valueTransformer)
         } else {
-            accumulator[prefix + key] = value
+            accumulator[prefix + key] = valueTransformer(value)
         }
     }, accumulator)
 }
 
-function flattenMap(input) {
-    return mapFlattener(input, {}, "")
+function flattenMap(input, valueTransformer = _.identity) {
+    return mapFlattener(input, {}, "", valueTransformer)
 }
 
 export { flattenKeys, flattenMap }
