@@ -34,7 +34,7 @@ class MakeCaptorButtonComponent extends React.Component {
                 captors={this.props.captors}
             ></MakeCaptorPopup>
         } else {
-            return <div><button className="btn btn-default btn-xs" onClick={this.togglePopupVisibility}>make captor</button></div>
+            return <button className="btn btn-default btn-xs" onClick={this.togglePopupVisibility}>make captor</button>
         }
     }
 }

@@ -32,6 +32,19 @@ const onNewHitsArrivedMiddleware = store => {
         
         let r = next(action)
 
+        if (
+            action.type === 'ACK_ID'
+            || action.type === 'ACK_TILL_ID'
+            || action.type === 'ACK_ALL'
+            || action.type === 'ADD_CAPTOR'
+            || action.type === 'REMOVE_CAPTOR'
+        ) {
+            store.dispatch({
+                type: 'NEW_IDS_ARRIVED', //TODO: different type, also just listen for the changes
+            })
+            return r
+        }
+
         if (action.type !== 'TMP_INCOMING_HITS') {
             return r
         }

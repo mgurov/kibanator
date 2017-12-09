@@ -40,7 +40,8 @@ export const ackTillId = id => {
 export const ackId = id => {
   return {
     type: 'ACK_ID',
-    id
+    id,
+    payload: {id},
   }
 }
 

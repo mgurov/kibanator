@@ -5,7 +5,7 @@ import DataRow from './DataRow'
 import './DataList.css'
 
 function DataList(props) {
-    let { ackTillId, data, firstRowContent, lastRowContent, ...rest } = props
+    let { data, firstRowContent, lastRowContent, ...rest } = props
     return (<Grid fluid={true}>
         <Row className="top-buffer">
             <Col xs={12} md={12} lg={12}>{firstRowContent}</Col>

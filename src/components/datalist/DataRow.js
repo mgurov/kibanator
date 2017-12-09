@@ -50,7 +50,7 @@ class DataRow extends Component {
 
             expandedRow = <Row>
             <Col xs={12} md={12} lg={12}>
-                <MakeCaptorButton hit={h} />
+                <div><MakeCaptorButton hit={h} /></div>
                 {oneLineFields}    
                 {multiLineFields}    
             </Col>

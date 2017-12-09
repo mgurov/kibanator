@@ -13,6 +13,7 @@ export const emptyState = {
     ids: []
   },
   timeline: [],
+  acked: {}, // id -> true
   data: {
     knownIds: {},
     hits: [],
@@ -36,7 +37,7 @@ const data = (state = emptyState, action) => {
                   $set: []
               },
           },
-          timeline: {$set: reprocessTimeline(state.hits, state.captorPredicates)},
+          timeline: {$set: reprocessTimeline(state)},
         })
     }
     case 'TMP_INCOMING_HITS':
@@ -110,7 +111,8 @@ const data = (state = emptyState, action) => {
             ...state.data,
             hits,
             acked: state.data.acked.concat(byId),
-          }
+          },
+          acked: {...state.acked, [action.id]: true},
         }
       }
     case 'ACK_TILL_ID':
@@ -127,13 +129,18 @@ const data = (state = emptyState, action) => {
           }
         }
         let [acked, hits] = _.partition(state.data.hits, removeUntilId(action.id))
+        let ackedAcked = {...state.acked}
+        for (let a of acked) {
+          ackedAcked[a.id] = true
+        }
         return {
           ...state,
           data: {
             ...state.data,
             hits,
             acked: state.data.acked.concat(acked),
-          }
+          },
+          acked: ackedAcked,
         }
       }
     case 'MARK_HIT':
@@ -286,10 +293,38 @@ function processCaptures(receivedHits, captorPredicates) {
   }
 }
 
-export const reprocessTimeline = (hits, captorPredicates) => {
-  return _.take(hits.ids, constant.VIEW_SIZE).map(
-    (id) => {return {source: hits.byId[id],}}
-  )
+export const reprocessTimeline = ({hits, captorPredicates = [], acked = {}}) => {
+  let result = []
+  for (let id of hits.ids) {
+    if (result.length >= constant.VIEW_SIZE) {
+      break
+    }
+
+    if (acked[id]) {
+      continue;
+    }
+
+    let logHit = hits.byId[id]
+    let matchedPredicate = matchPredicates(logHit, captorPredicates)
+
+    if (!matchedPredicate) {
+      result.push({id, source: logHit,})
+    }
+  }
+  return result
+}
+
+function matchPredicates(logHit, captorPredicates) {
+  for (let p of captorPredicates) {
+    try {
+      if (p.predicate(logHit)) {
+        return p
+      }
+    } catch (e) {
+      console.error('Exception matching', logHit, 'captor', p, 'e', e)
+    }
+  }
+  return null
 }
 
 export default data

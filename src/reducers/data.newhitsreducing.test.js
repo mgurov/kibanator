@@ -131,3 +131,32 @@ test('should keep the time-based order when adding', () => {
         }
     )
 })
+
+test('should ack hit', () => {
+    const hits = [
+        { _id: "1", _source: { message: 'm1', timestamp: "2017-08-30T09:12:04.216Z" } },
+        { _id: "2", _source: { message: 'm2', timestamp: "2017-08-30T09:12:04.216Z" } },
+    ]
+    let initialState = {
+        ...emptyState,
+        hits: {
+            ...emptyState.hits,
+            byId: {
+                "1" : toLogHit(hits[0]),
+                "2" : toLogHit(hits[1]),
+            },
+            newIds: [],
+            ids: ["1", "2"],
+        }
+    }
+    expect(dataReducer(initialState, {
+        type: 'ACK_ID',
+        id: "1"
+    }))
+    .toEqual(
+        {
+            ...initialState,
+            acked: {"1": true}
+        }
+    )
+})
