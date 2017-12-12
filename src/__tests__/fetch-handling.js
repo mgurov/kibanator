@@ -51,6 +51,6 @@ test('fetch success should lead to a data row shown', () => {
 
   return store.dispatch(fetchData({config: { index: 'blah' }})).then(() => {
     expect(appTree.find('#dataFetchErrorAlert').length).toEqual(0) //no alerts
-    expect(appTree.find('LogRow').length).toEqual(1) //well row
+    expect(appTree.find('LogRow')).toHaveLength(1) //well row
   })
 });

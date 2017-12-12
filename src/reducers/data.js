@@ -100,7 +100,8 @@ const data = (state = emptyState, action) => {
           ...state.data,
           hits: [],
           acked: state.data.acked.concat(state.data.hits),
-        }
+        },
+        acked: addTruthyKeys(state.data.hits, state.acked),
       }
     case 'ACK_ID':
       {
@@ -129,10 +130,6 @@ const data = (state = emptyState, action) => {
           }
         }
         let [acked, hits] = _.partition(state.data.hits, removeUntilId(action.id))
-        let ackedAcked = {...state.acked}
-        for (let a of acked) {
-          ackedAcked[a.id] = true
-        }
         return {
           ...state,
           data: {
@@ -140,7 +137,7 @@ const data = (state = emptyState, action) => {
             hits,
             acked: state.data.acked.concat(acked),
           },
-          acked: ackedAcked,
+          acked: addTruthyKeys(acked, state.acked),
         }
       }
     case 'MARK_HIT':
@@ -294,21 +291,36 @@ function processCaptures(receivedHits, captorPredicates) {
 }
 
 export const reprocessTimeline = ({hits, captorPredicates = [], acked = {}}) => {
-  let result = []
-  for (let id of hits.ids) {
-    if (result.length >= constant.VIEW_SIZE) {
-      break
+  let result = {}
+
+  function add(key, hit) {
+    if (!result[key]) {
+      result[key] = {
+        records: [],
+        moreToShow: 0,
+      }
     }
+    if (result[key].records.length >= constant.VIEW_SIZE) {
+      result[key].moreToShow += 1
+    } else {
+      result[key].records.push(hit)
+    }
+  }
+
+  for (let id of hits.ids) {
+    let logHit = hits.byId[id]
+    let h = {id, source: logHit,}
 
     if (acked[id]) {
+      add('acked', h)
       continue;
     }
 
-    let logHit = hits.byId[id]
     let matchedPredicate = matchPredicates(logHit, captorPredicates)
-
-    if (!matchedPredicate) {
-      result.push({id, source: logHit,})
+    if (matchedPredicate) {
+      add(constant.viewCapturePrefix + matchedPredicate.key, h)
+    } else {
+      add(constant.viewPending, h)
     }
   }
   return result
@@ -325,6 +337,14 @@ function matchPredicates(logHit, captorPredicates) {
     }
   }
   return null
+}
+
+function addTruthyKeys(hits, source) {
+  let result = {...source}
+  for (let h of hits) {
+    result[h.id] = true
+  }
+  return result
 }
 
 export default data

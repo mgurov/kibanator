@@ -235,6 +235,11 @@ describe('data reducer', () => {
                         toLogHit(hits[1]),
                         toLogHit(hits[2]),
                     ],
+                },
+                acked: {
+                    "1": true,
+                    "2": true,
+                    "3": true,
                 }
             })
     })

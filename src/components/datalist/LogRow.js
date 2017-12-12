@@ -20,11 +20,11 @@ class LogRow extends Component {
 
         const h = this.props.data
 
-        let onAck=(tillThis) => this.props.onAck(h.id, tillThis)
+        let onAck= this.props.onAck ? (tillThis) => this.props.onAck(h.id, tillThis) : null
 
         return <Row>
             <Col sm={3} md={3} lg={3}>
-                <AckButton onAck={onAck}/>
+                {onAck && <AckButton onAck={onAck}/>}
                 <ExpandableShevron expanded={this.state.expanded} toggle={this.toggle} />
                 <DateTime value={h.timestamp} /> 
             </Col>
@@ -72,11 +72,15 @@ class ExpandableDetails extends Component {
             <Col xs={12} md={12} lg={12}>
                 <div>
                     <MakeCaptorButton hit={h} />&nbsp;
-                    <button className="btn btn-default btn-xs" onClick={() => this.props.onAck(false)}>ack</button>&nbsp;
-                    <button className="btn btn-default btn-xs" onClick={() => this.props.onAck(true)}>ack all up to this</button>
+                    {this.props.onAck && 
+                        <span>
+                            <button className="btn btn-default btn-xs" onClick={() => this.props.onAck(false)}><span className="glyphicon glyphicon-ok-sign"></span> ack this</button>&nbsp;
+                            <button className="btn btn-default btn-xs" onClick={() => this.props.onAck(true)}><span className="glyphicon glyphicon-import"></span> ack down to this <span className="glyphicon glyphicon-ok-sign"></span></button>&nbsp;
+                        </span>
+                    }
                 </div>
-                {oneLineFields}    
-                {multiLineFields}    
+                {oneLineFields}
+                {multiLineFields}
             </Col>
         </Row>
     }

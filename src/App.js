@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 import AddWatchContainer from './components/AddWatchContainer.js'
 import WatchListContainer from './components/WatchListContainer.js'
-import DataListContainer from './components/datalist/DataListContainer.js'
+import HitsTimeline from './components/datalist/HitsTimeline'
 import {ConfigContainer} from './components/config'
 import Reset from './components/timerange/Reset'
 import DocumentTitleContainer from './components/title/DocumentTitleContainer'
@@ -26,7 +26,7 @@ let App = () => {
         <VersionWidget/> &nbsp; <ConfigContainer />&nbsp;<Reset />&nbsp;<TimeRangeControl/>
       </div>
       {watches}
-      <DataListContainer />
+      <HitsTimeline />
     </div>
   );
 }

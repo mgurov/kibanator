@@ -15,7 +15,7 @@ class AndNMoreNoPagingExplained extends React.Component {
 
     render() {
         let { count } = this.props
-        if (count <= 0) {
+        if (!count || count <= 0) {
             return null
         }
 
