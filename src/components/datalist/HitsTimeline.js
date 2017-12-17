@@ -40,8 +40,8 @@ function HitsTimeline(props) {
         return <Well>Right, select where to start from ^^^</Well>
     }
 
-    let theView = (props.timeline[props.view]||{})
-    let data = theView.records||[]
+    let theView = (props.timeline[props.view]||[])
+    let data = _.take(theView, constant.VIEW_SIZE)
     let onAck = null
     let action = null
     if (props.view === constant.viewPending) {
@@ -69,7 +69,7 @@ function HitsTimeline(props) {
             }
 
 
-        <ViewButtons selectedView={props.view} viewCounts={_.mapValues(props.timeline, v => v.moreToShow + v.records.length)} showViewClick={props.showViewClick}/>
+        <ViewButtons selectedView={props.view} viewCounts={_.mapValues(props.timeline, v => v.length)} showViewClick={props.showViewClick}/>
 
         <Grid fluid={true}>
         <Row className="top-buffer">
@@ -82,7 +82,7 @@ function HitsTimeline(props) {
                 onAck={onAck}
             />)}
         <Row className="top-buffer">
-            <Col xs={12} md={12} lg={12}><AndNMoreNoPagingExplained count={theView.moreToShow}/></Col>
+            <Col xs={12} md={12} lg={12}><AndNMoreNoPagingExplained count={theView.length - data.length}/></Col>
         </Row>
     </Grid>
     </span>

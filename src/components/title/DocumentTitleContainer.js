@@ -3,8 +3,8 @@ import DocumentTitle from './DocumentTitle'
 
 const mapStateToProps = state => {
     let title = state.config.serviceName
-    let pending = state.data.timeline.pending || {}
-    let pendingCount = (pending.records||[]).length + pending.moreToShow
+    let pending = state.data.timeline.pending || []
+    let pendingCount = pending.length
     if (pendingCount > 0) {
         title += ' - ' + pendingCount
     }

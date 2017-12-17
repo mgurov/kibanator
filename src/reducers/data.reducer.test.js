@@ -34,13 +34,11 @@ describe('data reducer', () => {
         let initialState = {
             ...emptyState,
             timeline: {
-                pending: {
-                    records: [
+                pending: [
                         {id: "1"},
                         {id: "2"},
                         {id: "3"},
                     ]
-                }
             },
             acked: {
                 "0": true,
@@ -59,13 +57,11 @@ describe('data reducer', () => {
         let initialState = {
             ...emptyState,
             timeline: {
-                pending: {
-                    records: [
+                pending: [
                         {id: "1"},
                         {id: "2"},
                         {id: "3"},
                     ]
-                }
             },
             acked: {
                 "0": true,

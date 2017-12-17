@@ -64,7 +64,7 @@ const data = (state = emptyState, action) => {
     case 'ACK_ALL':
     {
       let newAcked = {...state.acked}
-      for (let h of state.timeline.pending.records) {
+      for (let h of state.timeline.pending) {
         newAcked[h.id] = true
       }
       return {
@@ -82,7 +82,7 @@ const data = (state = emptyState, action) => {
     case 'ACK_TILL_ID':
       {
         let newAcked = {...state.acked}
-        for (let h of state.timeline.pending.records) {
+        for (let h of state.timeline.pending) {
           newAcked[h.id] = true
           if (h.id === action.id) {
             break
@@ -115,16 +115,10 @@ export const reprocessTimeline = ({hits, captorPredicates = [], acked = {}}) => 
   let result = {}
 
   function add(key, hit) {
-    if (!result[key]) {
-      result[key] = {
-        records: [],
-        moreToShow: 0,
-      }
-    }
-    if (result[key].records.length >= constant.VIEW_SIZE) {
-      result[key].moreToShow += 1
+    if (result[key]) {
+      result[key].push(hit)
     } else {
-      result[key].records.push(hit)
+      result[key] = [hit]
     }
   }
 

@@ -36,44 +36,12 @@ test('just copy the bloody data', () => {
             hits
         }))
         .toEqual({
-                'pending': {records: [{
+                'pending': [{
                     id: "1",
                     source: hits.byId["1"],
                 }],
-                moreToShow: 0,
-            },
             }
         )
-})
-
-test('only the N first should be copied', () => {
-
-    const hits = {
-        byId: {},
-        ids: [],
-    }
-
-    for (let i = 0; i < 10000; i++) {
-        let id = i + ""
-        hits[id] = toLogHit({
-            _id: id,
-            _source: {
-                message: 'm',
-                timestamp: "2017-08-30T09:12:04.216Z"
-            }
-        })
-        hits.ids.push(id)
-    }
-
-    let actual = reprocessTimeline({
-        hits
-    }).pending
-
-    expect(actual.records.length)
-        .toEqual(constant.VIEW_SIZE)
-
-    expect(actual.moreToShow)
-        .toEqual(10000 - constant.VIEW_SIZE)
 })
 
 test('record captured', () => {
@@ -96,13 +64,10 @@ test('record captured', () => {
     }))
         .toEqual(
         {
-            'captures.m': {
-                moreToShow: 0,
-                records: [{
+            'captures.m': [{
                     id: "1",
                     source: hits.byId["1"],
-                }],
-            },
+                }]
         }
         )
 
@@ -137,20 +102,14 @@ test('skip acked', () => {
     }))
         .toEqual(
         {
-            pending: {
-                records: [{
+            pending: [{
                     id: "2",
                     source: hits.byId["2"],
                 }],
-                moreToShow: 0,
-            },
-            acked: {
-                records: [{
+            acked: [{
                     id: "1",
                     source: hits.byId["1"],
                 }],
-                moreToShow: 0,
-            },
         }
 
         )
