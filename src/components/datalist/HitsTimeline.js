@@ -12,32 +12,11 @@ const mapStateToProps = state => {
     return {
         timeline: state.data.timeline,
         hitIds: state.data.hits.ids,
-        view: viewToKey(state.view),
+        view: state.view.key,
         error: state.fetchStatus.error,
         syncStarted: !!state.synctimes.selected,
     }
 }
-
-//TODO: use the same keys
-function viewToKey(view) {
-    if (view.type === 'capture') {
-        return constant.viewCapturePrefix + view.captorKey
-    } else {
-        return view.type
-    }
-}
-
-function keyToView(key) {
-    if (key.indexOf(constant.viewCapturePrefix) === 0) {
-        return {
-            type: 'capture',
-            captorKey: key.substring(constant.viewCapturePrefix.length),
-        }
-    } else {
-        return { type: key }
-    }
-}
-
 
 const mapDispatchToProps = (dispatch) => {
     return {
@@ -51,7 +30,7 @@ const mapDispatchToProps = (dispatch) => {
         ackAll: () => {
             dispatch(actions.ackAll())
         },
-        showViewClick: (key) => () => dispatch(actions.showView(keyToView(key))),
+        showViewClick: (key) => () => dispatch(actions.showView({key})),
     }
 }
 
@@ -68,7 +47,7 @@ function HitsTimeline(props) {
     if (props.view === constant.viewPending) {
         onAck = props.onAck
         action = {
-            title: 'ack all',
+            title: <span><span className="glyphicon glyphicon-ok-sign"></span> ack page</span>,
             action: props.ackAll,
             disabled: data.length === 0,
         }

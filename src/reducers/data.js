@@ -1,26 +1,16 @@
 import _ from 'lodash'
 import LogHit from '../domain/LogHit'
 import update from 'immutability-helper';
-import {
-  captorToPredicate
-} from '../domain/Captor'
 import * as constant from '../constant'
 
 export const emptyState = {
   hits: {
     byId: {},
-    newIds: [],
+    newIds: [], //TODO: do we even need this at the end? could be something separate or simply comparing the length of the ids.
     ids: []
   },
-  timeline: [],
+  timeline: {},
   acked: {}, // id -> true
-  data: {
-    knownIds: {},
-    hits: [],
-    captures: {},
-    marked: [],
-    acked: [],
-  },
   captorPredicates: [], //hackishly copied here upon config update. see captorPredicatesUpdater
 }
 
@@ -71,166 +61,40 @@ const data = (state = emptyState, action) => {
           }
         }
       }
-    case 'RECEIVED_HITS':
-      let idFilteringResult = takeNewHits(action.data.hits, state.data.knownIds)
-
-      if (!idFilteringResult.knownIds) {
-        return state //no new stuff
-      }
-
-      let transformedHits = _.map(idFilteringResult.hits, h => LogHit(h, action.config))
-
-      let newHits = processCaptures(transformedHits, state.captorPredicates)
-      let newState = {}
-      let captures = _.mergeWith(_.clone(state.data.captures), newHits.captures, (a, b) => (a || []).concat(b || []))
-      let hits = state.data.hits.concat(newHits.hits)
-      let knownIds = { ...state.data.knownIds,
-        ...idFilteringResult.knownIds
-      }
-      newState.data = Object.assign({}, state.data, {
-        hits,
-        knownIds,
-        captures
-      })
-      return Object.assign({}, state, newState)
     case 'ACK_ALL':
+    {
+      let newAcked = {...state.acked}
+      for (let h of state.timeline.pending.records) {
+        newAcked[h.id] = true
+      }
       return {
         ...state,
-        data: {
-          ...state.data,
-          hits: [],
-          acked: state.data.acked.concat(state.data.hits),
-        },
-        acked: addTruthyKeys(state.data.hits, state.acked),
+        acked: newAcked,
       }
-    case 'ACK_ID':
+    }
+  case 'ACK_ID':
       {
-        let [byId, hits] = _.partition(state.data.hits, ["id", action.id])
         return {
           ...state,
-          data: {
-            ...state.data,
-            hits,
-            acked: state.data.acked.concat(byId),
-          },
           acked: {...state.acked, [action.id]: true},
         }
       }
     case 'ACK_TILL_ID':
       {
-        let removeUntilId = (id) => {
-          let stillLooking = true
-          return (h) => {
-            if (h.id === id) {
-              stillLooking = false
-              return true //exclude this
-            } else {
-              return stillLooking
-            }
+        let newAcked = {...state.acked}
+        for (let h of state.timeline.pending.records) {
+          newAcked[h.id] = true
+          if (h.id === action.id) {
+            break
           }
         }
-        let [acked, hits] = _.partition(state.data.hits, removeUntilId(action.id))
         return {
           ...state,
-          data: {
-            ...state.data,
-            hits,
-            acked: state.data.acked.concat(acked),
-          },
-          acked: addTruthyKeys(acked, state.acked),
+          acked: newAcked,
         }
-      }
-    case 'MARK_HIT':
-      {
-        let [selected, rest] = _.partition(state.data.hits, ['id', action.payload.id])
-        if (selected.length === 0) {
-          console.error('Could not find id: ', action.payload.id)
-          return state
-        }
-        return update(state, {
-          data: {
-            hits: {
-              $set: rest
-            },
-            marked: {
-              $push: selected
-            }
-          }
-        })
-      }
-    case 'UNMARK_HIT':
-      {
-        let [selected, rest] = _.partition(state.data.marked, ['id', action.payload.id])
-        if (selected.length === 0) {
-          console.error('Could not find id: ', action.payload.id)
-          return state
-        }
-        return update(state, {
-          data: {
-            marked: {
-              $set: rest
-            },
-            hits: {
-              $set: selected.concat(state.data.hits)
-            }
-          }
-        })
-      }
-    case 'ADD_CAPTOR':
-      {
-        let newHits = processCaptures(state.data.hits, [captorToPredicate(action.captor)])
-
-        if (!newHits.captures) {
-          return state
-        }
-
-        return {
-          ...state,
-          data: {
-            ...state.data,
-            hits: newHits.hits,
-            captures: { ...state.data.captures,
-              ...newHits.captures
-            }
-          }
-        }
-      }
-    case 'REMOVE_CAPTOR':
-      //TODO: do not add twice upon removal non-ack captor
-      {
-        let hits = state.data.captures[action.captorKey].concat(state.data.hits)
-        return update(state, {
-          data: {
-            captures: {
-              $unset: [action.captorKey]
-            },
-            hits: {
-              $set: hits
-            }
-          }
-        })
       }
     default:
       return state
-  }
-}
-
-//TODO: drop me
-function takeNewHits(incomingHits, previouslyKnownIds) {
-  let hits = []
-  let knownIds = {}
-  _.forEach(incomingHits, h => {
-    let id = h._id
-    if (previouslyKnownIds[id] || knownIds[id]) {
-      return
-    }
-    knownIds[id] = 1
-    hits.push(h)
-  })
-
-  return {
-    hits,
-    knownIds
   }
 }
 
@@ -245,49 +109,6 @@ function takeNewHits2(incomingHits, previouslyKnownHits) {
   })
 
   return newHits
-}
-
-function processCaptures(receivedHits, captorPredicates) {
-  let captures = {}
-  let hits = []
-
-  _.forEach(receivedHits, newHit => {
-    for (var i = 0; i < captorPredicates.length; i++) {
-      let p = captorPredicates[i]
-
-      let matchedThisCaptor = false
-      try {
-        matchedThisCaptor = p.predicate(newHit)
-      } catch (e) {
-        matchedThisCaptor = false
-        console.error('Exception matching', newHit, 'captor', p, 'e', e)
-      }
-
-      if (matchedThisCaptor) {
-
-        if (p.messageField) {
-          //TODO: clone here to avoid mutation. Or rather extract the store from the whole list
-          newHit.message = newHit.fields[p.messageField] || newHit.message
-        }
-
-        if (!captures[p.key]) {
-          captures[p.key] = []
-        }
-        captures[p.key].push(newHit)
-        if (p.acknowledge === false) {
-          newHit.tags = [...(newHit.tags || []), p.key]
-        } else {
-          //TODO: consider marking as "no pending"
-          return //hit processing, do not want it to be pushed to the main hits 
-        }
-      }
-    }
-    hits.push(newHit)
-  })
-  return {
-    hits,
-    captures
-  }
 }
 
 export const reprocessTimeline = ({hits, captorPredicates = [], acked = {}}) => {
@@ -337,14 +158,6 @@ function matchPredicates(logHit, captorPredicates) {
     }
   }
   return null
-}
-
-function addTruthyKeys(hits, source) {
-  let result = {...source}
-  for (let h of hits) {
-    result[h.id] = true
-  }
-  return result
 }
 
 export default data
