@@ -71,9 +71,9 @@ class ExpandableDetails extends Component {
         return <Row>
             <Col xs={12} md={12} lg={12}>
                 <div>
-                    <MakeCaptorButton hit={h} />&nbsp;
                     {this.props.onAck && 
                         <span>
+                            <MakeCaptorButton hit={h} />&nbsp;
                             <button className="btn btn-default btn-xs" onClick={() => this.props.onAck(false)}><span className="glyphicon glyphicon-ok-sign"></span> ack this</button>&nbsp;
                             <button className="btn btn-default btn-xs" onClick={() => this.props.onAck(true)}><span className="glyphicon glyphicon-import"></span> ack down to this <span className="glyphicon glyphicon-ok-sign"></span></button>&nbsp;
                         </span>
