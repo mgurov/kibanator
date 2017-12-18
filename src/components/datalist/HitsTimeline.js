@@ -78,7 +78,7 @@ function HitsTimeline(props) {
         {data.map(o =>
             <LogRow
                 key={o.id}
-                data={o.source}
+                data={o}
                 onAck={onAck}
             />)}
         <Row className="top-buffer">

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Col, Row } from 'react-bootstrap'
+import { Col, Row, Badge } from 'react-bootstrap'
 import _ from 'lodash'
 import DateTime from '../generic/DateTime'
 import '../datalist/DataList.css'
@@ -18,7 +18,8 @@ class LogRow extends Component {
 
     render() {
 
-        const h = this.props.data
+        let row = this.props.data 
+        let h = row.source
 
         let onAck= this.props.onAck ? (tillThis) => this.props.onAck(h.id, tillThis) : null
 
@@ -27,6 +28,7 @@ class LogRow extends Component {
                 {onAck && <AckButton onAck={onAck}/>}
                 <ExpandableShevron expanded={this.state.expanded} toggle={this.toggle} />
                 <DateTime value={h.timestamp} /> 
+                {row.tag && <span> <Badge>{row.tag}</Badge></span>}
             </Col>
             <Col sm={9} md={9} lg={9}>{h.message}</Col>
             <ExpandableDetails expanded={this.state.expanded} data={this.props.data} onAck={onAck}/>
