@@ -31,7 +31,7 @@ class LogRow extends Component {
                 {row.tag && <span> <Badge>{row.tag}</Badge></span>}
             </Col>
             <Col sm={9} md={9} lg={9}>{h.message}</Col>
-            <ExpandableDetails expanded={this.state.expanded} data={this.props.data} onAck={onAck}/>
+            <ExpandableDetails expanded={this.state.expanded} data={h} onAck={onAck}/>
             </Row>
     }
 }
