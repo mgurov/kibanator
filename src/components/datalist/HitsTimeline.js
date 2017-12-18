@@ -47,7 +47,7 @@ function HitsTimeline(props) {
     if (props.view === constant.viewPending) {
         onAck = props.onAck
         action = {
-            title: <span><span className="glyphicon glyphicon-ok-sign"></span> ack page</span>,
+            title: <span><span className="glyphicon glyphicon-ok-sign"></span> ack all</span>,
             action: props.ackAll,
             disabled: data.length === 0,
         }
