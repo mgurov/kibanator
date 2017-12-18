@@ -134,7 +134,8 @@ export const reprocessTimeline = ({hits, captorPredicates = [], acked = {}}) => 
     let matchedPredicate = matchPredicates(logHit, captorPredicates)
     if (matchedPredicate) {
       add(constant.viewCapturePrefix + matchedPredicate.key, h)
-    } else {
+    }
+    if (!matchedPredicate || false === matchedPredicate.acknowledge) {
       add(constant.viewPending, h)
     }
   }

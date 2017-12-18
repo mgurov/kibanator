@@ -5,6 +5,7 @@ import dataReducer, {
 import LogHit from '../domain/LogHit'
 import {
     messageContainsCaptor,
+    keepPending,
     captorToPredicate
 } from '../domain/Captor'
 import * as constant from '../constant'
@@ -71,6 +72,38 @@ test('record captured', () => {
         }
         )
 
+})
+
+test('keep non-acking capture in the pending list', () => {
+    const hits = {
+        byId: {
+            "1": toLogHit({
+                _id: "1",
+                _source: {
+                    message: 'm',
+                    timestamp: "2017-08-30T09:12:04.216Z"
+                }
+            })
+        },
+        ids: ["1"]
+    }
+
+    expect(reprocessTimeline({
+        hits,
+        captorPredicates: [keepPending(captorForMessage('m', 'm'))]
+    }))
+        .toEqual(
+        {
+            'pending': [{
+                    id: "1",
+                    source: hits.byId["1"],
+                }],
+            'captures.m': [{
+                    id: "1",
+                    source: hits.byId["1"],
+                }]
+        }
+        )
 })
 
 test('skip acked', () => {
