@@ -97,6 +97,7 @@ test('keep non-acking capture in the pending list', () => {
             'pending': [{
                     id: "1",
                     source: hits.byId["1"],
+                    tag: 'm',
                 }],
             'captures.m': [{
                     id: "1",
