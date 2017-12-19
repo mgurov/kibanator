@@ -48,14 +48,14 @@ var makeSearch = function ({serviceName, from, to=new Date(), config}) {
             }
         },
         //"size": 500,
-        "sort": [
-          {
-            [config.timeField]: {
-              "order": "asc",
-              "unmapped_type": "boolean"
-            }
-          }
-        ],
+        // "sort": [
+        //   {
+        //     [config.timeField]: {
+        //       "order": "asc",
+        //       "unmapped_type": "boolean"
+        //     }
+        //   }
+        // ],
         // "fields": [
         //   "*",
         //   "_source"
