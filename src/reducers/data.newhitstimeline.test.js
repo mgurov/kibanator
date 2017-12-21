@@ -18,7 +18,9 @@ const testConfig = {
 
 const toLogHit = (h) => LogHit(h, testConfig)
 
-const captorForMessage = (key, messageSub) => captorToPredicate(messageContainsCaptor(key, messageSub))
+function applicablePredicates( predicates ) {
+    return predicates.map( captorToPredicate )
+}
 
 test('just copy the bloody data', () => {
     const hits = {
@@ -62,7 +64,7 @@ test('record captured', () => {
 
     expect(reprocessTimeline({
         hits,
-        captorPredicates: [captorForMessage('m', 'm')]
+        captorPredicates: applicablePredicates([messageContainsCaptor('m', 'm')])
     }))
         .toEqual(
         {
@@ -91,7 +93,7 @@ test('keep non-acking capture in the pending list', () => {
 
     expect(reprocessTimeline({
         hits,
-        captorPredicates: [keepPending(captorForMessage('m', 'm'))]
+        captorPredicates: applicablePredicates([keepPending(messageContainsCaptor('m', 'm'))])
     }))
         .toEqual(
         {
@@ -108,7 +110,7 @@ test('keep non-acking capture in the pending list', () => {
         )
 })
 
-test('transform the non-acking field', () => {
+test('transform non-acking field', () => {
     const hits = {
         byId: {
             "1": toLogHit({
@@ -123,9 +125,10 @@ test('transform the non-acking field', () => {
         ids: ["1"]
     }
 
+    let captorPredicate = messageExtractor(keepPending(messageContainsCaptor('m', 'm')), 'anotherField')
     expect(reprocessTimeline({
         hits,
-        captorPredicates: [messageExtractor(keepPending(captorForMessage('m', 'm')), 'anotherField')]
+        captorPredicates: applicablePredicates([captorPredicate])
     }))
         .toEqual(
         {

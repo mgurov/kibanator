@@ -2,6 +2,7 @@ import _ from 'lodash'
 import LogHit from '../domain/LogHit'
 import update from 'immutability-helper';
 import * as constant from '../constant'
+import {matchPredicates} from '../domain/Captor'
 
 export const emptyState = {
   hits: {
@@ -131,14 +132,14 @@ export const reprocessTimeline = ({hits, captorPredicates = [], acked = {}}) => 
       continue;
     }
 
-    let matchedPredicate = matchPredicates(logHit, captorPredicates)
-    if (matchedPredicate) {
-      if (matchedPredicate.messageField) {
-        h.message = logHit.fields[matchedPredicate.messageField]
+    let matched = matchPredicates(logHit, captorPredicates)
+    if (matched) {
+      if (matched.message) {
+        h.message = matched.message
       }
-      add(constant.viewCapturePrefix + matchedPredicate.key, h)
-      if (false === matchedPredicate.acknowledge) {
-        add(constant.viewPending, {...h, tag: matchedPredicate.key})
+      add(constant.viewCapturePrefix + matched.predicate.key, h)
+      if (false === matched.predicate.acknowledge) {
+        add(constant.viewPending, {...h, tag: matched.predicate.key})
       }
       continue
     }
@@ -146,19 +147,6 @@ export const reprocessTimeline = ({hits, captorPredicates = [], acked = {}}) => 
     add(constant.viewPending, h)
   }
   return result
-}
-
-function matchPredicates(logHit, captorPredicates) {
-  for (let p of captorPredicates) {
-    try {
-      if (p.predicate(logHit)) {
-        return p
-      }
-    } catch (e) {
-      console.error('Exception matching', logHit, 'captor', p, 'e', e)
-    }
-  }
-  return null
 }
 
 export default data

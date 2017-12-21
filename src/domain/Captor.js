@@ -32,8 +32,53 @@ export function captorToPredicate(captor) {
     } else {
         predicate = (h) => (valueExtractor(h) + "").indexOf(captor.messageContains) > -1
     }
+
+    let apply = (h) => {
+        if (captor.type === 'regex') {
+            let re = new RegExp(captor.regex)
+            let match = re.exec(valueExtractor(h))            
+            if (match) {
+                let result = {matched: true}
+                if (captor.messageField) {
+                    result.message = match[1] || match[0]
+                }
+                return result
+            } else {
+                return null
+            }
+        } else {
+            if (predicate(h)) {
+                let result = {matched: true}
+                if (captor.messageField) {
+                    result.message = h.fields[captor.messageField]
+                }
+                return result
+            } else {
+                return null
+            }
+        }            
+    }
+
     return {
         ...captor,
         predicate,
+        apply,
     }
 }
+
+export function matchPredicates(logHit, captorPredicates) {
+    for (let p of captorPredicates) {
+      try {
+        let r = p.apply(logHit)
+        if (r) {
+            return {
+                predicate: p,
+                ...r,
+            }
+        }
+      } catch (e) {
+        console.error('Exception matching', logHit, 'captor', p, 'e', e)
+      }
+    }
+    return null
+  }  

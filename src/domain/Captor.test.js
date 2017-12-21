@@ -47,3 +47,34 @@ test("should ignore missing fields when regex", () => {
         predicate.predicate({ fields: {} })
     ).toEqual(false)
 })
+
+test("use first match group when transforming regex has one", () => {
+
+    let captor = c.messageExtractor(c.messageMatchesRegexCaptor('key', 'b(\\d+)d', 'field'), 'field')
+    let predicate = c.captorToPredicate(captor)
+
+    expect(
+        predicate.apply({ fields: {'field': 'ab23de'} })
+    ).toEqual({matched: true, message: "23"})
+})
+
+test("use matched part of the field when regex has no group", () => {
+
+    let captor = c.messageExtractor(c.messageMatchesRegexCaptor('key', 'b\\d+d', 'field'), 'field')
+    let predicate = c.captorToPredicate(captor)
+
+    expect(
+        predicate.apply({ fields: {'field': 'ab23de'} })
+    ).toEqual({matched: true, message: "b23d"})
+})
+
+test("take the field provided for simple contains", () => {
+
+    let captor = c.messageExtractor(c.messageContainsCaptor('key', 'abcd', 'field'), 'field')
+    let predicate = c.captorToPredicate(captor)
+
+    expect(
+        predicate.apply({ fields: {'field': '01abcdefj'} })
+    ).toEqual({matched: true, message: "01abcdefj"})
+})
+
