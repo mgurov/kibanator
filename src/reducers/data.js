@@ -133,6 +133,9 @@ export const reprocessTimeline = ({hits, captorPredicates = [], acked = {}}) => 
 
     let matchedPredicate = matchPredicates(logHit, captorPredicates)
     if (matchedPredicate) {
+      if (matchedPredicate.messageField) {
+        h.message = logHit.fields[matchedPredicate.messageField]
+      }
       add(constant.viewCapturePrefix + matchedPredicate.key, h)
       if (false === matchedPredicate.acknowledge) {
         add(constant.viewPending, {...h, tag: matchedPredicate.key})

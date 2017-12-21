@@ -30,7 +30,7 @@ class LogRow extends Component {
                 <DateTime value={h.timestamp} /> 
                 {row.tag && <span> <Badge>{row.tag}</Badge></span>}
             </Col>
-            <Col sm={9} md={9} lg={9}>{h.message}</Col>
+            <Col sm={9} md={9} lg={9}>{row.message || h.message}</Col>
             <ExpandableDetails expanded={this.state.expanded} data={h} onAck={onAck}/>
             </Row>
     }

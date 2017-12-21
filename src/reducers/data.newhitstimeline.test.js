@@ -6,6 +6,7 @@ import LogHit from '../domain/LogHit'
 import {
     messageContainsCaptor,
     keepPending,
+    messageExtractor,
     captorToPredicate
 } from '../domain/Captor'
 import * as constant from '../constant'
@@ -102,6 +103,42 @@ test('keep non-acking capture in the pending list', () => {
             'captures.m': [{
                     id: "1",
                     source: hits.byId["1"],
+                }]
+        }
+        )
+})
+
+test('transform the non-acking field', () => {
+    const hits = {
+        byId: {
+            "1": toLogHit({
+                _id: "1",
+                _source: {
+                    message: 'm',
+                    timestamp: "2017-08-30T09:12:04.216Z",
+                    anotherField: 'show me',
+                }
+            })
+        },
+        ids: ["1"]
+    }
+
+    expect(reprocessTimeline({
+        hits,
+        captorPredicates: [messageExtractor(keepPending(captorForMessage('m', 'm')), 'anotherField')]
+    }))
+        .toEqual(
+        {
+            'pending': [{
+                    id: "1",
+                    source: hits.byId["1"],
+                    tag: 'm',
+                    message: 'show me',
+                }],
+            'captures.m': [{
+                    id: "1",
+                    source: hits.byId["1"],
+                    message: 'show me',
                 }]
         }
         )
