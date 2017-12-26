@@ -43,6 +43,7 @@ test('just copy the bloody data', () => {
                 'pending': [{
                     id: "1",
                     source: hits.byId["1"],
+                    tags: [],
                 }],
             }
         )
@@ -100,7 +101,7 @@ test('keep non-acking capture in the pending list', () => {
             'pending': [{
                     id: "1",
                     source: hits.byId["1"],
-                    tag: 'm',
+                    tags: ['m'],
                 }],
             'captures.m': [{
                     id: "1",
@@ -135,13 +136,134 @@ test('transform non-acking field', () => {
             'pending': [{
                     id: "1",
                     source: hits.byId["1"],
-                    tag: 'm',
+                    tags: ['m'],
                     message: 'show me',
                 }],
             'captures.m': [{
                     id: "1",
                     source: hits.byId["1"],
                     message: 'show me',
+                }]
+        }
+        )
+})
+
+test('multi tag non-acking captures', () => {
+    const hits = {
+        byId: {
+            "1": toLogHit({
+                _id: "1",
+                _source: {
+                    message: 'm',
+                    anotherField: 'f',
+                    timestamp: "2017-08-30T09:12:04.216Z"
+                }
+            })
+        },
+        ids: ["1"]
+    }
+
+    expect(reprocessTimeline({
+        hits,
+        captorPredicates: applicablePredicates([
+            keepPending(messageContainsCaptor('m', 'm')),
+            keepPending(messageContainsCaptor('f', 'f', 'anotherField')),
+        ])
+    }))
+        .toEqual(
+        {
+            'pending': [{
+                    id: "1",
+                    source: hits.byId["1"],
+                    tags: ['m', 'f'],
+                }],
+            'captures.m': [{
+                    id: "1",
+                    source: hits.byId["1"],
+                }],
+            'captures.f': [{
+                    id: "1",
+                    source: hits.byId["1"],
+                }]
+        }
+        )
+})
+
+test('ack if any of the captures is acking', () => {
+    const hits = {
+        byId: {
+            "1": toLogHit({
+                _id: "1",
+                _source: {
+                    message: 'm',
+                    anotherField: 'f',
+                    timestamp: "2017-08-30T09:12:04.216Z"
+                }
+            })
+        },
+        ids: ["1"]
+    }
+
+    expect(reprocessTimeline({
+        hits,
+        captorPredicates: applicablePredicates([
+            keepPending(messageContainsCaptor('m', 'm')),
+            messageContainsCaptor('f', 'f', 'anotherField'),
+        ])
+    }))
+        .toEqual(
+        {
+            'captures.m': [{
+                    id: "1",
+                    source: hits.byId["1"],
+                }],
+            'captures.f': [{
+                    id: "1",
+                    source: hits.byId["1"],
+                }]
+        }
+        )
+})
+
+test('use own transformation for captor and first one for the pending list', () => {
+    const hits = {
+        byId: {
+            "1": toLogHit({
+                _id: "1",
+                _source: {
+                    message: 'm',
+                    anotherField: 'f',
+                    timestamp: "2017-08-30T09:12:04.216Z"
+                }
+            })
+        },
+        ids: ["1"]
+    }
+
+    expect(reprocessTimeline({
+        hits,
+        captorPredicates: applicablePredicates([
+            messageExtractor(keepPending(messageContainsCaptor('m', 'm')), 'message'),
+            messageExtractor(keepPending(messageContainsCaptor('f', 'f', 'anotherField')), 'anotherField'),
+        ])
+    }))
+        .toEqual(
+        {
+            'pending': [{
+                id: "1",
+                source: hits.byId["1"],
+                tags: ['m', 'f'],
+                message: 'm',
+            }],
+            'captures.m': [{
+                    id: "1",
+                    source: hits.byId["1"],
+                    message: 'm',
+                }],
+            'captures.f': [{
+                    id: "1",
+                    source: hits.byId["1"],
+                    message: 'f',
                 }]
         }
         )
@@ -179,6 +301,7 @@ test('skip acked', () => {
             pending: [{
                     id: "2",
                     source: hits.byId["2"],
+                    tags: [],
                 }],
             acked: [{
                     id: "1",

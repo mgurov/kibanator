@@ -67,18 +67,19 @@ export function captorToPredicate(captor) {
 }
 
 export function matchPredicates(logHit, captorPredicates) {
+    let result = []
     for (let p of captorPredicates) {
       try {
         let r = p.apply(logHit)
         if (r) {
-            return {
+            result.push({
                 predicate: p,
                 ...r,
-            }
+            })
         }
       } catch (e) {
         console.error('Exception matching', logHit, 'captor', p, 'e', e)
       }
     }
-    return null
+    return result
   }  

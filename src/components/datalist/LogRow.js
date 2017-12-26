@@ -28,7 +28,7 @@ class LogRow extends Component {
                 {onAck && <AckButton onAck={onAck}/>}
                 <ExpandableShevron expanded={this.state.expanded} toggle={this.toggle} />
                 <DateTime value={h.timestamp} /> 
-                {row.tag && <span> <Badge>{row.tag}</Badge></span>}
+                {row.tags.map(tag => <React.Fragment key={tag}> <Badge>{tag}</Badge></React.Fragment>)}
             </Col>
             <Col sm={9} md={9} lg={9}>{row.message || h.message}</Col>
             <ExpandableDetails expanded={this.state.expanded} data={h} onAck={onAck}/>

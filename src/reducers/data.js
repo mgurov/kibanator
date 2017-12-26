@@ -125,26 +125,35 @@ export const reprocessTimeline = ({hits, captorPredicates = [], acked = {}}) => 
 
   for (let id of hits.ids) {
     let logHit = hits.byId[id]
-    let h = {id, source: logHit,}
+    let h = {id, source: logHit}
 
     if (acked[id]) {
       add('acked', h)
       continue;
     }
 
-    let matched = matchPredicates(logHit, captorPredicates)
-    if (matched) {
-      if (matched.message) {
-        h.message = matched.message
+    let ackedByCapture = false;
+    let tags = []
+    let messageOverride = null
+    
+    for (let matched of matchPredicates(logHit, captorPredicates)) {
+      if (null === messageOverride && matched.message) {
+        messageOverride = matched.message
       }
-      add(constant.viewCapturePrefix + matched.predicate.key, h)
-      if (false === matched.predicate.acknowledge) {
-        add(constant.viewPending, {...h, tag: matched.predicate.key})
+      add(constant.viewCapturePrefix + matched.predicate.key, {...h, message: matched.message})
+      if (false !== matched.predicate.acknowledge) {
+        ackedByCapture = true
       }
-      continue
+      tags.push(matched.predicate.key)
     }
     
-    add(constant.viewPending, h)
+    if (!ackedByCapture) {
+      h.tags = tags
+      if (null !== messageOverride) {
+        h.message = messageOverride
+      }
+      add(constant.viewPending, h)
+    }
   }
   return result
 }
