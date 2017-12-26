@@ -203,7 +203,7 @@ class MakeCaptorPopup extends Component {
                                 Acknowledge
                             </Checkbox>}
 
-                            {showTransformingFields && <Checkbox checked={this.state.transform} disabled={!this.state.field} onChange={() => that.setState({transform: !that.state.transform})}>
+                            {showTransformingFields && <Checkbox checked={this.state.transform} onChange={() => that.setState({transform: !that.state.transform})}>
                                 Transform
                             </Checkbox>}
 
