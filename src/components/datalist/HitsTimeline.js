@@ -5,7 +5,6 @@ import { Grid, Row, Col, Button, ButtonGroup, Alert, Well } from 'react-bootstra
 import LogRow from './LogRow'
 import * as constant from '../../constant'
 import _ from 'lodash'
-import AndNMoreNoPagingExplained from '../datalist/AndNMoreNoPagingExplained'
 import './DataList.css'
 
 const mapStateToProps = state => {
@@ -34,58 +33,71 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-function HitsTimeline(props) {
 
-    if (!props.syncStarted) {
-        return <Well>Right, select where to start from ^^^</Well>
-    }
-
-    let theView = (props.timeline[props.view]||[])
-    let data = _.take(theView, constant.VIEW_SIZE)
-    let onAck = null
-    let action = null
-    if (props.view === constant.viewPending) {
-        onAck = props.onAck
-        action = {
-            title: <span><span className="glyphicon glyphicon-ok-sign"></span> ack all</span>,
-            action: props.ackAll,
-            disabled: data.length === 0,
+class HitsTimeline extends React.Component{ 
+    constructor(props) {
+        super(props)
+        this.state = { viewSize: constant.VIEW_SIZE, }
+        let that = this
+        this.showMore = (e) => {
+            that.setState({ viewSize: that.state.viewSize + constant.VIEW_SIZE})
         }
     }
 
-    if (props.view.indexOf(constant.viewCapturePrefix) === 0) {
-        action = {
-            title: 'remove',
-            action: props.removeCaptor(props.view.substring(constant.viewCapturePrefix.length)),
+    render() {
+        let props = this.props
+        if (!props.syncStarted) {
+            return <Well>Right, select where to start from ^^^</Well>
         }
-    }
 
-    return <span>
-
-    {props.error &&
-                <Alert id="dataFetchErrorAlert" bsStyle="warning">
-                    {props.error.name} {props.error.message}
-                </Alert>
+        let theView = (props.timeline[props.view]||[])
+        let data = _.take(theView, this.state.viewSize)
+        let remainderLength = theView.length - data.length
+        let onAck = null
+        let action = null
+        if (props.view === constant.viewPending) {
+            onAck = props.onAck
+            action = {
+                title: <span><span className="glyphicon glyphicon-ok-sign"></span> ack all</span>,
+                action: props.ackAll,
+                disabled: data.length === 0,
             }
+        }
+
+        if (props.view.indexOf(constant.viewCapturePrefix) === 0) {
+            action = {
+                title: 'remove',
+                action: props.removeCaptor(props.view.substring(constant.viewCapturePrefix.length)),
+            }
+        }
+
+        return <span>
+
+        {props.error &&
+                    <Alert id="dataFetchErrorAlert" bsStyle="warning">
+                        {props.error.name} {props.error.message}
+                    </Alert>
+                }
 
 
-        <ViewButtons selectedView={props.view} viewCounts={_.mapValues(props.timeline, v => v.length)} showViewClick={props.showViewClick}/>
+            <ViewButtons selectedView={props.view} viewCounts={_.mapValues(props.timeline, v => v.length)} showViewClick={props.showViewClick}/>
 
-        <Grid fluid={true}>
-        <Row className="top-buffer">
-            <Col xs={12} md={12} lg={12}><ActionButton action={action}/></Col>
-        </Row>
-        {data.map(o =>
-            <LogRow
-                key={o.id}
-                data={o}
-                onAck={onAck}
-            />)}
-        <Row className="top-buffer">
-            <Col xs={12} md={12} lg={12}><AndNMoreNoPagingExplained count={theView.length - data.length}/></Col>
-        </Row>
-    </Grid>
-    </span>
+            <Grid fluid={true}>
+            <Row className="top-buffer">
+                <Col xs={12} md={12} lg={12}><ActionButton action={action}/></Col>
+            </Row>
+            {data.map(o =>
+                <LogRow
+                    key={o.id}
+                    data={o}
+                    onAck={onAck}
+                />)}
+            {(remainderLength > 0) && <Row className="top-buffer">
+                <Col xs={12} md={12} lg={12}><Button onClick={this.showMore}>See next {constant.VIEW_SIZE} of {remainderLength} remaining</Button></Col>
+            </Row>}
+        </Grid>
+        </span>
+    }
 }
 
 function ViewButtons({selectedView, viewCounts, showViewClick}) {
