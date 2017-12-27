@@ -25,17 +25,10 @@ export function captorToPredicate(captor) {
 
     let valueExtractor = captor.field ? h => h.fields[captor.field] : h => h.message
 
-    let predicate
+    let apply;
     if (captor.type === 'regex') {
         let re = new RegExp(captor.regex)
-        predicate = (h) => re.test(valueExtractor(h))
-    } else {
-        predicate = (h) => (valueExtractor(h) + "").indexOf(captor.messageContains) > -1
-    }
-
-    let apply = (h) => {
-        if (captor.type === 'regex') {
-            let re = new RegExp(captor.regex)
+        apply = (h) => {
             let match = re.exec(valueExtractor(h))            
             if (match) {
                 let result = {matched: true}
@@ -46,8 +39,10 @@ export function captorToPredicate(captor) {
             } else {
                 return null
             }
-        } else {
-            if (predicate(h)) {
+        }
+    } else {
+        apply = (h) => {
+            if ((valueExtractor(h) + "").indexOf(captor.messageContains) > -1) {
                 let result = {matched: true}
                 if (captor.messageField) {
                     result.message = h.fields[captor.messageField]
@@ -56,12 +51,11 @@ export function captorToPredicate(captor) {
             } else {
                 return null
             }
-        }            
+        }
     }
-
+    
     return {
         ...captor,
-        predicate,
         apply,
     }
 }

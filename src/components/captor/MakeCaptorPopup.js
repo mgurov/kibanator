@@ -106,7 +106,7 @@ class MakeCaptorPopup extends Component {
                 return Object.assign({}, defaultProps, help)
             }
 
-            if (!predicate.predicate(this.props.hit)) {
+            if (!predicate.apply(this.props.hit)) {
                 return Object.assign({}, defaultProps, {help: "Would not match current message", validationState: "warning"})
             }
 

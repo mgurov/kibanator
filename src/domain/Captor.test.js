@@ -6,8 +6,8 @@ test("should ignore missing fields when contains", () => {
     let predicate = c.captorToPredicate(captor)
 
     expect(
-        predicate.predicate({ fields: {} })
-    ).toEqual(false)
+        predicate.apply({ fields: {} })
+    ).toBeNull()
 })
 
 test("should stringify numeric fields when contains", () => {
@@ -16,12 +16,12 @@ test("should stringify numeric fields when contains", () => {
     let predicate = c.captorToPredicate(captor)
 
     expect(
-        predicate.predicate({ fields: {'field':123} })
-    ).toEqual(true)
+        predicate.apply({ fields: {'field':123} })
+    ).not.toBeNull()
 
     expect(
-        predicate.predicate({ fields: {'field':321} })
-    ).toEqual(false)
+        predicate.apply({ fields: {'field':321} })
+    ).toBeNull()
 })
 
 test("should stringify numeric fields when regex", () => {
@@ -30,12 +30,12 @@ test("should stringify numeric fields when regex", () => {
     let predicate = c.captorToPredicate(captor)
 
     expect(
-        predicate.predicate({ fields: {'field':123} })
-    ).toEqual(true)
+        predicate.apply({ fields: {'field':123} })
+    ).not.toBeNull()
 
     expect(
-        predicate.predicate({ fields: {'field':321} })
-    ).toEqual(false)
+        predicate.apply({ fields: {'field':321} })
+    ).toBeNull()
 })
 
 test("should ignore missing fields when regex", () => {
@@ -44,8 +44,8 @@ test("should ignore missing fields when regex", () => {
     let predicate = c.captorToPredicate(captor)
 
     expect(
-        predicate.predicate({ fields: {} })
-    ).toEqual(false)
+        predicate.apply({ fields: {} })
+    ).toBeNull()
 })
 
 test("use first match group when transforming regex has one", () => {
