@@ -2,7 +2,7 @@ import _ from 'lodash'
 import LogHit from '../domain/LogHit'
 import update from 'immutability-helper';
 import * as constant from '../constant'
-import {matchPredicates} from '../domain/Captor'
+import {matchPredicates, captorKeyToView} from '../domain/Captor'
 
 export const emptyState = {
   hits: {
@@ -140,7 +140,7 @@ export const reprocessTimeline = ({hits, captorPredicates = [], acked = {}}) => 
       if (null === messageOverride && matched.message) {
         messageOverride = matched.message
       }
-      add(constant.viewCapturePrefix + matched.predicate.key, {...h, message: matched.message})
+      add(captorKeyToView(matched.predicate.key), {...h, message: matched.message})
       if (false !== matched.predicate.acknowledge) {
         ackedByCapture = true
       }

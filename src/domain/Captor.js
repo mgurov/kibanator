@@ -1,3 +1,5 @@
+import * as constant from '../constant'
+
 export function messageContainsCaptor(key, messageContains, field) {
     return {key, messageContains, type: 'contains', field}
 }
@@ -76,4 +78,16 @@ export function matchPredicates(logHit, captorPredicates) {
       }
     }
     return result
-  }  
+  } 
+
+export function viewToCaptorKey(view) {
+    if (view.indexOf(constant.viewCapturePrefix) === 0) {
+        return view.substring(constant.viewCapturePrefix.length)
+    } else {
+        return null
+    }
+}
+
+export function captorKeyToView(captorKey) {
+    return constant.viewCapturePrefix + captorKey
+}

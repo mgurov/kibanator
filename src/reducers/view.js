@@ -1,4 +1,5 @@
 import * as constant from '../constant'
+import {captorKeyToView} from '../domain/Captor'
 const initialState = { key: 'pending' }
 
 const view = (state = initialState, action) => {
@@ -6,7 +7,7 @@ const view = (state = initialState, action) => {
     case 'SHOW_VIEW':
       return Object.assign({}, state, action.payload)
     case 'REMOVE_CAPTOR':
-      if (state.key === constant.viewCapturePrefix + action.captorKey) {
+      if (state.key === captorKeyToView(action.captorKey)) {
         return initialState
       } else {
         return state

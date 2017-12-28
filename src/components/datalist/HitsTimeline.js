@@ -6,6 +6,8 @@ import LogRow from './LogRow'
 import * as constant from '../../constant'
 import _ from 'lodash'
 import './DataList.css'
+import EditCaptorsButton from '../captor/EditCaptorsButton'
+import {viewToCaptorKey} from '../../domain/Captor'
 
 const mapStateToProps = state => {
     return {
@@ -14,6 +16,7 @@ const mapStateToProps = state => {
         view: state.view.key,
         error: state.fetchStatus.error,
         syncStarted: !!state.synctimes.selected,
+        captorsCount: state.config.captors.length,
     }
 }
 
@@ -64,10 +67,11 @@ class HitsTimeline extends React.Component{
             }
         }
 
-        if (props.view.indexOf(constant.viewCapturePrefix) === 0) {
+        let captorKey = viewToCaptorKey(props.view)
+        if (captorKey) {
             action = {
                 title: 'remove captor',
-                action: props.removeCaptor(props.view.substring(constant.viewCapturePrefix.length)),
+                action: props.removeCaptor(captorKey),
             }
         }
 
@@ -80,7 +84,7 @@ class HitsTimeline extends React.Component{
                 }
 
 
-            <ViewButtons selectedView={props.view} viewCounts={_.mapValues(props.timeline, v => v.length)} showViewClick={props.showViewClick}/>
+            <ViewButtons selectedView={props.view} viewCounts={_.mapValues(props.timeline, v => v.length)} showViewClick={props.showViewClick} captorsCount={props.captorsCount}/>
 
             <Grid fluid={true}>
             <Row className="top-buffer">
@@ -100,7 +104,7 @@ class HitsTimeline extends React.Component{
     }
 }
 
-function ViewButtons({selectedView, viewCounts, showViewClick}) {
+function ViewButtons({selectedView, viewCounts, showViewClick, captorsCount}) {
 
     function DataViewButton({view, name}) {
      return <Button
@@ -119,9 +123,9 @@ function ViewButtons({selectedView, viewCounts, showViewClick}) {
                 _.chain(viewCounts)
                     .keys()
                     .map( k => {
-                            if (k.indexOf(constant.viewCapturePrefix) === 0) {
-                                let captureName = k.substring(constant.viewCapturePrefix.length)
-                                return <DataViewButton key={k} view={k} name={captureName}/>
+                            let captorKey = viewToCaptorKey(k)
+                            if (captorKey) {
+                                return <DataViewButton key={k} view={k} name={captorKey}/>
                             } else {
                                 return null
                             }
@@ -129,6 +133,10 @@ function ViewButtons({selectedView, viewCounts, showViewClick}) {
                     )
                     .compact()
                     .value()
+            }
+            <span className="btn"></span>
+            {
+                (captorsCount > 0) && <EditCaptorsButton/>
             }
         </ButtonGroup>
 
