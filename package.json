@@ -21,7 +21,7 @@
   },
   "scripts": {
     "start": "PORT=3001 REACT_APP_INTERVAL=1000 REACT_APP_VIEW_SIZE=10 react-scripts start",
-    "build": "export REACT_APP_VERSION=$(git rev-parse --short HEAD); react-scripts build && echo $REACT_APP_VERSION > ./build/REACT_APP_VERSION ",
+    "build": "export REACT_APP_VERSION=$(git rev-parse --short HEAD); react-scripts build && echo $REACT_APP_VERSION > ./build/REACT_APP_VERSION && echo ok  ",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
