@@ -4,8 +4,6 @@ import _ from 'lodash'
 import * as FormHelper from '../generic/FormHelper'
 import { messageContainsCaptor, messageMatchesRegexCaptor, captorToPredicate } from '../../domain/Captor'
 
-const showTransformingFields = !!process.env.REACT_APP_TRANSFORM_FEATURE
-
 class MakeCaptorPopup extends Component {
 
     constructor(props) {
@@ -199,13 +197,13 @@ class MakeCaptorPopup extends Component {
                             }
                             <HelpBlock>{this.state.exampleMessage}</HelpBlock>
 
-                            {showTransformingFields && <Checkbox checked={this.state.acknowledge} onChange={() => that.setState({acknowledge: !that.state.acknowledge})}>
-                                Acknowledge
-                            </Checkbox>}
+                            <Checkbox checked={this.state.acknowledge} onChange={() => that.setState({acknowledge: !that.state.acknowledge})}>
+                                Acknowledge <small>untick to leave message tagged in the pending list</small>
+                            </Checkbox>
 
-                            {showTransformingFields && <Checkbox checked={this.state.transform} onChange={() => that.setState({transform: !that.state.transform})}>
-                                Transform
-                            </Checkbox>}
+                            <Checkbox checked={this.state.transform} onChange={() => that.setState({transform: !that.state.transform})}>
+                                Transform <small>tick to use matched field as the title. First captured group will be used for regex with captures.</small>
+                            </Checkbox>
 
                         </form>
                     </Modal.Body>

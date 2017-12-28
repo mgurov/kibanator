@@ -66,7 +66,7 @@ class HitsTimeline extends React.Component{
 
         if (props.view.indexOf(constant.viewCapturePrefix) === 0) {
             action = {
-                title: 'remove',
+                title: 'remove captor',
                 action: props.removeCaptor(props.view.substring(constant.viewCapturePrefix.length)),
             }
         }
