@@ -1,4 +1,3 @@
-import * as constant from '../constant'
 import {captorKeyToView} from '../domain/Captor'
 const initialState = { key: 'pending' }
 
