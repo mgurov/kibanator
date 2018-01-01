@@ -16,7 +16,7 @@ const mapStateToProps = state => {
         view: state.view.key,
         error: state.fetchStatus.error,
         syncStarted: !!state.synctimes.selected,
-        captorsCount: state.config.captors.length,
+        captorsCount: _.size(state.config.captors),
     }
 }
 
