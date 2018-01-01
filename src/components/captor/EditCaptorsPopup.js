@@ -58,7 +58,7 @@ class EditCaptorsPopup extends Component {
                     </Modal.Header>
 
                     <Modal.Body>
-                        <Grid>
+                        <Grid fluid={true}>
                         {props.captors.map(
                             captor => 
                             <Row key={captor.key}>
