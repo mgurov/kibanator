@@ -51,6 +51,7 @@ function doHttpFetch({fromTimestamp, toTimestamp, config}) {
     return fetch(API_PATH + '/' + index + '/_search?size=' + MAX_FETCH_SIZE + '&ignore_unavailable=' + ignoreMissingIndex, {
         method: "POST",
         body: JSON.stringify(body),
+        credentials: 'same-origin',
     })
 }
 
