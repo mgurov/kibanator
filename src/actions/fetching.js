@@ -55,7 +55,7 @@ function doHttpFetch({fromTimestamp, toTimestamp, config}) {
     })
 }
 
-export function fetchData({fromTimestamp=new Date(), toTimestamp=new Date(), config, onOkResponse=()=>{}}) {
+export function fetchData({fromTimestamp=new Date(), toTimestamp=new Date(), config, onResponse=()=>{}}) {
     return function (dispatch) {
         dispatch(fetchingData())
 
@@ -66,21 +66,31 @@ export function fetchData({fromTimestamp=new Date(), toTimestamp=new Date(), con
                 if (response.ok) {
                     return response.json();
                 }
+                if (response.status === 401) {
+                    let error = {
+                        name: `Panic: response not authorized`,
+                        message: `To prevent your password lockout the polling has been stopped. Please check your credentials and restart. Response.status: ${response.status} message: ${response.statusText}`,
+                    }
+                    dispatch(failedFetchingData(error))        
+                    onResponse({gotData: false, stopFetchTimerNow: true});
+                    throw error
+                }
                 throw new Error(response.statusText);
             }
             )
         .then(
             responseJson => {
-                let maxFetchReached = undefined
-                if (responseJson.hits.total > MAX_FETCH_SIZE) {
-                    maxFetchReached = {
-                        fetchTotal: responseJson.hits.total,
-                        fetchLimit: MAX_FETCH_SIZE,
+                let maxFetchReached = responseJson.hits.total > MAX_FETCH_SIZE
+                if (maxFetchReached) {
+                    let error = {
+                        name: `Max fetch limit of ${MAX_FETCH_SIZE} has been reached. ${responseJson.hits.total - MAX_FETCH_SIZE} records skipped. The polling of the new lines has been stopped.`,
+                        message: 'Reset from a later point in time to continue. Please note that the marks will be lost upon this operation.',
                     }
+                    dispatch(failedFetchingData(error))        
                 }
-                dispatch(receiveData(responseJson, config, maxFetchReached))
+                dispatch(receiveData(responseJson, config))
                 dispatch(receiveData2(responseJson.hits, config))
-                onOkResponse(maxFetchReached);                
+                onResponse({gotData: true, stopFetchTimerNow: maxFetchReached});
             },
             error => dispatch(failedFetchingData(error))
         )
@@ -91,26 +101,28 @@ export function startFetching(fromTimestamp, config) {
     return function (dispatch) {
 
         let runningFrom = fromTimestamp
-        let maxFetchReached = false
+        //TODO: propagate
+        let stopTheTimer = false
 
         let doFetch = () => {
 
-            if (maxFetchReached) {
-                return; //hack to stop getting data if too many hits encountered
-                //the reason for this is that with the introduction of the running from moment it is possible 
-                //to miss a spike
+            if (stopTheTimer) {
+                return; //hack to stop getting data if too many hits or unauth panic encountered 
             }
 
             let toTimestamp = new Date()
-            let onOkResponse = (maxFetchReachedThisTime) => {
-                maxFetchReached = !!maxFetchReachedThisTime
-                let newRunningFrom = new Date(toTimestamp)
-                newRunningFrom.setHours(newRunningFrom.getHours() - 1)
-                if (newRunningFrom > runningFrom) {
-                    runningFrom = newRunningFrom
+            let onResponse = ({gotData, stopFetchTimerNow}) => {
+                stopTheTimer = !!stopFetchTimerNow
+                if (gotData) {
+                    let newRunningFrom = new Date(toTimestamp)
+                    newRunningFrom.setHours(newRunningFrom.getHours() - 1)
+                    if (newRunningFrom > runningFrom) {
+                        runningFrom = newRunningFrom
+                    }
                 }
             }
-            dispatch(fetchData({fromTimestamp:runningFrom, toTimestamp, config, onOkResponse}))
+
+            dispatch(fetchData({fromTimestamp:runningFrom, toTimestamp, config, onResponse}))
         }
 
         doFetch()
