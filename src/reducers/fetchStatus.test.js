@@ -1,4 +1,5 @@
 import fetchStatusReducer, { emptyState } from './fetchStatus'
+import {receiveData} from '../actions/fetching'
 
 test('set isFetching', () => {
     expect(fetchStatusReducer(emptyState, { type: 'FETCHING_DATA' }))
@@ -17,29 +18,10 @@ test('Error set upon error', () => {
 
 test('should reset isFetching and last sync upon data received', () => {
     let givenState = { ...emptyState, isFetching: true }
-    let whenAction = { type: 'RECEIVED_HITS', timestamp: new Date(), }
+    let whenAction = receiveData({}, {}, new Date())
     expect(fetchStatusReducer(givenState, whenAction))
         .toEqual({...emptyState,
             isFetching: false,
             lastSync: expect.any(Date),
-        })
-})
-
-test('max fetch reached', () => {
-
-    let givenState = { ...emptyState, isFetching: true }
-    let whenAction = { 
-        type: 'RECEIVED_HITS', 
-        timestamp: new Date(), 
-        maxFetchReached : {
-            fetchTotal: 10,
-            fetchLimit: 5,
-        },
-    }
-    expect(fetchStatusReducer(givenState, whenAction))
-        .toEqual({...emptyState,
-            isFetching: false,
-            lastSync: expect.any(Date),
-            error: expect.objectContaining({name: expect.stringMatching(/fetch limit/)}),
         })
 })

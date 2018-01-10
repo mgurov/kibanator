@@ -7,22 +7,13 @@ export const fetchingData = () => {
     }
 }
 
-export const receiveData = (data, config, maxFetchReached) => {
+export const receiveData = (data, config, timestamp) => {
     return {
-        type: 'RECEIVED_HITS',
-        data: data.hits,
-        config: config,
-        timestamp: new Date(),
-        maxFetchReached,
-    }
-}
-
-export const receiveData2 = (data, config/* , maxFetchReached */) => {
-    return {
-        type: 'TMP_INCOMING_HITS',
+        type: 'INCOMING_HITS',
         payload: {
             hits: data.hits,
             config,
+            timestamp,
         },
     }
 }
@@ -80,6 +71,7 @@ export function fetchData({fromTimestamp=new Date(), toTimestamp=new Date(), con
             )
         .then(
             responseJson => {
+                dispatch(receiveData(responseJson.hits, config, new Date()))
                 let maxFetchReached = responseJson.hits.total > MAX_FETCH_SIZE
                 if (maxFetchReached) {
                     let error = {
@@ -88,8 +80,6 @@ export function fetchData({fromTimestamp=new Date(), toTimestamp=new Date(), con
                     }
                     dispatch(failedFetchingData(error))        
                 }
-                dispatch(receiveData(responseJson, config))
-                dispatch(receiveData2(responseJson.hits, config))
                 onResponse({gotData: true, stopFetchTimerNow: maxFetchReached});
             },
             error => dispatch(failedFetchingData(error))

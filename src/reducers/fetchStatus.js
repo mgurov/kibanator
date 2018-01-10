@@ -14,12 +14,12 @@ const fetchStatus = (state = emptyState, action) => {
                 isFetching: false,
                 error: action.error,
             };
-        case 'RECEIVED_HITS':{
+        case 'INCOMING_HITS':{
             let newStatus = {
                 ...state,
                 isFetching: false,
                 error: null,
-                lastSync: action.timestamp,
+                lastSync: action.payload.timestamp,
             }
             if (action.maxFetchReached) {
                 newStatus.error = {

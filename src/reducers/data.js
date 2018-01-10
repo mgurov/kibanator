@@ -31,7 +31,7 @@ const data = (state = emptyState, action) => {
           timeline: {$set: reprocessTimeline(state)},
         })
     }
-    case 'TMP_INCOMING_HITS':
+    case 'INCOMING_HITS':
       {
         let newHitsRaw = takeNewHits2(action.payload.hits, state.hits.byId)
         if (_.isEmpty(newHitsRaw)) {

@@ -45,7 +45,7 @@ const onNewHitsArrivedMiddleware = store => {
             return r
         }
 
-        if (action.type !== 'TMP_INCOMING_HITS') {
+        if (action.type !== 'INCOMING_HITS') {
             return r
         }
 

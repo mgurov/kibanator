@@ -13,7 +13,7 @@ const captorForMessage = (key, messageSub) => captorToPredicate(messageContainsC
 test('should detect new hits', () => {
     const hits = [{ _id: "1", _source: { message: 'm', timestamp: "2017-08-30T09:12:04.216Z" } }]
     expect(dataReducer(emptyState, {
-        type: 'TMP_INCOMING_HITS',
+        type: 'INCOMING_HITS',
         payload: {
             hits,
             config: testConfig,
@@ -44,7 +44,7 @@ test('should skip known hits', () => {
         }
     }
     expect(dataReducer(initialState, {
-        type: 'TMP_INCOMING_HITS',
+        type: 'INCOMING_HITS',
         payload: {
             hits,
             config: testConfig,
@@ -70,7 +70,7 @@ test('should append new hits to the existing ones', () => {
         }
     }
     expect(dataReducer(initialState, {
-        type: 'TMP_INCOMING_HITS',
+        type: 'INCOMING_HITS',
         payload: {
             hits,
             config: testConfig,
@@ -110,7 +110,7 @@ test('should keep the time-based order when adding', () => {
         }
     }
     expect(dataReducer(initialState, {
-        type: 'TMP_INCOMING_HITS',
+        type: 'INCOMING_HITS',
         payload: {
             hits: [hits["2"]],
             config: testConfig,
