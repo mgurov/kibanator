@@ -17,7 +17,7 @@ export const emptyState = {
 
 const data = (state = emptyState, action) => {
   switch (action.type) {
-    case 'FETCH_STOP_TIMER': //reset all
+    case 'RESET_DATA': //reset all
       return { ...emptyState,
         captorPredicates: state.captorPredicates
       }

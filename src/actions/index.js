@@ -51,6 +51,12 @@ export const ackAll = id => {
   }
 }
 
+export const resetData = id => {
+  return {
+    type: 'RESET_DATA'
+  }
+}
+
 export const setConfig = newState => {
   return {
     type: 'SET_CONFIG',

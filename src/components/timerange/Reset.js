@@ -2,7 +2,7 @@ import React from 'react'
 import {Button} from 'react-bootstrap'
 import { connect } from 'react-redux'
 
-import { stopFetchTimer } from '../../actions'
+import { stopFetchTimer, resetData } from '../../actions'
 
 const mapStateToProps = state => {
     return {
@@ -14,6 +14,7 @@ const mapDispatchToProps = dispatch => {
     return {
         reset: (config) => {
             dispatch(stopFetchTimer())
+            dispatch(resetData())
         },
     }
 }

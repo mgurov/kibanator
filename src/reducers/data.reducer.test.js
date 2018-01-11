@@ -22,7 +22,7 @@ describe('data reducer', () => {
         expect(dataReducer({
             data: { hits: [1, 2, 3] },
             captorPredicates: ['a', 'b', 'c']
-        }, { type: 'FETCH_STOP_TIMER' }))
+        }, { type: 'RESET_DATA' }))
             .toEqual({
                 ...emptyState,
                 captorPredicates: ['a', 'b', 'c'],

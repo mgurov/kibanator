@@ -62,8 +62,8 @@ export function fetchData({fromTimestamp=new Date(), toTimestamp=new Date(), con
                         name: `Panic: response not authorized`,
                         message: `To prevent your password lockout the polling has been stopped. Please check your credentials and restart. Response.status: ${response.status} message: ${response.statusText}`,
                     }
-                    dispatch(failedFetchingData(error))        
-                    onResponse({gotData: false, stopFetchTimerNow: true});
+                    dispatch(failedFetchingData(error))
+                    dispatch(stopFetchTimer())
                     throw error
                 }
                 throw new Error(response.statusText);
@@ -79,8 +79,9 @@ export function fetchData({fromTimestamp=new Date(), toTimestamp=new Date(), con
                         message: 'Reset from a later point in time to continue. Please note that the marks will be lost upon this operation.',
                     }
                     dispatch(failedFetchingData(error))        
+                    dispatch(stopFetchTimer())
                 }
-                onResponse({gotData: true, stopFetchTimerNow: maxFetchReached});
+                onResponse();
             },
             error => dispatch(failedFetchingData(error))
         )
@@ -91,24 +92,13 @@ export function startFetching(fromTimestamp, config) {
     return function (dispatch) {
 
         let runningFrom = fromTimestamp
-        //TODO: propagate
-        let stopTheTimer = false
-
         let doFetch = () => {
-
-            if (stopTheTimer) {
-                return; //hack to stop getting data if too many hits or unauth panic encountered 
-            }
-
             let toTimestamp = new Date()
-            let onResponse = ({gotData, stopFetchTimerNow}) => {
-                stopTheTimer = !!stopFetchTimerNow
-                if (gotData) {
-                    let newRunningFrom = new Date(toTimestamp)
-                    newRunningFrom.setHours(newRunningFrom.getHours() - 1)
-                    if (newRunningFrom > runningFrom) {
-                        runningFrom = newRunningFrom
-                    }
+            let onResponse = () => {
+                let newRunningFrom = new Date(toTimestamp)
+                newRunningFrom.setHours(newRunningFrom.getHours() - 1)
+                if (newRunningFrom > runningFrom) {
+                    runningFrom = newRunningFrom
                 }
             }
 

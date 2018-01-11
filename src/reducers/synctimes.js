@@ -42,9 +42,11 @@ const synctimes = (state = startingState, action) => {
             })
         case 'FETCH_STARTED_TIMER':
             return Object.assign({}, state, {intervaldId: action.intervaldId})
+        case 'RESET_DATA' : 
+            return startingState
         case 'FETCH_STOP_TIMER' : 
             window.clearInterval(state.intervaldId)
-            return startingState
+            return Object.assign({}, state, {intervaldId: null})
         default:
             return state
     }

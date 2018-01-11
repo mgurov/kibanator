@@ -11,7 +11,7 @@ const view = (state = initialState, action) => {
       } else {
         return state
       }
-    case 'FETCH_STOP_TIMER': //reset all
+    case 'RESET_DATA': //reset all
       return initialState
     default:
       return state
