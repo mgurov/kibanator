@@ -51,20 +51,6 @@ export const ackAll = id => {
   }
 }
 
-export const markHit = id => {
-  return {
-    type: 'MARK_HIT',
-    payload: {id}
-  }
-}
-
-export const unmarkHit = id => {
-  return {
-    type: 'UNMARK_HIT',
-    payload: {id}
-  }
-}
-
 export const setConfig = newState => {
   return {
     type: 'SET_CONFIG',
