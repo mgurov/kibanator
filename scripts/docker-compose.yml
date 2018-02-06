@@ -1,15 +1,6 @@
 version: '3'
 
 services:
-
-  kibana46:
-    image: kibana:4.6.4
-    ports:
-      - "5601:5601"
-    networks:
-      - elk46
-    depends_on:
-      - elasticsearch2_4_0
       
   elasticsearch2_4_0:
     image: elasticsearch:2.4.0
@@ -20,14 +11,55 @@ services:
         aliases:
           - elasticsearch
 
-  streamer:
+  streamer4:
     image: mgurov/kibanato-streamator
     networks:
       - elk46
     depends_on:
       - elasticsearch2_4_0
-    command: --elasticURL=http://elasticsearch:9200    
+    command: --elasticURL=http://elasticsearch:9200
+
+  kibana46:
+    image: kibana:4.6.4
+    ports:
+      - "5601:5601"
+    networks:
+      - elk46
+    depends_on:
+      - elasticsearch2_4_0
+      - streamer4
+
+  elasticsearch6:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.1.0
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - discovery.type=single-node
+    networks:
+      elk6:
+        aliases:
+          - elasticsearch
+
+  streamer6:
+    image: mgurov/kibanato-streamator
+    networks:
+      - elk6
+    depends_on:
+      - elasticsearch6
+    command: --elasticURL=http://elasticsearch:9200
+
+  kibana6:
+    image: docker.elastic.co/kibana/kibana-oss:6.1.0
+    ports:
+      - "5601:5601"
+    networks:
+      - elk6
+    depends_on:
+      - elasticsearch6
+      - streamer6
 
 networks:
 
   elk46:
+  elk6:
