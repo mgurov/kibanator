@@ -2,36 +2,12 @@ var makeSearch = function ({serviceName, from, to=new Date(), config}) {
     serviceName = serviceName || ''
     return {
         "query": {
-            "filtered": {
-                // "query": {
-                //     "query_string": {
-                //         "analyze_wildcard": true,
-                //         "query": "*"
-                //     }
-                // },
+            "constant_score": {
                 "filter": {
                     "bool": {
                         "must": [
-                            {
-                                "query": {
-                                    "match": {
-                                        [config.serviceField]: {
-                                            "query": serviceName,
-                                            "type": "phrase"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "query": {
-                                    "match": {
-                                        [config.levelField]: {
-                                            "query": config.levelValue,
-                                            "type": "phrase"
-                                        }
-                                    }
-                                }
-                            },
+                            {term: {[config.serviceField]: serviceName.toLowerCase()}},
+                            {term: {[config.levelField]: config.levelValue.toLowerCase()}},
                             {
                                 "range": {
                                 [config.timeField]: {
@@ -46,23 +22,7 @@ var makeSearch = function ({serviceName, from, to=new Date(), config}) {
                     }
                 }
             }
-        },
-        //"size": 500,
-        // "sort": [
-        //   {
-        //     [config.timeField]: {
-        //       "order": "asc",
-        //       "unmapped_type": "boolean"
-        //     }
-        //   }
-        // ],
-        // "fields": [
-        //   "*",
-        //   "_source"
-        // ],
-        // "fielddata_fields": [
-        //     config.timeField
-        // ]
+        }
     }
 }
 
