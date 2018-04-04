@@ -53,6 +53,33 @@ describe('data reducer', () => {
             })
     })
 
+    it('shall ack by tag', () => {
+
+        let initialState = {
+            ...emptyState,
+            timeline: {
+                pending: [
+                        {id: "1", tags: ["a"]},
+                        {id: "2", tags: ["b", "c"]},
+                        {id: "3", tags: ["d", "a"]},
+                    ],
+                'captures.a': [{id: "1"}, {id: "3"}],
+    
+            },
+            acked: {
+                "0": true,
+            }
+        }
+        expect(dataReducer(initialState, {
+            type: 'ACK_TAG',
+            payload: {tag: 'a'}
+        }))
+            .toEqual({
+                ...initialState,
+                acked: {'0': true, '1': true, '3': true,}
+            })
+    })
+
     it('shall ack till id', () => {
         let initialState = {
             ...emptyState,
@@ -78,12 +105,6 @@ describe('data reducer', () => {
     })
 
     it('shall ack id', () => {
-        const hits = [
-            { _id: "1", _source: { timestamp: 1 } },
-            { _id: "2", _source: { timestamp: 2 } },
-            { _id: "3", _source: { timestamp: 3 } },
-        ]
-
         let initialState = {
             ...emptyState,
             acked: {"1": true}

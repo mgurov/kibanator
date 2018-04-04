@@ -26,6 +26,7 @@ const mapDispatchToProps = (dispatch) => {
             let a = ackAllTillThis ? actions.ackTillId : actions.ackId;
             dispatch(a(id))
         },
+        onAckTag: (tag) => dispatch(actions.ackTag(tag)) ,
         removeCaptor: (captorKey) => () => {
             dispatch(actions.removeCaptor(captorKey))
         },
@@ -57,9 +58,11 @@ class HitsTimeline extends React.Component{
         let data = _.take(theView, this.state.viewSize)
         let remainderLength = theView.length - data.length
         let onAck = null
+        let onAckTag = null
         let action = null
         if (props.view === constant.viewPending) {
             onAck = props.onAck
+            onAckTag = props.onAckTag
             action = {
                 title: <span><span className="glyphicon glyphicon-ok-sign"></span> ack all</span>,
                 action: props.ackAll,
@@ -95,6 +98,7 @@ class HitsTimeline extends React.Component{
                     key={o.id}
                     data={o}
                     onAck={onAck}
+                    onAckTag={onAckTag}
                 />)}
             {(remainderLength > 0) && <Row className="top-buffer">
                 <Col xs={12} md={12} lg={12}><Button onClick={this.showMore}>See next {constant.VIEW_SIZE} of {remainderLength} remaining</Button></Col>

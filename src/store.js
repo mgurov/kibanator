@@ -35,6 +35,7 @@ const onNewHitsArrivedMiddleware = store => {
         if (
             action.type === 'ACK_ID'
             || action.type === 'ACK_TILL_ID'
+            || action.type === 'ACK_TAG'
             || action.type === 'ACK_ALL'
             || action.type === 'ADD_CAPTOR'
             || action.type === 'REMOVE_CAPTOR'

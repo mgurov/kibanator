@@ -28,7 +28,7 @@ class LogRow extends Component {
                 {onAck && <AckButton onAck={onAck}/>}
                 <ExpandableShevron expanded={this.state.expanded} toggle={this.toggle} />
                 <DateTime value={h.timestamp} /> 
-                {(row.tags||[]).map(tag => <React.Fragment key={tag}> <Badge>{tag}</Badge></React.Fragment>)}
+                {(row.tags||[]).map(tag => <React.Fragment key={tag}> <Badge>{tag} <AckTagButton onClick={() => this.props.onAckTag(tag)} /> </Badge></React.Fragment>)}
             </Col>
             <Col sm={9} md={9} lg={9}>{row.message || h.message}</Col>
             <ExpandableDetails expanded={this.state.expanded} data={h} onAck={onAck}/>
@@ -42,6 +42,14 @@ function AckButton(props) {
         style={{cursor: 'pointer'}} 
         onClick={(e) => props.onAck(e.metaKey)} 
         title="Acknlowledge. Use cmd to ack all up to this."></span>
+}
+
+function AckTagButton(props) {
+    return <span 
+        className="glyphicon glyphicon-ok-sign" 
+        style={{cursor: 'pointer'}} 
+        onClick={(e) => props.onClick()} 
+        title="Acknlowledge the captor."></span>
 }
 
 function ExpandableShevron(props) {

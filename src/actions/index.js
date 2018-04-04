@@ -51,6 +51,13 @@ export const ackAll = id => {
   }
 }
 
+export const ackTag = tag => {
+  return {
+    type: 'ACK_TAG',
+    payload: {tag}
+  }
+}
+
 export const resetData = id => {
   return {
     type: 'RESET_DATA'
