@@ -2,16 +2,24 @@ import { connect } from 'react-redux'
 import DocumentTitle from './DocumentTitle'
 
 const mapStateToProps = state => {
-    let title = state.config.serviceName
-    let pending = state.data.timeline.pending || []
-    let pendingCount = pending.length
+    let titleArray = []
+
+    let pendingCount = (state.data.timeline.pending || []).length
     if (pendingCount > 0) {
-        title += ' - ' + pendingCount
+        titleArray.push('' + pendingCount)
     }
-    const error = state.fetchStatus.error
+
+    if (state.config.serviceName) {
+        titleArray.push(state.config.serviceName)
+    }
+
+    let error = state.fetchStatus.error
     if (error) {
-        title += ' - error fetching ' + error
+        titleArray.push(' - error fetching ' + error)
     }
+
+    let title = titleArray.join(" - ")
+
     return {
         title,
     }

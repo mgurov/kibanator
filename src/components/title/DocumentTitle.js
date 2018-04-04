@@ -1,5 +1,9 @@
 function DocumentTitle({title}) {
-    document.title = 'Kibanator' + (title? ' - ' + title : '')
+    if (title) {
+        document.title = title
+    } else {
+        document.title = 'Kibanator'
+    }
     return null
 }
 
