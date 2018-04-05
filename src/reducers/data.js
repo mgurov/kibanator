@@ -94,6 +94,17 @@ const data = (state = emptyState, action) => {
           acked: newAcked,
         }
       }
+    case 'ACK_TAG':
+      {
+        let newAcked = {...state.acked}
+        for (let h of state.timeline[captorKeyToView(action.payload.tag)]) {
+          newAcked[h.id] = true
+        }
+        return {
+          ...state,
+          acked: newAcked,
+        }
+      }
     default:
       return state
   }
