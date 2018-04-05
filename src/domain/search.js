@@ -14,10 +14,10 @@ var makeSearch = function ({serviceName, from, to=new Date(), config}) {
     ]
 
     if (config.serviceField && serviceName) {
-        filters.push({term: {[config.serviceField]: serviceName.toLowerCase()}})
+        filters.push({terms: {[config.serviceField]: serviceName.toLowerCase().split(',')}})
     }
     if (config.levelField && config.levelValue) {
-        filters.push({term: {[config.levelField]: config.levelValue.toLowerCase()}})
+        filters.push({terms: {[config.levelField]: config.levelValue.toLowerCase().split(',')}})
     }
 
     serviceName = serviceName || ''

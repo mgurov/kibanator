@@ -82,7 +82,7 @@ class EditConfigPopup extends Component {
                             <FieldGroup
                                 {...fieldProps("serviceName") }
                                 label="Service Name"
-                                help="e.g. wps or webfrontende"
+                                help="e.g. wps or webfrontend. Comma separates."
                                 autoFocus
                             />
 
@@ -95,7 +95,7 @@ class EditConfigPopup extends Component {
                             <FieldGroup
                                 {...fieldProps("levelValue") }
                                 label="Level"
-                                help="e.g. ERROR, WARN, INFO or DEBUG"
+                                help="e.g. ERROR, WARN, INFO or DEBUG. Comma separates."
                             />
 
                             <FieldGroup
