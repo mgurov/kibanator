@@ -13,6 +13,7 @@ export const emptyState = {
   timeline: {},
   acked: {}, // id -> true
   captorPredicates: [], //hackishly copied here upon config update. see captorPredicatesUpdater
+  draftFilter: null, // editing filter
 }
 
 const data = (state = emptyState, action) => {
@@ -105,6 +106,34 @@ const data = (state = emptyState, action) => {
           acked: newAcked,
         }
       }
+    case 'ACK_PREDICATE':
+      {
+        let once = true
+        let predicate = (h) => {
+          let logHit = state.hits.byId[h.id]
+          let result = matchPredicates(logHit, [action.payload.predicate])
+          if (once) {
+            once = false
+          }
+          return result.length === 1
+        }
+        let newAcked = {...state.acked}
+        for (let h of state.timeline.pending) {
+          if (predicate(h)) {
+            newAcked[h.id] = true
+          }
+        }
+        return {
+          ...state,
+          acked: newAcked,
+        }
+      }
+    case 'APPLY_DRAFT_FILTER': {
+      return {
+        ...state,
+        draftFilter: action.payload.predicate,
+      }
+    }
     default:
       return state
   }
@@ -123,7 +152,7 @@ function takeNewHits2(incomingHits, previouslyKnownHits) {
   return newHits
 }
 
-export const reprocessTimeline = ({hits, captorPredicates = [], acked = {}}) => {
+export const reprocessTimeline = ({hits, captorPredicates = [], acked = {}, draftFilter = null}) => {
   let result = {}
 
   function add(key, hit) {
@@ -139,7 +168,7 @@ export const reprocessTimeline = ({hits, captorPredicates = [], acked = {}}) => 
     let h = {id, source: logHit}
 
     if (acked[id]) {
-      add('acked', h)
+      add(constant.viewAcked, h)
       continue;
     }
 
@@ -164,6 +193,9 @@ export const reprocessTimeline = ({hits, captorPredicates = [], acked = {}}) => 
         h.message = messageOverride
       }
       add(constant.viewPending, h)
+      if (draftFilter && 1 === matchPredicates(logHit, [draftFilter]).length) {
+        add(constant.viewFilterLikeThis, h)
+      }
     }
   }
   return result

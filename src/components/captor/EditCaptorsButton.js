@@ -17,7 +17,7 @@ class EditCaptorsButton extends React.Component {
                 close={this.togglePopupVisibility}
             ></EditCaptorsPopup>
         } else {
-            return <button className="btn btn-default btn-xs" onClick={this.togglePopupVisibility}>edit captors</button>
+            return <button className="btn btn-default btn-xs" onClick={this.togglePopupVisibility}>edit filters</button>
         }
     }
 }

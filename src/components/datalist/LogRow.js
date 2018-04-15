@@ -3,8 +3,8 @@ import { Col, Row, Badge } from 'react-bootstrap'
 import _ from 'lodash'
 import DateTime from '../generic/DateTime'
 import '../datalist/DataList.css'
-import MakeCaptorButton from '../captor/MakeCaptorButton'
 import MultilineField from '../datalist/MultilineField'
+import FilterLikeThisButton from './FilterLikeThisButton'
 
 class LogRow extends Component {
     constructor(props) {
@@ -83,7 +83,7 @@ class ExpandableDetails extends Component {
                 <div>
                     {this.props.onAck && 
                         <span>
-                            <MakeCaptorButton hit={h} />&nbsp;
+                            <FilterLikeThisButton value={h}/>&nbsp;
                             <button className="btn btn-default btn-xs" onClick={() => this.props.onAck(false)}><span className="glyphicon glyphicon-ok-sign"></span> ack this</button>&nbsp;
                             <button className="btn btn-default btn-xs" onClick={() => this.props.onAck(true)}><span className="glyphicon glyphicon-import"></span> ack down to this <span className="glyphicon glyphicon-ok-sign"></span></button>&nbsp;
                         </span>

@@ -1,19 +1,21 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import * as actions from '../../actions'
-import { Grid, Row, Col, Button, ButtonGroup, Alert, Well } from 'react-bootstrap'
-import LogRow from './LogRow'
+import { Button, ButtonGroup, Alert, Well } from 'react-bootstrap'
 import * as constant from '../../constant'
 import _ from 'lodash'
 import './DataList.css'
 import EditCaptorsButton from '../captor/EditCaptorsButton'
 import {viewToCaptorKey} from '../../domain/Captor'
+import FilterLikeThisView from './FilterLikeThisView'
+import DataList from './DataList'
 
 const mapStateToProps = state => {
     return {
         timeline: state.data.timeline,
         hitIds: state.data.hits.ids,
         view: state.view.key,
+        viewProps: state.view, //TODO: merge with the above
         error: state.fetchStatus.error,
         syncStarted: !!state.synctimes.selected,
         captorsCount: _.size(state.config.captors),
@@ -39,15 +41,6 @@ const mapDispatchToProps = (dispatch) => {
 
 
 class HitsTimeline extends React.Component{ 
-    constructor(props) {
-        super(props)
-        this.state = { viewSize: constant.VIEW_SIZE, }
-        let that = this
-        this.showMore = (e) => {
-            that.setState({ viewSize: that.state.viewSize + constant.VIEW_SIZE})
-        }
-    }
-
     render() {
         let props = this.props
         if (!props.syncStarted) {
@@ -55,8 +48,6 @@ class HitsTimeline extends React.Component{
         }
 
         let theView = (props.timeline[props.view]||[])
-        let data = _.take(theView, this.state.viewSize)
-        let remainderLength = theView.length - data.length
         let onAck = null
         let onAckTag = null
         let action = null
@@ -66,7 +57,7 @@ class HitsTimeline extends React.Component{
             action = {
                 title: <span><span className="glyphicon glyphicon-ok-sign"></span> ack all</span>,
                 action: props.ackAll,
-                disabled: data.length === 0,
+                disabled: theView.length === 0,
             }
         }
 
@@ -78,6 +69,19 @@ class HitsTimeline extends React.Component{
             }
         }
 
+        let view
+        if (props.view === constant.viewFilterLikeThis) {
+            view = <FilterLikeThisView close={props.showViewClick(constant.viewPending)} />
+         } else {
+
+            view = <DataList value={theView}
+                    actionButton={<ActionButton action={action}/>}
+                    onAck={onAck}
+                    onAckTag={onAckTag}
+                />
+         }
+
+
         return <span>
 
         {props.error &&
@@ -86,24 +90,10 @@ class HitsTimeline extends React.Component{
                     </Alert>
                 }
 
-
             <ViewButtons selectedView={props.view} viewCounts={_.mapValues(props.timeline, v => v.length)} showViewClick={props.showViewClick} captorsCount={props.captorsCount}/>
 
-            <Grid fluid={true}>
-            <Row className="top-buffer">
-                <Col xs={12} md={12} lg={12}><ActionButton action={action}/></Col>
-            </Row>
-            {data.map(o =>
-                <LogRow
-                    key={o.id}
-                    data={o}
-                    onAck={onAck}
-                    onAckTag={onAckTag}
-                />)}
-            {(remainderLength > 0) && <Row className="top-buffer">
-                <Col xs={12} md={12} lg={12}><Button onClick={this.showMore}>See next {constant.VIEW_SIZE} of {remainderLength} remaining</Button></Col>
-            </Row>}
-        </Grid>
+            <div>{view}</div>
+
         </span>
     }
 }

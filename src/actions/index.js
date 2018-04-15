@@ -92,4 +92,18 @@ export const showView = (payload) => {
   }
 }
 
+export const applyDraftFilter = (payload) => {
+  return {
+    type: 'APPLY_DRAFT_FILTER',
+    payload
+  }
+}
+
+export const ackPredicate = (payload) => {
+  return {
+    type: 'ACK_PREDICATE',
+    payload
+  }
+}
+
 export * from "./fetching"

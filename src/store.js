@@ -39,6 +39,8 @@ const onNewHitsArrivedMiddleware = store => {
             || action.type === 'ACK_ALL'
             || action.type === 'ADD_CAPTOR'
             || action.type === 'REMOVE_CAPTOR'
+            || action.type === 'APPLY_DRAFT_FILTER'
+            || action.type === 'ACK_PREDICATE'
         ) {
             store.dispatch({
                 type: 'NEW_IDS_ARRIVED', //TODO: different type, also just listen for the changes
