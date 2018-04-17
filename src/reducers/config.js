@@ -9,7 +9,7 @@ const defaultConfig = {
   levelField: '@fields.level',
   levelValue: 'ERROR',
   index: 'logstash-pro-log4json-*',
-  captors: {},
+  captors: [],
   unitialized: true,
 }
 
