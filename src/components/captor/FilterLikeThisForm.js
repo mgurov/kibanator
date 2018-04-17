@@ -334,6 +334,7 @@ class FilterLikeThisForm extends Component {
                 <Button bsStyle="primary"
                     bsSize="small"
                     onClick={this.onAddCaptor}
+                    disabled={this.isInvalid()}
                     title="Save me"
                 >
                     OK, save this
