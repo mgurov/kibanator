@@ -199,7 +199,10 @@ class FilterLikeThisForm extends Component {
             this.setState({ view: view })
         }
 
-        this.close = () => {
+        this.close = (event) => {
+            if (event) {
+                event.preventDefault();
+            }
             this.props.close()
         }        
     }
