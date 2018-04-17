@@ -8,7 +8,7 @@ import * as actions from '../../actions'
 const mapStateToProps = state => {
     return {
         view: state.view,
-        captorsNames: state.config.captors.map((c) => c.key),
+        captorsNames: _.map(state.config.captors, (c) => c.key),
         hit: state.view.hit,
     }
 }
