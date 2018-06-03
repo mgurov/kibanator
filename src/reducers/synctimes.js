@@ -43,7 +43,7 @@ const synctimes = (state = startingState, action) => {
         case 'FETCH_STARTED_TIMER':
             return Object.assign({}, state, {intervalId: action.intervalId})
         case 'RESET_DATA' : 
-            return startingState //TODO: stop fetching?
+            return startingStaten
         case 'FETCH_STOP_TIMER' : 
             window.clearInterval(state.intervalId)
             return Object.assign({}, state, {intervalId: null})
