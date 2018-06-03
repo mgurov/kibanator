@@ -2,15 +2,17 @@ import React from 'react'
 import {Popover} from 'react-bootstrap'
 import {DateTime, ConditionalOverlayTrigger} from '../generic/'
 
-export function SyncTimeControl({selected, lastSync}) {
+export function SyncTimeControl({selected, lastSync, syncIntervalId}) {
 
     let stuff = []
 
     let syncingFrom 
     if (lastSync) {
         syncingFrom = <DateTime value={lastSync} className="label label-default"/>
-    } else {
+    } else if (syncIntervalId) {
         syncingFrom = <span>fetching...</span>
+    } else {
+        syncingFrom = <span>stopped</span>
     }
 
     let timesPopover = (
@@ -21,7 +23,7 @@ export function SyncTimeControl({selected, lastSync}) {
     );
 
     stuff.push(
-        <span key="syncTimes">
+        <span key="syncTimes" data-test-id="fetch-status">
             <ConditionalOverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={timesPopover} visible={null != timesPopover}>
                 {syncingFrom}
             </ConditionalOverlayTrigger>

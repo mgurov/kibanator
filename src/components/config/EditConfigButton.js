@@ -22,6 +22,7 @@ class EditConfigButton extends Component {
         } else {
             return (<Button 
                 className="btn btn-xs glyphicon glyphicon-wrench" 
+                data-test-id="edit-config"
                 onClick={this.toggleEditor}
                 />)
         }

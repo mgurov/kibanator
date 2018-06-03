@@ -29,6 +29,7 @@ function TimeRangeControl(props) {
     if (props.synctimes.selected) {    
         return <SyncTimeControl
             selected={props.synctimes.selected}
+            syncIntervalId={props.synctimes.intervalId}
             lastSync={props.fetchStatus.lastSync}
         />
     } else {

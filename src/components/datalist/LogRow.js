@@ -23,7 +23,7 @@ class LogRow extends Component {
 
         let onAck= this.props.onAck ? (tillThis) => this.props.onAck(h.id, tillThis) : null
 
-        return <Row>
+        return <Row data-test-class="log-row">
             <Col sm={3} md={3} lg={3}>
                 {onAck && <AckButton onAck={onAck}/>}
                 <ExpandableShevron expanded={this.state.expanded} toggle={this.toggle} />

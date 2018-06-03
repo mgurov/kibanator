@@ -1,5 +1,6 @@
 import makeSearch from '../domain/search'
 import { selectIndexInterval } from '../domain/elasticsearch'
+import _ from 'lodash'
 
 export const fetchingData = () => {
     return {
@@ -72,17 +73,29 @@ export function fetchData({fromTimestamp=new Date(), toTimestamp=new Date(), con
             )
         .then(
             responseJson => {
-                dispatch(receiveData(responseJson.hits, config, new Date()))
-                let maxFetchReached = responseJson.hits.total > MAX_FETCH_SIZE
-                if (maxFetchReached) {
+
+                if (
+                    !_.has(responseJson, 'hits.hits')
+                ) {
                     let error = {
-                        name: `Max fetch limit of ${MAX_FETCH_SIZE} has been reached. ${responseJson.hits.total - MAX_FETCH_SIZE} records skipped. The polling of the new lines has been stopped.`,
-                        message: 'Reset from a later point in time to continue. Please note that the marks will be lost upon this operation.',
+                        name: `Invalid response json`,
+                        message: '',
                     }
                     dispatch(failedFetchingData(error))        
-                    dispatch(stopFetchTimer())
+                } else {
+                    dispatch(receiveData(responseJson.hits, config, new Date()))
+                    let maxFetchReached = responseJson.hits.total > MAX_FETCH_SIZE
+                    if (maxFetchReached) {
+                        let error = {
+                            name: `Max fetch limit of ${MAX_FETCH_SIZE} has been reached. ${responseJson.hits.total - MAX_FETCH_SIZE} records skipped. The polling of the new lines has been stopped.`,
+                            message: 'Reset from a later point in time to continue. Please note that the marks will be lost upon this operation.',
+                        }
+                        dispatch(failedFetchingData(error))        
+                        dispatch(stopFetchTimer())
+                    }
+                    onResponse();
                 }
-                onResponse();
+
             },
             error => dispatch(failedFetchingData(error))
         )
@@ -107,8 +120,8 @@ export function startFetching(fromTimestamp, config) {
         }
 
         doFetch()
-        let intervaldId = setInterval(doFetch, refreshInterval)
-        dispatch(startedFetchTimer(intervaldId))
+        let intervalId = setInterval(doFetch, refreshInterval)
+        dispatch(startedFetchTimer(intervalId))
     }
 }
 
@@ -118,10 +131,10 @@ export function stopFetchTimer() {
     }
 }
 
-export function startedFetchTimer(intervaldId) {
+export function startedFetchTimer(intervalId) {
     return {
         type: 'FETCH_STARTED_TIMER',
-        intervaldId
+        intervalId
     }
 }
 

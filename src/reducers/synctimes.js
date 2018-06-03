@@ -26,7 +26,7 @@ const defaultOptions = [
 const startingState = {
     options:defaultOptions, 
     selected: null,
-    intervaldId: null,
+    intervalId: null,
 }
 
 const synctimes = (state = startingState, action) => {
@@ -41,12 +41,12 @@ const synctimes = (state = startingState, action) => {
                 }
             })
         case 'FETCH_STARTED_TIMER':
-            return Object.assign({}, state, {intervaldId: action.intervaldId})
+            return Object.assign({}, state, {intervalId: action.intervalId})
         case 'RESET_DATA' : 
-            return startingState
+            return startingState //TODO: stop fetching?
         case 'FETCH_STOP_TIMER' : 
-            window.clearInterval(state.intervaldId)
-            return Object.assign({}, state, {intervaldId: null})
+            window.clearInterval(state.intervalId)
+            return Object.assign({}, state, {intervalId: null})
         default:
             return state
     }

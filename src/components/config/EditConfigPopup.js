@@ -112,6 +112,7 @@ class EditConfigPopup extends Component {
                         <Button bsStyle="primary"
                             onClick={this.submit}
                             disabled={this.props.disabled}
+                            data-test-id="save-config"
                             title="Save the changes"
                         >
                             Save changes
