@@ -1,5 +1,4 @@
 import { combineReducers} from 'redux'
-import watches from './watches'
 import data from './data'
 import synctimes from './synctimes'
 import config from './config'
@@ -9,7 +8,6 @@ import captorPredicatesUpdater from './captorPredicatesUpdater'
 import view from './view'
 
 const combinedReducers = combineReducers({
-  watches,
   data,
   fetchStatus,
   synctimes,
