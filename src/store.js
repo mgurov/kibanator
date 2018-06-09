@@ -6,9 +6,6 @@ import {
 import thunkMiddleware from 'redux-thunk'
 //import { createLogger } from 'redux-logger'
 
-import {
-    getNextId
-} from './actions'
 import kibanatorApp from './reducers'
 
 export function readStateFromLocalStore() {
