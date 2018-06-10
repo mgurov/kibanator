@@ -1,37 +1,90 @@
 import update from 'immutability-helper';
 import _ from 'lodash'
 
-const defaultConfig = {
-  timeField: '@timestamp',
-  messageField: '@message',
-  serviceField: '@fields.application',
-  serviceName: 'yourAppHere',
-  levelField: '@fields.level',
-  levelValue: 'ERROR',
-  index: 'logstash-pro-log4json-*',
-  captors: [],
-  unitialized: true,
-}
+export const initialState = {watches: []}
 
-const config = (state = defaultConfig, action) => {
+const config = (state = initialState, action) => {
   switch (action.type) {
-    case 'SET_CONFIG':{
-      let newState = Object.assign({}, action, action.newState)
-      delete newState.unitialized
-      return newState
-    }
-    case 'ADD_CAPTOR':
-      if (_.isEmpty(state.captors)) {
-        return Object.assign({}, state, { captors: [action.captor] })
+    case 'SET_CONFIG': {
+      let {index, value} = action.payload
+      let watches = [...state.watches]
+      if (index === undefined) {
+        watches.push(value)
       } else {
-        return update(state, { captors: { $push: [action.captor] } })
+        watches[index] = value
       }
-    case 'REMOVE_CAPTOR':
-      let captors = _.filter(state.captors, c => c.key !== action.captorKey)
-      return Object.assign({}, state, { captors })
+      return {...state, watches}
+    }
+    case 'RM_CONFIG': {
+      let {watchIndex} = action.payload
+      let watches = state.watches.filter((e, i) => i !== watchIndex )
+      return {...state, watches}
+    }
+    case 'ADD_CAPTOR':{
+      const watch = state.watches[action.payload.watchIndex]
+      let updateAction
+      if (_.isEmpty(watch.captors)) {
+        updateAction = { $set: [action.payload.captor] }
+      } else {
+        updateAction = { $push: [action.payload.captor] }
+      }
+      return update(state, {
+        watches: {
+          [action.payload.watchIndex]: {
+            captors: updateAction
+          }
+        }
+      })
+    }
+    case 'REMOVE_CAPTOR': {
+      const watch = state.watches[action.payload.watchIndex]
+      let captors = _.filter(watch.captors, c => c.key !== action.payload.captorKey)
+      let updateAction = { $set: captors }
+      return update(state, {
+        watches: {
+          [action.payload.watchIndex]: {
+            captors: updateAction
+          }
+        }
+      })
+
+    }
     default:
       return state
   }
+}
+
+const v1Key = 'kibanator_config_v1'
+
+export const readConfigFromLocalStore = () => {
+  let newConfig = localStorage.getItem(v1Key)
+  if (newConfig) {
+    const parsed = JSON.parse(newConfig);
+    if (!_.isObject(parsed)) {
+      console.error("Could not parse configuration", parsed)
+    } else {
+      return parsed
+    }
+  }
+
+  let legacyConfig = localStorage.getItem('config')
+  if (legacyConfig) {
+    legacyConfig = JSON.parse(legacyConfig)
+    delete legacyConfig.newState
+    delete legacyConfig.type
+    delete legacyConfig.watches
+    legacyConfig.id = legacyConfig.serviceName
+    let migrated = {
+      watches: [legacyConfig],
+    }
+    writeConfigToLocalStore(migrated)
+    return migrated
+  }
+  return undefined
+}
+
+export const writeConfigToLocalStore = (config) => {
+  localStorage.setItem(v1Key, JSON.stringify(config))
 }
 
 export default config

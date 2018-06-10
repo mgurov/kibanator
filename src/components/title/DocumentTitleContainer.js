@@ -1,5 +1,6 @@
 import { connect } from 'react-redux'
 import DocumentTitle from './DocumentTitle'
+import _ from 'lodash'
 
 const mapStateToProps = state => {
     let titleArray = []
@@ -9,8 +10,10 @@ const mapStateToProps = state => {
         titleArray.push('' + pendingCount)
     }
 
-    if (state.config.serviceName) {
-        titleArray.push(state.config.serviceName)
+    let watchIndex = _.get(state, 'view.watchIndex')
+    let serviceName = _.get(state, `config.watches[${watchIndex}].serviceName`)
+    if (serviceName) { 
+        titleArray.push(serviceName)
     }
 
     let error = state.fetchStatus.error

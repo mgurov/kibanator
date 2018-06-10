@@ -55,7 +55,7 @@ function AckTagButton(props) {
 function ExpandableShevron(props) {
     let title = props.expanded ? 'show less' : 'show less'
     let chevronDirection = props.expanded ? 'down' : 'right'
-    return <span className={'glyphicon glyphicon-chevron-' + chevronDirection} 
+    return <span data-test-class="row-expand-collapse" className={['glyphicon', 'glyphicon-chevron-' + chevronDirection].join(' ')} 
         style={{cursor: 'pointer'}} //TODO: make external .css
         onClick={props.toggle}
         title={title} ></span>

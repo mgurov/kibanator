@@ -8,8 +8,11 @@ export class JsonToggle extends React.Component {
     }
 
     render() {
-        let toggle = () => this.setState({visible: !this.state.visible})
-        let result = [<Button bsSize="xsmall" bsStyle="default" key="toggle" onClick={toggle}>{this.props.text}</Button>]
+        let toggle = (e) => {
+            e.preventDefault()
+            this.setState({visible: !this.state.visible})
+        }
+        let result = [<Button bsSize="xsmall" bsStyle="default" key="toggle" onClick={toggle}>{this.props.text || 'json'}</Button>]
         if (this.state.visible) {
             result.push(<pre key="value">{JSON.stringify(this.props.value, '', '  ')}</pre> )
         }

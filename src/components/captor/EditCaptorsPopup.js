@@ -8,16 +8,19 @@ import {captorKeyToView} from '../../domain/Captor'
 
 
 const mapStateToProps = state => {
+    let watchIndex = state.view.watchIndex
+    let captors = state.config.watches[watchIndex].captors
     return {
-        captors: state.config.captors,
+        watchIndex,
+        captors,
         timeline: state.data.timeline,
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        removeCaptor: (captor) => {
-            dispatch(removeCaptor(captor.key))
+        removeCaptor: (captor, watchIndex) => {
+            dispatch(removeCaptor({captorKey: captor.key, watchIndex}))
         },
     }
 }
@@ -63,7 +66,7 @@ class EditCaptorsPopup extends Component {
                             captor => 
                             <Row key={captor.key}>
                                 <Col xs={2}>
-                                    <button className="btn btn-default btn-xs glyphicon glyphicon-remove" onClick={() => this.props.removeCaptor(captor)}></button>
+                                    <button className="btn btn-default btn-xs glyphicon glyphicon-remove" onClick={() => this.props.removeCaptor(captor, this.props.watchIndex)}></button>
                                 </Col>
                                 <Col xs={10}>
                                     {captor.key} <span className="badge">{countCaptured(captor.key)}</span>                                 

@@ -10,15 +10,17 @@ import {viewToCaptorKey} from '../../domain/Captor'
 import FilterLikeThisView from './FilterLikeThisView'
 import DataList from './DataList'
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
+    let watchIndex = state.view.watchIndex
     return {
         timeline: state.data.timeline,
         hitIds: state.data.hits.ids,
         view: state.view.key,
-        viewProps: state.view, //TODO: merge with the above
+        viewProps: state.view,
         error: state.fetchStatus.error,
         syncStarted: !!state.synctimes.selected,
-        captorsCount: _.size(state.config.captors),
+        captorsCount: _.size(_.get(state, `config.watches[${watchIndex}].captors`)),
+        watchIndex: state.view.watchIndex,
     }
 }
 
@@ -29,8 +31,8 @@ const mapDispatchToProps = (dispatch) => {
             dispatch(a(id))
         },
         onAckTag: (tag) => dispatch(actions.ackTag(tag)) ,
-        removeCaptor: (captorKey) => () => {
-            dispatch(actions.removeCaptor(captorKey))
+        removeCaptor: (captorKey, watchIndex) => () => {
+            dispatch(actions.removeCaptor({captorKey, watchIndex}))
         },
         ackAll: () => {
             dispatch(actions.ackAll())
@@ -65,7 +67,7 @@ class HitsTimeline extends React.Component{
         if (captorKey) {
             action = {
                 title: 'remove captor',
-                action: props.removeCaptor(captorKey),
+                action: props.removeCaptor(captorKey, props.watchIndex),
             }
         }
 

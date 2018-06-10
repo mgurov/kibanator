@@ -7,9 +7,9 @@ import App from './App';
 import {unregister} from './registerServiceWorker';
 import { Provider } from 'react-redux'
 
-import {readStateFromLocalStore, newStore} from './store'
+import {newStore} from './store'
 
-let store = newStore(readStateFromLocalStore())
+let store = newStore()
 
 ReactDOM.render(<Provider store={store}>
     <App/>

@@ -5,12 +5,12 @@ import * as actions from '../../actions'
 import { SyncTimeControl } from './SyncTimeControl'
 import { SelectTimeRange } from './SelectTimeRange'
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
     return {
         data: state.data,
         fetchStatus: state.fetchStatus,
         synctimes: state.synctimes,
-        config: state.config,
+        config: state.config.watches[ownProps.watchIndex],
     }
 }
 

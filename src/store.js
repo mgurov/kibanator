@@ -4,18 +4,10 @@ import {
 } from 'redux'
 
 import thunkMiddleware from 'redux-thunk'
+import {readConfigFromLocalStore, writeConfigToLocalStore} from './reducers/config'
 //import { createLogger } from 'redux-logger'
 
 import kibanatorApp from './reducers'
-
-export function readStateFromLocalStore() {
-    let result = {}
-    let localConfig = localStorage.getItem('config')
-    if (localConfig) {
-        result.config = JSON.parse(localConfig)
-    }
-    return result
-}
 
 const onNewHitsArrivedMiddleware = store => {
     return next => action => {
@@ -57,10 +49,10 @@ const onNewHitsArrivedMiddleware = store => {
     }
 }
 
-export function newStore(initialState) {
+export function newStore() {
     let store = createStore(
         kibanatorApp,
-        initialState,
+        {config: readConfigFromLocalStore()},
         applyMiddleware(thunkMiddleware, onNewHitsArrivedMiddleware)
     )
     store.dispatch({
@@ -70,7 +62,7 @@ export function newStore(initialState) {
     store.subscribe(() => {
         let state = store.getState()
         if (currentConfig !== state.config) {
-            localStorage.setItem('config', JSON.stringify(state.config))
+            writeConfigToLocalStore(state.config)
             currentConfig = state.config
         }
     })

@@ -7,7 +7,7 @@ import {matchPredicates, captorKeyToView} from '../domain/Captor'
 export const emptyState = {
   hits: {
     byId: {},
-    newIds: [], //TODO: do we even need this at the end? could be something separate or simply comparing the length of the ids.
+    newIds: [],
     ids: []
   },
   timeline: {},

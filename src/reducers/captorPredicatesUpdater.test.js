@@ -9,8 +9,20 @@ test("captorPredicatesUpdater should simply skip failing (regex) predicates for 
         messageMatchesRegexCaptor('good', 'a(b)'),
     ]
 
+    let state = {
+        config: {
+            watches: [
+                {captors}
+            ]
+        },
+        data: {},
+        view: {
+            watchIndex: 0
+        }
+    }
+
     let errorsReported = captureConsoleError(() => {
-        let hackedActually = captorPredicatesUpdater({config: {captors}, data: {}}, {type: 'ON_INIT'});
+        let hackedActually = captorPredicatesUpdater(state, {type: 'ON_INIT'});
         
             expect(hackedActually.data.captorPredicates.length)
                 .toEqual(1)

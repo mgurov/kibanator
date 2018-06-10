@@ -41,24 +41,36 @@ export const resetData = id => {
   }
 }
 
-export const setConfig = newState => {
+export const setConfig = ({value, index}) => {
   return {
     type: 'SET_CONFIG',
-    newState
+    payload: {
+      value,
+      index,
+    }
   }
 }
 
-export const addCaptor = (captor) => {
+export const removeConfig = ({watchIndex}) => {
+  return {
+    type: 'RM_CONFIG',
+    payload: {
+      watchIndex,
+    }
+  }
+}
+
+export const addCaptor = ({captor, watchIndex}) => {
   return {
     type: 'ADD_CAPTOR',
-    captor,
+    payload: {captor, watchIndex},
   }
 }
 
-export const removeCaptor = (captorKey) => {
+export const removeCaptor = ({captorKey, watchIndex}) => {
   return {
     type: 'REMOVE_CAPTOR',
-    captorKey,
+    payload: {captorKey, watchIndex},
   }
 }
 
@@ -80,6 +92,13 @@ export const ackPredicate = (payload) => {
   return {
     type: 'ACK_PREDICATE',
     payload
+  }
+}
+
+export const selectWatch = ({watchIndex}) => {
+  return {
+    type: 'SELECT_WATCH',
+    payload: {watchIndex}
   }
 }
 

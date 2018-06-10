@@ -4,16 +4,20 @@ import { Button, FormGroup, ControlLabel, FormControl, HelpBlock, ButtonGroup, M
 import _ from 'lodash'
 import { messageContainsCaptor, messageMatchesRegexCaptor, captorToPredicate } from '../../domain/Captor'
 import * as actions from '../../actions'
+import {withRouter} from 'react-router-dom'
 
 const mapStateToProps = state => {
+    let watchIndex = state.view.watchIndex
+    let selectedConfigWatch = state.config.watches[watchIndex]
     return {
+        watchIndex,
         view: state.view,
-        captorsNames: _.map(state.config.captors, (c) => c.key),
+        captorsNames: _.map(selectedConfigWatch.captors, (c) => c.key), 
         hit: state.view.hit,
     }
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
     return {
         applyDraftFilter: (predicate) => {
             dispatch(actions.applyDraftFilter({predicate}))
@@ -21,8 +25,8 @@ const mapDispatchToProps = dispatch => {
         ackPredicate: (predicate) => {
             dispatch(actions.ackPredicate({predicate}))
         },
-        addCaptor: (captor) => {
-            dispatch(actions.addCaptor(captor))
+        addCaptor: (captor, watchIndex) => {
+            dispatch(actions.addCaptor({captor, watchIndex}))
         },
     }
 }
@@ -31,6 +35,8 @@ class FilterLikeThisForm extends Component {
 
     constructor(props) {
         super(props)
+
+        this.watchIndex = props.watchIndex
 
         let existingCaptorNames = {}
         _.forEach(props.captorsNames, (c) => existingCaptorNames[c] = 1)
@@ -191,7 +197,7 @@ class FilterLikeThisForm extends Component {
             }
 
             let filter = that.makeCaptor()
-            that.props.addCaptor(filter)
+            that.props.addCaptor(filter, this.watchIndex)
             that.close()
         }
 
@@ -362,4 +368,4 @@ function FieldGroup({ id, label, help, validationState, ...rest }) {
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(FilterLikeThisForm);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(FilterLikeThisForm));
