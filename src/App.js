@@ -18,7 +18,7 @@ let App = () => {
         <DocumentTitleContainer />
 
         <div className="App-header">
-          <Link to="/"><VersionWidget /></Link>{' '}
+          <Link to="/" data-test-id="home-page"><VersionWidget /></Link>{' '}
           <Reset />
         </div>
 
