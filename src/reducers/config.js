@@ -17,7 +17,7 @@ const config = (state = initialState, action) => {
     }
     case 'RM_CONFIG': {
       let {watchIndex} = action.payload
-      let watches = state.watches.filter((e, i) => i !== watchIndex )
+      let watches = state.watches.filter((e, i) => i + "" !== watchIndex)
       return {...state, watches}
     }
     case 'ADD_CAPTOR':{
