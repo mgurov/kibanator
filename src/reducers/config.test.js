@@ -47,7 +47,7 @@ test('removing existing config', () => {
   let initial = {...initialState, watches: [{"blah": "fooe"}, {"blah": "fooe2"}]}
 
   let event = removeConfig({
-    watchIndex: 1,
+    watchIndex: "1",
   })
 
   expect(configReducer(initial, event))
