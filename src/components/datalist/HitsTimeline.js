@@ -9,12 +9,14 @@ import EditCaptorsButton from '../captor/EditCaptorsButton'
 import {viewToCaptorKey} from '../../domain/Captor'
 import FilterLikeThisView from './FilterLikeThisView'
 import DataList from './DataList'
+import {selectedData} from '../../state/data'
 
 const mapStateToProps = (state) => {
     let watchIndex = state.view.watchIndex
+    let data = selectedData(state, true)
     return {
-        timeline: state.data.timeline,
-        hitIds: state.data.hits.ids,
+        timeline: data.timeline,
+        hitIds: data.hits.ids,
         view: state.view.key,
         viewProps: state.view,
         error: state.fetchStatus.error,

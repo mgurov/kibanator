@@ -1,24 +1,28 @@
-import { combineReducers} from 'redux'
-import data from './data'
+import watches from './watches'
 import synctimes from './synctimes'
 import config from './config'
 import versions from './versions'
 import fetchStatus from './fetchStatus'
-import captorPredicatesUpdater from './captorPredicatesUpdater'
 import view from './view'
+import _ from 'lodash'
 
-const combinedReducers = combineReducers({
-  data,
+const combinedReducers = combineReducersWithState({
+  view,
+  watches,
   fetchStatus,
   synctimes,
   config,
   versions,
-  view,
 })
 
 function kibanatorApp(state, action) {
-  const intermediateState = combinedReducers(state, action);
-  return captorPredicatesUpdater(intermediateState, action)
+  return combinedReducers(state, action);
+}
+
+function combineReducersWithState(combination) {
+  return (state, action) => {
+    return _.mapValues(combination, (reducer, key)=> reducer(state[key], action, state))
+  }
 }
 
 export default kibanatorApp

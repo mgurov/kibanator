@@ -1,11 +1,12 @@
 import { connect } from 'react-redux'
 import DocumentTitle from './DocumentTitle'
 import _ from 'lodash'
+import {selectedData} from '../../state/data'
 
 const mapStateToProps = state => {
     let titleArray = []
 
-    let pendingCount = (state.data.timeline.pending || []).length
+    let pendingCount = (selectedData(state, true).timeline.pending || []).length
     if (pendingCount > 0) {
         titleArray.push('' + pendingCount)
     }

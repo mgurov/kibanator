@@ -1,5 +1,4 @@
-import dataReducer, {
-    emptyState,
+import {
     reprocessTimeline
 } from './data'
 import LogHit from '../domain/LogHit'
@@ -9,7 +8,6 @@ import {
     messageExtractor,
     captorToPredicate
 } from '../domain/Captor'
-import * as constant from '../constant'
 
 const testConfig = {
     timeField: 'timestamp',

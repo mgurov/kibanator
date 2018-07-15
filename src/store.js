@@ -6,6 +6,7 @@ import {
 import thunkMiddleware from 'redux-thunk'
 import {readConfigFromLocalStore, writeConfigToLocalStore} from './reducers/config'
 //import { createLogger } from 'redux-logger'
+import {selectedData} from './state/data'
 
 import kibanatorApp from './reducers'
 
@@ -35,7 +36,12 @@ const onNewHitsArrivedMiddleware = store => {
         }
 
         let state = store.getState();
-        const newIds = state.data.hits.newIds
+        let data = selectedData(state, false)
+        if (data === undefined) {
+            console.warn('no selected data to propagate incoming hits')
+            return r
+        }
+        const newIds = data.hits.newIds
 
         if (newIds && newIds.length > 0) {
             store.dispatch({

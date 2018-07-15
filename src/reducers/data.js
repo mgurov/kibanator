@@ -2,7 +2,7 @@ import _ from 'lodash'
 import LogHit from '../domain/LogHit'
 import update from 'immutability-helper';
 import * as constant from '../constant'
-import {matchPredicates, captorKeyToView} from '../domain/Captor'
+import {matchPredicates, captorKeyToView, captorToPredicate} from '../domain/Captor'
 
 export const emptyState = {
   hits: {
@@ -12,24 +12,29 @@ export const emptyState = {
   },
   timeline: {},
   acked: {}, // id -> true
-  captorPredicates: [], //hackishly copied here upon config update. see captorPredicatesUpdater
   draftFilter: null, // editing filter
 }
 
-const data = (state = emptyState, action) => {
+const data = (state = emptyState, action, filters) => {
   switch (action.type) {
     case 'RESET_DATA': //reset all
-      return { ...emptyState,
-        captorPredicates: state.captorPredicates
-      }
+      return emptyState
     case 'NEW_IDS_ARRIVED' : {
+      let captorPredicates = _.flatMap(filters, c => {
+        try {
+          return [captorToPredicate(c)]
+        } catch (e) {
+          console.error('error making predicate from captor', c, e)
+          return []
+        }
+      })
       return update(state, {
           hits: {
               newIds: {
                   $set: []
               },
           },
-          timeline: {$set: reprocessTimeline(state)},
+          timeline: {$set: reprocessTimeline({...state, captorPredicates})},
         })
     }
     case 'INCOMING_HITS':

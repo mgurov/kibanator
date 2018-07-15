@@ -5,6 +5,7 @@ import * as FormHelper from '../generic/FormHelper'
 import { connect } from 'react-redux'
 import { removeCaptor } from '../../actions'
 import {captorKeyToView} from '../../domain/Captor'
+import {selectedData} from '../../state/data'
 
 
 const mapStateToProps = state => {
@@ -13,7 +14,7 @@ const mapStateToProps = state => {
     return {
         watchIndex,
         captors,
-        timeline: state.data.timeline,
+        timeline: selectedData(state).timeline,
     }
 }
 

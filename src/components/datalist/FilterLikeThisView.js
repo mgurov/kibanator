@@ -6,9 +6,11 @@ import FilterLikethisForm from '../captor/FilterLikeThisForm'
 
 import DataList from './DataList'
 
+import {selectedData} from '../../state/data'
+
 const mapStateToProps = state => {
     return {
-        filterLikeThis: state.data.timeline.filterLikeThis,
+        filterLikeThis: selectedData(state).timeline.filterLikeThis,
     }
 }
 

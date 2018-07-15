@@ -1,32 +1,17 @@
 import dataReducer, { emptyState } from './data'
-import _ from 'lodash'
-import LogHit from '../domain/LogHit'
-import {messageContainsCaptor, captorToPredicate, messageMatchesRegexCaptor, messageExtractor, keepPending } from '../domain/Captor'
-import {captureConsoleError} from '../testutil/funmock'
 
-const testConfig = {
-    timeField: 'timestamp',
-    messageField: 'message'
-}
-
-const toLogHit = (h) => LogHit(h, testConfig)
-
-const captorForMessage = (key, messageSub) => captorToPredicate(messageContainsCaptor(key, messageSub))
 
 describe('data reducer', () => {
     it('intial state is empty state', () => {
         expect(dataReducer(undefined, {}))
             .toEqual(emptyState)
     })
-    it('resets back to empty state, except for the captors hack', () => {
+    it('resets back to empty state', () => {
         expect(dataReducer({
             data: { hits: [1, 2, 3] },
             captorPredicates: ['a', 'b', 'c']
         }, { type: 'RESET_DATA' }))
-            .toEqual({
-                ...emptyState,
-                captorPredicates: ['a', 'b', 'c'],
-            })
+            .toEqual(emptyState)
     })
 
     it('shall ack all', () => {
