@@ -8,7 +8,4 @@ cache: yarn
 script:
   - yarn install
   - yarn test
-  - REACT_APP_INTERVAL=500 yarn build
-  - docker network create cypress-run
-  - docker run -d --network cypress-run --net-alias kibanator -v $(pwd)/build:/srv/http/ui pierrezemb/gostatic --fallback=/ui/index.html
-  - docker run --network cypress-run mgurov/kibanator-cypress node_modules/.bin/cypress run --config baseUrl=http://kibanator:8043/ui/
+  - scripts/cypress.sh
