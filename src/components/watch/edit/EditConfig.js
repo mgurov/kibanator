@@ -5,6 +5,8 @@ import { connect } from 'react-redux'
 import PasteJson from './PasteJson'
 import EditConfigForm from './EditConfigForm';
 import { Tabs, Tab, Button } from 'react-bootstrap'
+import FilterList from '../FilterList'
+import _ from 'lodash'
 
 const defaultConfig = {
     timeField: '@timestamp',
@@ -68,6 +70,12 @@ class EditConfig extends React.Component {
             this.history.push("/")
         }
 
+        let onFilterRemove = (key) => {
+            this.setState({
+                values: { ...this.state.values, captors: _.filter(this.state.values.captors, c => c.key !== key) }
+            })
+        }
+
         return <div>Edit configuration&nbsp;
             <Button bsStyle="primary"
                 onClick={onSubmit}
@@ -85,7 +93,10 @@ class EditConfig extends React.Component {
                 <Tab eventKey={1} title="Form">
                     <EditConfigForm {...{ values: this.state.values, onChange, onSubmit }} />
                 </Tab>
-                <Tab eventKey={2} title="Source">
+                <Tab eventKey="filters" title="Filters">
+                    <FilterList value={this.state.values.captors} onRemove={onFilterRemove} />
+                </Tab>
+                <Tab eventKey={3} title="Source">
                     <PasteJson value={this.state.values} onJsonEdited={(values) => this.setState({ values })} />
                 </Tab>
             </Tabs>

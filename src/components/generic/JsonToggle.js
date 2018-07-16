@@ -1,7 +1,7 @@
 import React from 'react'
 import {Button} from 'react-bootstrap'
 
-export class JsonToggle extends React.Component {
+export default class JsonToggle extends React.Component {
     constructor(props) {
         super(props)
         this.state = {visible: false}
@@ -14,10 +14,10 @@ export class JsonToggle extends React.Component {
         }
         let result = [<Button bsSize="xsmall" bsStyle="default" key="toggle" onClick={toggle}>{this.props.text || 'json'}</Button>]
         if (this.state.visible) {
-            result.push(<pre key="value">{JSON.stringify(this.props.value, '', '  ')}</pre> )
+            result.push(<JsonPre key="value" value={this.props.value}/>)
         }
         return result
     }
 }
 
-export default JsonToggle
+export const JsonPre = ({value}) => <pre>{JSON.stringify(value, '', '  ')}</pre>
