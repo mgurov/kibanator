@@ -68,7 +68,7 @@ class EditCaptorsPopup extends Component {
                             captor => 
                             <Row key={captor.key}>
                                 <Col xs={2}>
-                                    <button className="btn btn-default btn-xs glyphicon glyphicon-remove" onClick={() => this.props.removeCaptor(captor, this.props.watchIndex)}></button>
+                                    <button className="rm-filter btn btn-default btn-xs glyphicon glyphicon-remove" onClick={() => this.props.removeCaptor(captor, this.props.watchIndex)}></button>
                                 </Col>
                                 <Col xs={10}>
                                     {captor.key} <span className="badge">{countCaptured(captor.key)}</span>                                 
