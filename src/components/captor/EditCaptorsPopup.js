@@ -3,13 +3,14 @@ import { Button, Modal, Grid, Row, Col} from 'react-bootstrap';
 import * as FormHelper from '../generic/FormHelper'
 
 import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 import { removeCaptor } from '../../actions'
 import {captorKeyToView} from '../../domain/Captor'
 import {selectedData} from '../../state/data'
 
 
-const mapStateToProps = state => {
-    let watchIndex = state.view.watchIndex
+const mapStateToProps = (state, {match}) => {
+    let watchIndex = parseInt(match.params.watchIndex, 10)
     let captors = state.config.watches[watchIndex].captors
     return {
         watchIndex,
@@ -88,4 +89,4 @@ class EditCaptorsPopup extends Component {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(EditCaptorsPopup);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(EditCaptorsPopup));

@@ -8,8 +8,8 @@ import EditConfig from './edit/EditConfig';
 export default function LandingWatch({watchIndex}) {
     return <Switch>
         <Route path="/watch/new" component={EditConfig}/>
-        <Route path="/watch/:watchId/edit" render={() => <EditConfig watchIndex={watchIndex} />}/>
-        <Route path="/watch/:watchId" render={() => <ExistingWatch watchIndex={watchIndex} />}/>
+        <Route path="/watch/:watchIndex/edit" render={() => <EditConfig watchIndex={watchIndex} />}/>
+        <Route path="/watch/:watchIndex" render={() => <ExistingWatch watchIndex={watchIndex} />}/>
     </Switch>
 }
 
