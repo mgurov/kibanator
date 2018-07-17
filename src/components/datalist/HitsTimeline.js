@@ -9,11 +9,10 @@ import EditCaptorsButton from '../captor/EditCaptorsButton'
 import {viewToCaptorKey} from '../../domain/Captor'
 import FilterLikeThisView from './FilterLikeThisView'
 import DataList from './DataList'
-import {selectedData} from '../../state/data'
+import {watchIndexData} from '../../state/data'
 
-const mapStateToProps = (state) => {
-    let watchIndex = state.view.watchIndex
-    let data = selectedData(state, true)
+const mapStateToProps = (state, {watchIndex}) => {
+    let data = watchIndexData(state, watchIndex)
     return {
         timeline: data.timeline,
         hitIds: data.hits.ids,
@@ -22,7 +21,6 @@ const mapStateToProps = (state) => {
         error: state.fetchStatus.error,
         syncStarted: !!state.synctimes.selected,
         captorsCount: _.size(_.get(state, `config.watches[${watchIndex}].captors`)),
-        watchIndex: state.view.watchIndex,
     }
 }
 
@@ -75,7 +73,7 @@ class HitsTimeline extends React.Component{
 
         let view
         if (props.view === constant.viewFilterLikeThis) {
-            view = <FilterLikeThisView close={props.showViewClick(constant.viewPending)} />
+            view = <FilterLikeThisView watchIndex={props.watchIndex} close={props.showViewClick(constant.viewPending)} />
          } else {
 
             view = <DataList value={theView}

@@ -8,13 +8,14 @@ export const fetchingData = () => {
     }
 }
 
-export const receiveData = (data, config, timestamp) => {
+export const receiveData = ({hits, config, timestamp, watchIndex}) => {
     return {
         type: 'INCOMING_HITS',
         payload: {
-            hits: data.hits,
+            hits,
             config,
             timestamp,
+            watchIndex,
         },
     }
 }
@@ -48,7 +49,7 @@ function doHttpFetch({fromTimestamp, toTimestamp, config}) {
     })
 }
 
-export function fetchData({fromTimestamp=new Date(), toTimestamp=new Date(), config, onResponse=()=>{}}) {
+export function fetchData({fromTimestamp=new Date(), toTimestamp=new Date(), config, onResponse=()=>{}, watchIndex}) {
     return function (dispatch) {
         dispatch(fetchingData())
 
@@ -83,7 +84,7 @@ export function fetchData({fromTimestamp=new Date(), toTimestamp=new Date(), con
                     }
                     dispatch(failedFetchingData(error))        
                 } else {
-                    dispatch(receiveData(responseJson.hits, config, new Date()))
+                    dispatch(receiveData({hits: responseJson.hits.hits, config, timestamp: new Date(), watchIndex}))
                     let maxFetchReached = responseJson.hits.total > MAX_FETCH_SIZE
                     if (maxFetchReached) {
                         let error = {
@@ -102,10 +103,10 @@ export function fetchData({fromTimestamp=new Date(), toTimestamp=new Date(), con
     }
 }
 
-export function startFetching(fromTimestamp, config) {
+export function startFetching({from, config, watchIndex}) {
     return function (dispatch) {
 
-        let runningFrom = fromTimestamp
+        let runningFrom = from
         let doFetch = () => {
             let toTimestamp = new Date()
             let onResponse = () => {
@@ -116,7 +117,7 @@ export function startFetching(fromTimestamp, config) {
                 }
             }
 
-            dispatch(fetchData({fromTimestamp:runningFrom, toTimestamp, config, onResponse}))
+            dispatch(fetchData({fromTimestamp:runningFrom, toTimestamp, config, onResponse, watchIndex}))
         }
 
         doFetch()

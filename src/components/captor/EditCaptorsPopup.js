@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import { removeCaptor } from '../../actions'
 import {captorKeyToView} from '../../domain/Captor'
-import {selectedData} from '../../state/data'
+import {watchIndexData} from '../../state/data'
 
 
 const mapStateToProps = (state, {match}) => {
@@ -15,7 +15,7 @@ const mapStateToProps = (state, {match}) => {
     return {
         watchIndex,
         captors,
-        timeline: selectedData(state).timeline,
+        timeline:  watchIndexData(state, watchIndex).timeline,
     }
 }
 

@@ -6,11 +6,9 @@ import { messageContainsCaptor, messageMatchesRegexCaptor, captorToPredicate } f
 import * as actions from '../../actions'
 import {withRouter} from 'react-router-dom'
 
-const mapStateToProps = state => {
-    let watchIndex = state.view.watchIndex
+const mapStateToProps = (state, {watchIndex}) => {
     let selectedConfigWatch = state.config.watches[watchIndex]
     return {
-        watchIndex,
         view: state.view,
         captorsNames: _.map(selectedConfigWatch.captors, (c) => c.key), 
         hit: state.view.hit,

@@ -6,18 +6,18 @@ import FilterLikethisForm from '../captor/FilterLikeThisForm'
 
 import DataList from './DataList'
 
-import {selectedData} from '../../state/data'
+import {watchIndexData} from '../../state/data'
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, {watchIndex}) => {
     return {
-        filterLikeThis: selectedData(state).timeline.filterLikeThis,
+        filterLikeThis: watchIndexData(state, watchIndex).timeline.filterLikeThis,
     }
 }
 
 function FilterLikeThisView(props) {
     return <span>
 
-        <FilterLikethisForm close={props.close} matchedCount={(props.filterLikeThis || []).length} />
+        <FilterLikethisForm close={props.close} matchedCount={(props.filterLikeThis || []).length} watchIndex={props.watchIndex} />
 
         <DataList value={props.filterLikeThis}/>
 

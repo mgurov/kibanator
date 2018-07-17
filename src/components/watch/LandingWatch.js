@@ -17,7 +17,7 @@ function ExistingWatch({watchIndex}) {
     return <div> watch: <EditLink watchIndex={watchIndex} />
         &nbsp;<TimeRangeControl watchIndex={watchIndex} />
 
-        <HitsTimeline />
+        <HitsTimeline watchIndex={watchIndex} />
     </div>
 }
 

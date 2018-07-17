@@ -5,21 +5,21 @@ import * as actions from '../../actions'
 import { SyncTimeControl } from './SyncTimeControl'
 import { SelectTimeRange } from './SelectTimeRange'
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state, {watchIndex}) => {
     return {
         data: state.data,
         fetchStatus: state.fetchStatus,
         synctimes: state.synctimes,
-        config: state.config.watches[ownProps.watchIndex],
+        config: state.config.watches[watchIndex],
     }
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch, {watchIndex}) => {
     return {
         onSyncSelected: (st, config) => {
             dispatch(actions.selectSyncTime(st))
             let from = new Date(st.nowToStart(new Date()))
-            dispatch(actions.startFetching(from, config))
+            dispatch(actions.startFetching({from, config, watchIndex}))
         },
     }
 }
