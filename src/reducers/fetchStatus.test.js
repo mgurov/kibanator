@@ -18,7 +18,7 @@ test('Error set upon error', () => {
 
 test('should reset isFetching and last sync upon data received', () => {
     let givenState = { ...emptyState, isFetching: true }
-    let whenAction = receiveData({}, {}, new Date())
+    let whenAction = receiveData({hits:{}, config: {}, timestamp: new Date()})
     expect(fetchStatusReducer(givenState, whenAction))
         .toEqual({...emptyState,
             isFetching: false,
