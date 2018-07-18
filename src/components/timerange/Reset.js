@@ -22,6 +22,7 @@ const mapDispatchToProps = dispatch => {
 function ResetButton(props) {
     return <Button 
         className="btn btn-xs glyphicon glyphicon-repeat" 
+        data-test-id="reset"
         onClick={props.reset}
         disabled={!props.fetchStarted}
         title="Reset"
