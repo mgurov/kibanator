@@ -9,7 +9,7 @@ export default function watches (state = startingState, action, fullState) {
 
     //cross-watch actions
     if (action.type === 'RESET_DATA') {
-        return {...state, data: _.map(state.data, (d, watchIndex) => applyDataAction(d, watchIndex, action))}
+        return {...state, data: _.mapValues(state.data, (d, watchIndex) => applyDataAction(d, watchIndex, action))}
     }
     
     //delegate the rest to the specific data reducer if watchIndex present
