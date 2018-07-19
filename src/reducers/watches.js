@@ -7,6 +7,11 @@ const startingState = {
 
 export default function watches (state = startingState, action, fullState) {
 
+    if (action.type === 'ON_INIT') {
+        let initialData = _.fromPairs(_.map(fullState.config.watches, (watch, watchIndex) => applyDataAction(undefined, watchIndex, action)))
+        return initialData
+    }
+
     //cross-watch actions
     if (action.type === 'RESET_DATA') {
         return {...state, data: _.mapValues(state.data, (d, watchIndex) => applyDataAction(d, watchIndex, action))}
