@@ -8,8 +8,8 @@ const startingState = {
 export default function watches (state = startingState, action, fullState) {
 
     if (action.type === 'ON_INIT') {
-        let initialData = _.fromPairs(_.map(fullState.config.watches, (watch, watchIndex) => applyDataAction(undefined, watchIndex, action)))
-        return initialData
+        let initialData = _.fromPairs(_.map(fullState.config.watches, (watch, watchIndex) => [watchIndex, applyDataAction(undefined, watchIndex + "", action)]))
+        return {...state, data: initialData}
     }
 
     //cross-watch actions
@@ -25,17 +25,19 @@ export default function watches (state = startingState, action, fullState) {
     }
 
     if (undefined === watchIndex) {
-        return startingState
+        return state
     }
 
     watchIndex = "" + watchIndex //stringify index
 
     let updatedData = applyDataAction(state.data[watchIndex], watchIndex, action)
 
-    return {...state, data: {
+    let result = {...state, data: {
         ...state.data,
         [watchIndex]: updatedData
     }}
+
+    return result
 
     function applyDataAction(watchData, watchIndex, action) {
         watchIndex = "" + watchIndex //stringify index
