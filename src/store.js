@@ -36,7 +36,8 @@ const onNewHitsArrivedMiddleware = store => {
         }
 
         let state = store.getState();
-        let data = watchIndexData(state, action.payload.watchIndex)
+        let watchIndex = action.payload.watchIndex
+        let data = watchIndexData(state, watchIndex)
         if (data === undefined) {
             console.warn('no selected data to propagate incoming hits')
             return r
@@ -47,7 +48,8 @@ const onNewHitsArrivedMiddleware = store => {
             store.dispatch({
                 type: 'NEW_IDS_ARRIVED',
                 payload: {
-                    newIds
+                    newIds,
+                    watchIndex,
                 },
             })
         }
