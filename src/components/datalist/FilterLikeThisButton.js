@@ -4,10 +4,10 @@ import { showView } from '../../actions'
 import { connect } from 'react-redux'
 import * as constant from '../../constant'
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch, {watchIndex}) => {
     return {
         makeFilterLikeThis: (hit) => {
-            dispatch(showView({ key: constant.viewFilterLikeThis, hit }))
+            dispatch(showView({ key: constant.viewFilterLikeThis, hit, watchIndex }))
         },
     }
 }
