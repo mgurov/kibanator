@@ -80,6 +80,7 @@ class HitsTimeline extends React.Component{
                     actionButton={<ActionButton action={action}/>}
                     onAck={onAck}
                     onAckTag={onAckTag}
+                    watchIndex={props.watchIndex}
                 />
          }
 

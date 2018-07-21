@@ -31,7 +31,7 @@ class LogRow extends Component {
                 {(row.tags||[]).map(tag => <React.Fragment key={tag}> <Badge>{tag} <AckTagButton onClick={() => this.props.onAckTag(tag)} /> </Badge></React.Fragment>)}
             </Col>
             <Col sm={9} md={9} lg={9}>{row.message || h.message}</Col>
-            <ExpandableDetails expanded={this.state.expanded} data={h} onAck={onAck}/>
+            <ExpandableDetails expanded={this.state.expanded} data={h} onAck={onAck} watchIndex={this.props.watchIndex}/>
             </Row>
     }
 }
@@ -83,7 +83,7 @@ class ExpandableDetails extends Component {
                 <div>
                     {this.props.onAck && 
                         <span>
-                            <FilterLikeThisButton value={h}/>&nbsp;
+                            <FilterLikeThisButton value={h} watchIndex={this.props.watchIndex}/>&nbsp;
                             <button className="btn btn-default btn-xs" onClick={() => this.props.onAck(false)}><span className="glyphicon glyphicon-ok-sign"></span> ack this</button>&nbsp;
                             <button className="btn btn-default btn-xs" onClick={() => this.props.onAck(true)}><span className="glyphicon glyphicon-import"></span> ack down to this <span className="glyphicon glyphicon-ok-sign"></span></button>&nbsp;
                         </span>

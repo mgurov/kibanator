@@ -32,6 +32,7 @@ class DataList extends React.Component {
                  data={o}
                  onAck={this.props.onAck}
                  onAckTag={this.props.onAckTag}
+                 watchIndex={this.props.watchIndex}
              />)}
          {(remainderLength > 0) && <Row className="top-buffer">
              <Col xs={12} md={12} lg={12}><Button onClick={this.showMore}>See next {constant.VIEW_SIZE} of {remainderLength} remaining</Button></Col>
