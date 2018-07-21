@@ -1,5 +1,5 @@
 import {captorKeyToView} from '../domain/Captor'
-const initialState = { key: 'pending', watchIndex: undefined }
+const initialState = { key: 'pending' }
 
 const view = (state = initialState, action) => {
   switch (action.type) {
@@ -13,8 +13,6 @@ const view = (state = initialState, action) => {
       }
     case 'RESET_DATA': //reset all
       return {...state, key: 'pending'}
-    case 'SELECT_WATCH':
-      return {...state, watchIndex: action.payload.watchIndex}
     default:
       return state
   }
