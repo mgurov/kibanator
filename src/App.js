@@ -27,7 +27,6 @@ let App = () => {
         <Switch>
           <Route path="/watch/new" component={EditConfig} />
           <Route path="/watch/:watchIndex" render={({match}) => <div>
-              <DocumentTitleContainer watchIndex={match.params.watchIndex} />
               <OnWatchSelected watchIndex={match.params.watchIndex} />
               <LandingWatch watchIndex={match.params.watchIndex}/>
             </div>} />
