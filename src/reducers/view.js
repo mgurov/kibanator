@@ -6,7 +6,7 @@ const view = (state = initialState, action) => {
     case 'SHOW_VIEW':
       return Object.assign({}, state, action.payload)
     case 'REMOVE_CAPTOR':
-      if (state.key === captorKeyToView(action.captorKey)) {
+      if (state.key === captorKeyToView(action.payload.captorKey)) {
         return {...state, key: 'pending'}
       } else {
         return state
