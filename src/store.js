@@ -9,6 +9,7 @@ import {readConfigFromLocalStore, writeConfigToLocalStore} from './reducers/conf
 import {watchIndexData} from './state/data'
 
 import kibanatorApp from './reducers'
+import _ from 'lodash'
 
 const onNewHitsArrivedMiddleware = store => {
     return next => action => {
@@ -27,6 +28,9 @@ const onNewHitsArrivedMiddleware = store => {
         ) {
             store.dispatch({
                 type: 'NEW_IDS_ARRIVED', //TODO: different type, also just listen for the changes
+                payload: {
+                    watchIndex: _.get(action, 'payload.watchIndex')
+                }
             })
             return r
         }
