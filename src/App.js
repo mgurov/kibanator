@@ -15,8 +15,6 @@ let App = () => {
   return (
     <Router basename="/ui">
       <div className="App">
-        <DocumentTitleContainer />
-
         <div className="App-header">
           <Link to="/" data-test-id="home-page"><VersionWidget /></Link>{' '}
           <Reset />
@@ -29,9 +27,16 @@ let App = () => {
         <Switch>
           <Route path="/watch/new" component={EditConfig} />
           <Route path="/watch/:watchIndex" render={({match}) => <div>
+              <DocumentTitleContainer watchIndex={match.params.watchIndex} />
               <OnWatchSelected watchIndex={match.params.watchIndex} />
               <LandingWatch watchIndex={match.params.watchIndex}/>
             </div>} />
+        </Switch>
+
+        <Switch>
+          <Route path="/(watch)?/:watchIndex?" render={({match}) =>
+              <DocumentTitleContainer watchIndex={match.params.watchIndex} />
+            } />
         </Switch>
 
 
