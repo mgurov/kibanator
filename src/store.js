@@ -64,11 +64,13 @@ const onNewHitsArrivedMiddleware = store => {
 export function newStore() {
     let store = createStore(
         kibanatorApp,
-        {config: readConfigFromLocalStore()},
         applyMiddleware(thunkMiddleware, onNewHitsArrivedMiddleware)
     )
     store.dispatch({
-        type: 'ON_INIT'
+        type: 'ON_INIT',
+        payload: {
+            config: readConfigFromLocalStore()
+        }
     })
     let [currentConfig] = [null]
     store.subscribe(() => {

@@ -5,6 +5,9 @@ export const initialState = {watches: []}
 
 const config = (state = initialState, action) => {
   switch (action.type) {
+    case 'ON_INIT': {
+      return action.payload.config || initialState
+    }
     case 'SET_CONFIG': {
       let {index, value} = action.payload
       let watches = [...state.watches]
