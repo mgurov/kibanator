@@ -17,6 +17,15 @@ export default function watches (state = startingState, action, fullState) {
         return {...state, data: _.mapValues(state.data, (d, watchIndex) => applyDataAction(d, watchIndex, action))}
     }
     
+    if (action.type === 'SET_CONFIG' || action.type === 'RM_CONFIG') {
+        let newData = {}
+        _.forEach(fullState.config.watches, (watch, watchIndex) => {
+            newData[watchIndex] = applyDataAction(state.data[watchIndex + ""], watchIndex, action)
+        })
+        
+        return {...state, data: newData}
+    }
+    
     //delegate the rest to the specific data reducer if watchIndex present
     let watchIndex = _.get(action, 'payload.watchIndex')
 
