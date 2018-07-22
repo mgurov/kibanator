@@ -95,11 +95,4 @@ export const ackPredicate = (payload) => {
   }
 }
 
-export const selectWatch = ({watchIndex}) => {
-  return {
-    type: 'SELECT_WATCH',
-    payload: {watchIndex}
-  }
-}
-
 export * from "./fetching"

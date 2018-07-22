@@ -1,5 +1,5 @@
 import {connect} from 'react-redux'
-import {selectWatch, resetData, stopFetchTimer} from '../../actions'
+import {resetData, stopFetchTimer} from '../../actions'
 
 const mapStateToProps = state => {
     return {
@@ -9,10 +9,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        selectWatch: (watchIndex) => {
+        selectWatch: () => {
             dispatch(stopFetchTimer())
             dispatch(resetData())
-            dispatch(selectWatch({watchIndex}))
         }
     }
 }
