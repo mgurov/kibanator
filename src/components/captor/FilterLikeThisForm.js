@@ -17,8 +17,8 @@ const mapStateToProps = (state, {watchIndex}) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        applyDraftFilter: (predicate) => {
-            dispatch(actions.applyDraftFilter({predicate}))
+        applyDraftFilter: (predicate, watchIndex) => {
+            dispatch(actions.applyDraftFilter({predicate, watchIndex}))
         },
         ackPredicate: (predicate) => {
             dispatch(actions.ackPredicate({predicate}))
@@ -171,7 +171,7 @@ class FilterLikeThisForm extends Component {
 
             let filter = that.makeCaptor()
             let predicate = captorToPredicate(filter)
-            that.props.applyDraftFilter(predicate)
+            that.props.applyDraftFilter(predicate, this.watchIndex)
             that.setState({predicateTested: true})
         }
 

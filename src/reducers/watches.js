@@ -30,10 +30,6 @@ export default function watches (state = startingState, action, fullState) {
     let watchIndex = _.get(action, 'payload.watchIndex')
 
     if (undefined === watchIndex) {
-        watchIndex =  _.get(fullState, 'view.watchIndex')
-    }
-
-    if (undefined === watchIndex) {
         return state
     }
 
