@@ -4,16 +4,16 @@ import config from './config'
 import versions from './versions'
 import fetchStatus from './fetchStatus'
 import view from './view'
-import _ from 'lodash'
 
-const combinedReducers = combineReducersWithState({
-  view,
-  watches,
-  fetchStatus,
-  synctimes,
-  config,
-  versions,
-})
+const combinedReducers = combineReducersWithState([
+  //array as order might matter
+  ['view', view],
+  ['config', config],
+  ['watches', watches],
+  ['fetchStatus', fetchStatus],
+  ['synctimes', synctimes],
+  ['versions', versions],
+])
 
 function kibanatorApp(state, action) {
   return combinedReducers(state, action);
@@ -21,7 +21,14 @@ function kibanatorApp(state, action) {
 
 function combineReducersWithState(combination) {
   return (state, action) => {
-    return _.mapValues(combination, (reducer, key)=> reducer(state[key], action, state))
+
+    let newState = {...state}
+
+    for (let [storeKey, reducer] of combination ) {
+      newState[storeKey] = reducer(newState[storeKey], action, newState)
+    }
+
+    return newState
   }
 }
 
