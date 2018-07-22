@@ -4,7 +4,7 @@ import {Link} from 'react-router-dom'
 
 const mapStateToProps = state => {
     return {
-        watches: state.config.watches
+        watches: state.watches
     }
 }
 
@@ -14,9 +14,9 @@ function WatchList({watches, match}) {
 
     return <ul className="list-group">
     {
-        watches.map((value, i) =>
+        watches.map(({config}, i) =>
             <Link to={`${baseUrl}/${i}`} className="list-group-item" key={i} data-test-class="watch-li">
-            {value.serviceName} {value.levelValue}
+            {config.serviceName} {config.levelValue}
             </Link>
         )
     }

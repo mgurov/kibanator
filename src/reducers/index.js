@@ -1,6 +1,5 @@
 import watches from './watches'
 import synctimes from './synctimes'
-import config from './config'
 import versions from './versions'
 import fetchStatus from './fetchStatus'
 import view from './view'
@@ -8,7 +7,6 @@ import view from './view'
 const combinedReducers = combineReducersWithState([
   //array as order might matter
   ['view', view],
-  ['config', config],
   ['watches', watches],
   ['fetchStatus', fetchStatus],
   ['synctimes', synctimes],

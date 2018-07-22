@@ -1,31 +1,42 @@
-import data from './data'
+import dataReducer from './data'
+import configReducer from './config'
 import _ from 'lodash'
 
-const startingState = {
-    data: {}
-}
+export const initialState = []
 
-export default function watches (state = startingState, action, fullState) {
+export default function watches(state = initialState, action) {
 
     if (action.type === 'ON_INIT') {
-        let initialData = _.fromPairs(_.map(fullState.config.watches, (watch, watchIndex) => [watchIndex, applyDataAction(undefined, watchIndex + "", action)]))
-        return {...state, data: initialData}
+        let watches = _.get(action.payload.config, 'watches') || []
+
+        let initial = _.map(watches,
+            watch => { return { config: watch, data: dataReducer(undefined, action, watch.captors) } }
+        )
+        return initial
+    }
+
+    if (action.type === 'SET_CONFIG') {
+        let { index, value } = action.payload
+        let watches = [...state]
+        if (index === undefined) {
+            watches.push({ config: value, data: dataReducer(undefined, action, undefined) })
+        } else {
+            watches[index] = { ...watches[index], config: value }
+        }
+        return watches
+    }
+
+    if (action.type === 'RM_CONFIG') {
+        let { watchIndex } = action.payload
+        return state.filter((e, i) => i + "" !== watchIndex)
     }
 
     //cross-watch actions
     if (action.type === 'RESET_DATA') {
-        return {...state, data: _.mapValues(state.data, (d, watchIndex) => applyDataAction(d, watchIndex, action))}
+        return _.map(state, (watch) => { return { ...watch, data: dataReducer(undefined, action, watch.captors) } })
     }
-    
-    if (action.type === 'SET_CONFIG' || action.type === 'RM_CONFIG') {
-        let newData = {}
-        _.forEach(fullState.config.watches, (watch, watchIndex) => {
-            newData[watchIndex] = applyDataAction(state.data[watchIndex + ""], watchIndex, action)
-        })
-        
-        return {...state, data: newData}
-    }
-    
+
+
     //delegate the rest to the specific data reducer if watchIndex present
     let watchIndex = _.get(action, 'payload.watchIndex')
 
@@ -33,28 +44,18 @@ export default function watches (state = startingState, action, fullState) {
         return state
     }
 
-    watchIndex = "" + watchIndex //stringify index
+    let watch = state[watchIndex]
+    let oldConfig = watch.config
+    let newConfig = configReducer(oldConfig, action)
 
-    let updatedData = applyDataAction(state.data[watchIndex], watchIndex, action)
+    let oldData = watch.data
+    let newData = dataReducer(oldData, action, newConfig.captors)
 
-    let result = {...state, data: {
-        ...state.data,
-        [watchIndex]: updatedData
-    }}
-
-    return result
-
-    function applyDataAction(watchData, watchIndex, action) {
-        watchIndex = "" + watchIndex //stringify index
-
-        let filters = _.get(fullState.config.watches[watchIndex], 'captors')
-    
-        let updatedData = data(watchData, action, filters)
-    
-        if (undefined === updatedData) {
-            console.warn('unexpectedly undefined data for watch index', watchIndex)
-        }
-
-        return updatedData
+    if (oldConfig === newConfig && oldData === newData) {
+        return state //no changes
     }
+
+    let result = [...state]
+    result[watchIndex] = { config: newConfig, data: newData }
+    return result
 }

@@ -6,13 +6,13 @@ const mapStateToProps = (state, {watchIndex}) => {
 
     let titleArray = []
 
-    let pendingCount = _.sum(_.map(state.watches.data, d => _.size(d.timeline.pending)))
+    let pendingCount = _.sum(_.map(state.watches, d => _.size(d.data.timeline.pending)))
     if (pendingCount > 0) {
         titleArray.push('' + pendingCount)
     }
 
     if (watchIndex !== undefined) {
-        let serviceName = _.get(state, `config.watches[${watchIndex}].serviceName`)
+        let serviceName = _.get(state, `watches[${watchIndex}].config.serviceName`)
         if (serviceName) { 
             titleArray.push(serviceName)
         }

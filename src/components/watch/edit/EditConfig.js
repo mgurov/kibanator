@@ -20,7 +20,7 @@ const defaultConfig = {
 }
 
 const mapStateToProps = state => {
-    return { watches: state.config.watches }
+    return { watches: state.watches }
 }
 
 const mapDispatchToProps = dispatch => {
@@ -41,7 +41,7 @@ class EditConfig extends React.Component {
         this.index = props.watchIndex
         this.history = props.history
 
-        let value = !this.index ? defaultConfig : props.watches[this.index]
+        let value = !this.index ? defaultConfig : props.watches[this.index].config
 
         this.state = {
             values: { ...value },

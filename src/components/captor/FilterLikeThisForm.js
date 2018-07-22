@@ -7,7 +7,7 @@ import * as actions from '../../actions'
 import {withRouter} from 'react-router-dom'
 
 const mapStateToProps = (state, {watchIndex}) => {
-    let selectedConfigWatch = state.config.watches[watchIndex]
+    let selectedConfigWatch = state.watches[watchIndex].config
     return {
         view: state.view,
         captorsNames: _.map(selectedConfigWatch.captors, (c) => c.key), 

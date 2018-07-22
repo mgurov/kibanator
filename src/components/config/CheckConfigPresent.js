@@ -5,8 +5,7 @@ import {Redirect} from 'react-router-dom'
 import {connect} from 'react-redux'
 
 let mapStateToProps = (state) => ({
-    configPresent: _.size(state.config.watches) > 0,
-    config: state.config
+    configPresent: _.size(state.watches) > 0
 })
 
 function CheckConfigPresent({configPresent}) {

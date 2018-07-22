@@ -11,7 +11,7 @@ import {watchIndexData} from '../../state/data'
 
 const mapStateToProps = (state, {match}) => {
     let watchIndex = parseInt(match.params.watchIndex, 10)
-    let captors = state.config.watches[watchIndex].captors
+    let captors = state.watches[watchIndex].config.captors
     return {
         watchIndex,
         captors,

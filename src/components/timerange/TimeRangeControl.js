@@ -10,7 +10,7 @@ const mapStateToProps = (state, {watchIndex}) => {
         data: state.data,
         fetchStatus: state.fetchStatus,
         synctimes: state.synctimes,
-        config: state.config.watches[watchIndex],
+        config: state.watches[watchIndex].config,
     }
 }
 

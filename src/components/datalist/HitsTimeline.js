@@ -20,7 +20,7 @@ const mapStateToProps = (state, {watchIndex}) => {
         viewProps: state.view,
         error: state.fetchStatus.error,
         syncStarted: !!state.synctimes.selected,
-        captorsCount: _.size(_.get(state, `config.watches[${watchIndex}].captors`)),
+        captorsCount: _.size(_.get(state, `watches[${watchIndex}].config.captors`)),
     }
 }
 
