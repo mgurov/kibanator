@@ -38,7 +38,7 @@ class LogRow extends Component {
 
 function AckButton(props) {
     return <span 
-        className="glyphicon glyphicon-ok-sign" 
+        className="glyphicon glyphicon-ok-sign ack-button" 
         style={{cursor: 'pointer'}} 
         onClick={(e) => props.onAck(e.metaKey)} 
         title="Acknlowledge. Use cmd to ack all up to this."></span>
@@ -46,7 +46,7 @@ function AckButton(props) {
 
 function AckTagButton(props) {
     return <span 
-        className="glyphicon glyphicon-ok-sign" 
+        className="glyphicon glyphicon-ok-sign ack-tag" 
         style={{cursor: 'pointer'}} 
         onClick={(e) => props.onClick()} 
         title="Acknlowledge the captor."></span>
