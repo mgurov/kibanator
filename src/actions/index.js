@@ -7,35 +7,37 @@ export const selectSyncTime = selected => {
   }  
 }
 
-export const ackTillId = id => {
+export const ackTillId = ({id, watchIndex}) => {
   return {
     type: 'ACK_TILL_ID',
-    id
+    id,
+    payload: {id, watchIndex}
   }
 }
 
-export const ackId = id => {
+export const ackId = ({id, watchIndex}) => {
   return {
     type: 'ACK_ID',
     id,
-    payload: {id},
+    payload: {id, watchIndex},
   }
 }
 
-export const ackAll = id => {
+export const ackAll = ({watchIndex}) => {
   return {
-    type: 'ACK_ALL'
+    type: 'ACK_ALL',
+    payload: {watchIndex}
   }
 }
 
-export const ackTag = tag => {
+export const ackTag = ({tag, watchIndex}) => {
   return {
     type: 'ACK_TAG',
-    payload: {tag}
+    payload: {tag, watchIndex}
   }
 }
 
-export const resetData = id => {
+export const resetData = () => {
   return {
     type: 'RESET_DATA'
   }
