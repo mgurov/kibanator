@@ -24,18 +24,18 @@ const mapStateToProps = (state, {watchIndex}) => {
     }
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch, {watchIndex}) => {
     return {
         onAck: (id, ackAllTillThis) => {
             let a = ackAllTillThis ? actions.ackTillId : actions.ackId;
-            dispatch(a(id))
+            dispatch(a({id, watchIndex}))
         },
-        onAckTag: (tag) => dispatch(actions.ackTag(tag)) ,
+        onAckTag: (tag) => dispatch(actions.ackTag({tag, watchIndex})) ,
         removeCaptor: (captorKey, watchIndex) => () => {
             dispatch(actions.removeCaptor({captorKey, watchIndex}))
         },
         ackAll: () => {
-            dispatch(actions.ackAll())
+            dispatch(actions.ackAll({watchIndex}))
         },
         showViewClick: (key) => () => dispatch(actions.showView({key})),
     }
