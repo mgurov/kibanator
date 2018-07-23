@@ -1,6 +1,7 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
+import _ from 'lodash'
 
 const mapStateToProps = state => {
     return {
@@ -14,9 +15,9 @@ function WatchList({watches, match}) {
 
     return <ul className="list-group">
     {
-        watches.map(({config}, i) =>
+        watches.map(({config, data}, i) =>
             <Link to={`${baseUrl}/${i}`} className="list-group-item" key={i} data-test-class="watch-li">
-            {config.serviceName} {config.levelValue}
+            {config.serviceName} {config.levelValue} <PendingCount data={data} />
             </Link>
         )
     }
@@ -24,6 +25,16 @@ function WatchList({watches, match}) {
             add...
             </Link>
     </ul>
+}
+
+function PendingCount({data}) {
+    let count = _.size(data.timeline.pending)
+    if (!count) {
+        return null
+    }
+
+    return <span className="badge">{count}</span>
+
 }
 
 export default connect(mapStateToProps, null)(WatchList)
