@@ -3,7 +3,7 @@ import { Col, Row, Badge } from 'react-bootstrap'
 import _ from 'lodash'
 import DateTime from '../generic/DateTime'
 import '../datalist/DataList.css'
-import MultilineField from '../datalist/MultilineField'
+import LogRowFieldValue from '../datalist/LogRowFieldValue'
 import FilterLikeThisButton from './FilterLikeThisButton'
 
 class LogRow extends Component {
@@ -67,30 +67,32 @@ class ExpandableDetails extends Component {
             return null
         }
         const h = this.props.data
-        let oneLineFields = []
-        let multiLineFields = []
-
-        _.forEach(h.fields, (value, key) => {
-            if (value.indexOf && value.indexOf('\n') > 0) {
-                multiLineFields.push(<MultilineField key={key} k={key} v={value}/>)
-            } else {
-                oneLineFields.push(<span key={key}><label>{key}:</label> {value} </span>)
+        let fields = _.map(h.fields, (value, fieldName) => {
+            return {
+                multiline: value.indexOf && value.indexOf('\n') > 0,
+                fieldName,
+                value,
             }
         })
+        
+        fields = _.sortBy(fields, 'multiline')
+
+        let filterLikeThisFieldButton = (fieldName) => <FilterLikeThisButton value={h} field={fieldName} watchIndex={this.props.watchIndex}/>
 
         return <Row>
             <Col xs={12} md={12} lg={12}>
                 <div>
                     {this.props.onAck && 
                         <span>
-                            <FilterLikeThisButton value={h} watchIndex={this.props.watchIndex}/>&nbsp;
+                            <FilterLikeThisButton value={h} watchIndex={this.props.watchIndex}>Filter...</FilterLikeThisButton>&nbsp;
                             <button className="btn btn-default btn-xs" onClick={() => this.props.onAck(false)}><span className="glyphicon glyphicon-ok-sign"></span> ack this</button>&nbsp;
                             <button className="btn btn-default btn-xs" onClick={() => this.props.onAck(true)}><span className="glyphicon glyphicon-import"></span> ack down to this <span className="glyphicon glyphicon-ok-sign"></span></button>&nbsp;
                         </span>
                     }
                 </div>
-                {oneLineFields}
-                {multiLineFields}
+                {
+                    fields.map(f => <LogRowFieldValue {...f} key={f.fieldName} filterButton={filterLikeThisFieldButton(f.fieldName)} />)
+                }
             </Col>
         </Row>
     }

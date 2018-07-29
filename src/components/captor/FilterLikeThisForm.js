@@ -12,6 +12,7 @@ const mapStateToProps = (state, {watchIndex}) => {
         view: state.view,
         captorsNames: _.map(selectedConfigWatch.captors, (c) => c.key), 
         hit: state.view.hit,
+        field: state.view.field,
     }
 }
 
@@ -39,14 +40,16 @@ class FilterLikeThisForm extends Component {
         let existingCaptorNames = {}
         _.forEach(props.captorsNames, (c) => existingCaptorNames[c] = 1)
 
-        const exampleMessage = this.props.hit.message
+        let {field, hit} = props
+
+        const exampleMessage = field ?  hit.fields[props.field] : hit.message
 
         this.state = {
             key: exampleMessage,
             keyEdited: false,
             messageContains: exampleMessage,
             type: 'contains',
-            field: null,
+            field,
             exampleMessage,
             acknowledge: true,
             transform: false,
