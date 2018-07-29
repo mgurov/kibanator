@@ -27,6 +27,7 @@ const startingState = {
     options:defaultOptions, 
     selected: null,
     intervalId: null,
+    fetchedWatchIndexes: []
 }
 
 const synctimes = (state = startingState, action) => {
@@ -40,13 +41,17 @@ const synctimes = (state = startingState, action) => {
                     at: now,
                 }
             })
-        case 'FETCH_STARTED_TIMER':
-            return Object.assign({}, state, {intervalId: action.intervalId})
+        case 'FETCH_STARTED_TIMER': {
+            let {intervalId, watchIndexes} = action.payload
+            return Object.assign({}, state, {intervalId: intervalId, fetchedWatchIndexes: watchIndexes})
+        }
+            
         case 'RESET_DATA' : 
             return startingState
-        case 'FETCH_STOP_TIMER' : 
+        case 'FETCH_STOP_TIMER' : {
             window.clearInterval(state.intervalId)
-            return Object.assign({}, state, {intervalId: null})
+            return Object.assign({}, state, {intervalId: null, fetchedWatchIndexes: []})
+        }
         default:
             return state
     }

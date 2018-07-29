@@ -122,7 +122,7 @@ export function startFetching({from, config, watchIndex}) {
 
         doFetch()
         let intervalId = setInterval(doFetch, refreshInterval)
-        dispatch(startedFetchTimer(intervalId))
+        dispatch(startedFetchTimer({intervalId, watchIndexes: [watchIndex]}))
     }
 }
 
@@ -132,10 +132,10 @@ export function stopFetchTimer() {
     }
 }
 
-export function startedFetchTimer(intervalId) {
+export function startedFetchTimer({intervalId, watchIndexes}) {
     return {
         type: 'FETCH_STARTED_TIMER',
-        intervalId
+        payload: {intervalId, watchIndexes}
     }
 }
 
