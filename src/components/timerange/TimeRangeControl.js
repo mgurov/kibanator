@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import * as actions from '../../actions'
 import { SyncTimeControl } from './SyncTimeControl'
 import { SelectTimeRange } from './SelectTimeRange'
+import Reset from './Reset'
 import _ from 'lodash'
 
 const mapStateToProps = (state, {watchIndex}) => {
@@ -32,7 +33,9 @@ function TimeRangeControl(props) {
     if (_.size(fetchedWatchIndexes) > 0) {
         let fetchingCurrentWatch = (_.indexOf(fetchedWatchIndexes, props.watchIndex) >= 0)
         if (!fetchingCurrentWatch) {
-            return <div className="bg-warning">Other watch(es) is being fetched. Reset data to continue with this one.</div>
+            return <div className="bg-warning">Other watches are being fetched.  
+                { }<Reset>Reset data</Reset> or <a target="_blank" href="#open-me-new-window">open in new window</a> to start with this one.
+            </div>
         }
     }
     

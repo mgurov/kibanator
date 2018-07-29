@@ -12,7 +12,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        reset: (config) => {
+        reset: () => {
             dispatch(stopFetchTimer())
             dispatch(resetData())
         },
@@ -21,12 +21,15 @@ const mapDispatchToProps = dispatch => {
 
 function ResetButton(props) {
     return <Button 
-        className="btn btn-xs glyphicon glyphicon-repeat" 
+        className="btn btn-xs" 
         data-test-id="reset"
         onClick={props.reset}
         disabled={!props.fetchStarted}
         title="Reset"
-    />
+    >
+        <span className="glyphicon glyphicon-repeat"/>
+        {props.children}
+    </Button>
 }
 
 let Reset = connect(mapStateToProps, mapDispatchToProps)(ResetButton)
