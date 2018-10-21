@@ -33,7 +33,7 @@ function PendingCount({data}) {
         return null
     }
 
-    return <span className="badge">{count}</span>
+    return <span className="badge badge-secondary">{count}</span>
 
 }
 

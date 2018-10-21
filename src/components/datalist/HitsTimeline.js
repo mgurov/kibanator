@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import * as actions from '../../actions'
-import { Button, ButtonGroup, Alert, Well } from 'react-bootstrap'
+import {Button, ButtonGroup, Alert} from 'reactstrap'
 import * as constant from '../../constant'
 import _ from 'lodash'
 import './DataList.css'
@@ -10,6 +10,7 @@ import {viewToCaptorKey} from '../../domain/Captor'
 import FilterLikeThisView from './FilterLikeThisView'
 import DataList from './DataList'
 import {watchIndexData} from '../../state/data'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const mapStateToProps = (state, {watchIndex}) => {
     let data = watchIndexData(state, watchIndex)
@@ -46,7 +47,7 @@ class HitsTimeline extends React.Component{
     render() {
         let props = this.props
         if (!props.syncStarted) {
-            return <Well>Right, select where to start from ^^^</Well>
+            return null
         }
 
         let theView = (props.timeline[props.view]||[])
@@ -57,7 +58,7 @@ class HitsTimeline extends React.Component{
             onAck = props.onAck
             onAckTag = props.onAckTag
             action = {
-                title: <span><span className="glyphicon glyphicon-ok-sign"></span> ack all</span>,
+                title: <span><FontAwesomeIcon icon="check-circle"/> ack all</span>,
                 action: props.ackAll,
                 disabled: theView.length === 0,
             }
@@ -88,7 +89,7 @@ class HitsTimeline extends React.Component{
         return <span>
 
         {props.error &&
-                    <Alert id="dataFetchErrorAlert" bsStyle="warning">
+                    <Alert id="dataFetchErrorAlert" color="warning">
                         {props.error.name} {props.error.message}
                     </Alert>
                 }
@@ -105,14 +106,16 @@ function ViewButtons({selectedView, viewCounts, showViewClick, captorsCount}) {
 
     function DataViewButton({view, name}) {
      return <Button
+            color="light"
             active={view === selectedView}
             onClick={showViewClick(view)}
             >
-            {name || view} <span className="badge">{viewCounts[view]}</span>
+            {name || view} <span className="badge badge-secondary">{viewCounts[view]}</span>
             </Button>
     }
 
-    return <ButtonGroup bsSize="xsmall" bsStyle="default">
+    return <ButtonGroup size="sm">
+        <span className="btn"></span>
             <DataViewButton view={constant.viewPending}/>
             <DataViewButton view={constant.viewAcked}/>
         <span className="btn"></span>
@@ -141,8 +144,7 @@ function ViewButtons({selectedView, viewCounts, showViewClick, captorsCount}) {
 
 function ActionButton({action}) {
     return action ? <Button 
-        bsSize="xsmall" 
-        bsStyle="default" 
+        size="sm" 
         onClick={action.action} 
         disabled={action.disabled}
         >{action.title}</Button> : null

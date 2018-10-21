@@ -1,7 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 import * as constant from '../../constant'
-import { Grid, Row, Col, Button} from 'react-bootstrap'
+import { Container, Row, Col, Button} from 'reactstrap'
 import LogRow from './LogRow'
 
 
@@ -22,7 +22,7 @@ class DataList extends React.Component {
         let dataHead = _.take(fullData, this.state.viewSize)
         let remainderLength = fullData.length - dataHead.length
 
-        return <Grid fluid={true}>
+        return <Container fluid>
          <Row className="top-buffer">
              <Col xs={12} md={12} lg={12}>{this.props.actionButton}</Col>
          </Row>
@@ -35,9 +35,9 @@ class DataList extends React.Component {
                  watchIndex={this.props.watchIndex}
              />)}
          {(remainderLength > 0) && <Row className="top-buffer">
-             <Col xs={12} md={12} lg={12}><Button onClick={this.showMore}>See next {constant.VIEW_SIZE} of {remainderLength} remaining</Button></Col>
+             <Col xs={12} md={12} lg={12}><Button color="light" block onClick={this.showMore}>See next {constant.VIEW_SIZE} of {remainderLength} remaining</Button></Col>
          </Row>}
-     </Grid>
+     </Container>
     }
 }
 

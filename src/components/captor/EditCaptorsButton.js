@@ -1,5 +1,6 @@
 import React from 'react'
 import EditCaptorsPopup from './EditCaptorsPopup'
+import {Button} from 'reactstrap'
 
 class EditCaptorsButton extends React.Component {
     constructor(props) {
@@ -17,7 +18,7 @@ class EditCaptorsButton extends React.Component {
                 close={this.togglePopupVisibility}
             ></EditCaptorsPopup>
         } else {
-            return <button className="btn btn-default btn-xs" onClick={this.togglePopupVisibility}>edit filters</button>
+            return <Button size="sm" color="light" onClick={this.togglePopupVisibility}>edit filters</Button>
         }
     }
 }

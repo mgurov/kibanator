@@ -1,5 +1,6 @@
 import React from 'react'
-import {Button} from 'react-bootstrap'
+import {Button} from 'reactstrap'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 class LogRowFieldValue extends React.Component {
     constructor(props) {
@@ -21,7 +22,7 @@ class LogRowFieldValue extends React.Component {
                 document.execCommand('copy')
             }
 
-            this.copyButton = <Button className="glyphicon glyphicon-copy" bsSize="xsmall" title="copy to clipboard" onClick={onSelect}></Button>
+            this.copyButton = <Button size="sm" title="copy to clipboard" onClick={onSelect}><FontAwesomeIcon icon="copy"/></Button>
             this.renderedValue = <pre ref={(textHolder) => { this.textHolder = textHolder }}>{value}</pre>
         } else {
             this.renderedValue = value

@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import { Button, FormGroup, ControlLabel, FormControl, HelpBlock, ButtonGroup, MenuItem, DropdownButton, Checkbox } from 'react-bootstrap';
+import { Button, 
+    ButtonGroup,
+    UncontrolledButtonDropdown,DropdownMenu, DropdownToggle, DropdownItem,
+    Input, Label, FormGroup, FormText
+} from 'reactstrap'
 import _ from 'lodash'
 import { messageContainsCaptor, messageMatchesRegexCaptor, captorToPredicate } from '../../domain/Captor'
 import * as actions from '../../actions'
 import {withRouter} from 'react-router-dom'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const mapStateToProps = (state, {watchIndex}) => {
     let selectedConfigWatch = state.watches[watchIndex].config
@@ -239,8 +244,7 @@ class FilterLikeThisForm extends Component {
         }
 
         let CancelButton = () => {
-            return <Button bsStyle="default"
-                bsSize="small"
+            return <Button
                 onClick={this.close}
                 title="Forget about this"
             >Never mind</Button>
@@ -255,17 +259,22 @@ class FilterLikeThisForm extends Component {
                     {...fieldProps("messageContains")}
                     label={<span>
 
-                        Filter on field <DropdownButton bsSize="xsmall" bsStyle="default" id="filterFields" title={this.state.field == null ? 'Message' : this.state.field} onSelect={changeField}>
-                            <MenuItem active={this.state.field == null}>Message</MenuItem>
-                            <MenuItem divider />
-                            {
-                                _.map(this.props.hit.fields, (v, k) => <MenuItem key={k} active={this.state.field === k} eventKey={k}>{k}</MenuItem>)
-                            }
-                        </DropdownButton>
+                        Filter on field 
+
+                        <UncontrolledButtonDropdown size="sm" id="filterFields">
+                            <DropdownToggle caret>{this.state.field == null ? 'Message' : this.state.field}</DropdownToggle>
+                            <DropdownMenu>
+                                <DropdownItem active={this.state.field == null}>Message</DropdownItem>
+                                <DropdownItem divider />
+                                {
+                                    _.map(this.props.hit.fields, (v, k) => <DropdownItem key={k} active={this.state.field === k} onClick={() => changeField(k)}>{k}</DropdownItem>)
+                                }
+                            </DropdownMenu>
+                        </UncontrolledButtonDropdown>
 
                         &nbsp;using&nbsp;
 
-                        <ButtonGroup bsSize="xsmall" bsStyle="default">
+                        <ButtonGroup size="sm">
                             <Button active={this.state.type === 'contains'} onClick={() => that.setState({ type: 'contains' })}>contains</Button>
                             <Button active={this.state.type === 'matches'} onClick={() => that.setState({ type: 'matches' })}>matches js regex</Button>
                         </ButtonGroup>:</span>
@@ -275,16 +284,16 @@ class FilterLikeThisForm extends Component {
                 />
 
                 {this.state.type === 'matches' &&
-                    <HelpBlock ><p>e.g. <code>Hello \d+ world</code> to match <code>Hello 12 world</code></p>
-                        <p><Button bsSize="xsmall" bsStyle="default" onClick={this.escapeRegex}>escape the filter</Button> <a className="glyphicon glyphicon-education" target="_blank" rel="noopener noreferrer" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp" title="">MDN</a></p>
-                    </HelpBlock>
+                    <FormText><p>e.g. <code>Hello \d+ world</code> to match <code>Hello 12 world</code></p>
+                        <p><Button size="sm" color="primary" onClick={this.escapeRegex}>escape the filter</Button> 
+                        {' '}<a target="_blank" rel="noopener noreferrer" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp" title=""><FontAwesomeIcon icon="book"/> MDN</a></p>
+                    </FormText>
                 }
-                <HelpBlock>{this.state.exampleMessage}</HelpBlock>
+                <FormText>{this.state.exampleMessage}</FormText>
 
                 <CancelButton />&nbsp;
 
-                <Button bsStyle={this.state.predicateTested ? "default": "primary"}
-                    bsSize="small"
+                <Button color={this.state.predicateTested ? "secondary": "primary"}
                     onClick={this.dryRunMatch}
                     disabled={this.isInvalid()}
                     title="Show matching lines"
@@ -293,8 +302,7 @@ class FilterLikeThisForm extends Component {
                     </Button>
                 &nbsp;
 
-                <Button bsStyle={this.state.predicateTested ? "primary": "default"}
-                    bsSize="small"
+                <Button color={this.state.predicateTested ? "secondary": "primary"}
                     onClick={this.ack}
                     disabled={!this.state.predicateTested}
                     title="Do not create the filter yet, just ack the currently pending lines"
@@ -302,8 +310,7 @@ class FilterLikeThisForm extends Component {
                     Ack Matched ({this.props.matchedCount})
                     </Button>
 
-                <Button bsStyle="default"
-                    bsSize="small"
+                <Button
                     onClick={this.switchViewFun('save')}
                     disabled={!this.state.predicateTested}
                     title="Create a new persistent filter of this search"
@@ -323,16 +330,23 @@ class FilterLikeThisForm extends Component {
                     autoFocus
                 />
 
-                <Checkbox checked={this.state.acknowledge} onChange={() => that.setState({ acknowledge: !that.state.acknowledge })}>
-                    Acknowledge <small>untick to leave message tagged in the pending list</small>
-                </Checkbox>
+                <FormGroup check>
+                    <Label check>
+                        <Input type="checkbox" checked={this.state.acknowledge} onChange={() => that.setState({ acknowledge: !that.state.acknowledge })} />{' '}
+                        Acknowledge <small>untick to leave message tagged in the pending list</small>
+                    </Label>
+                </FormGroup>
 
-                <Checkbox checked={this.state.transform} onChange={() => that.setState({ transform: !that.state.transform })}>
-                    Transform <small>tick to use matched field as the title. First captured group will be used for regex with captures.</small>
-                </Checkbox>
 
-                <Button bsStyle="default"
-                    bsSize="small"
+                <FormGroup check>
+                    <Label check>
+                        <Input type="checkbox" checked={this.state.transform} onChange={() => that.setState({ transform: !that.state.transform })} />{' '}
+                        Transform <small>tick to use matched field as the title. First captured group will be used for regex with captures.</small>
+                    </Label>
+                </FormGroup>
+
+
+                <Button
                     onClick={this.switchViewFun('filter')}
                     title="Back to filter"
                 >
@@ -341,8 +355,7 @@ class FilterLikeThisForm extends Component {
                 &nbsp;
                 <CancelButton />
                 &nbsp;
-                <Button bsStyle="primary"
-                    bsSize="small"
+                <Button color="primary"
                     onClick={this.onAddCaptor}
                     disabled={this.isInvalid()}
                     title="Save me"
@@ -358,12 +371,12 @@ class FilterLikeThisForm extends Component {
     }
 }
 
-function FieldGroup({ id, label, help, validationState, ...rest }) {
+function FieldGroup({label, help, validationState, ...rest }) {
     return (
-        <FormGroup controlId={id} validationState={validationState}>
-            <ControlLabel>{label}</ControlLabel>
-            <FormControl {...rest} />
-            {help && <HelpBlock>{help}</HelpBlock>}
+        <FormGroup>
+            <Label>{label}</Label>
+            <Input {...rest} />
+            {help && <FormText>{help}</FormText>}
         </FormGroup>
     );
 }

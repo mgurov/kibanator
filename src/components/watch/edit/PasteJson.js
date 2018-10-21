@@ -1,5 +1,5 @@
 import React from 'react'
-import {FormGroup, ControlLabel, FormControl, HelpBlock, Button} from 'react-bootstrap'
+import {FormGroup, Input, Alert, Button} from 'reactstrap'
 
 class PasteJsonButton extends React.Component {
     constructor(props) {
@@ -34,10 +34,9 @@ class PasteJsonButton extends React.Component {
     }
 
     render() {
-        return <FormGroup controlId="formControlsTextarea" validationState={this.state.parsingError == null ? null : "error"}>
-        <ControlLabel>JSON</ControlLabel>
-        {this.state.parsingError && <HelpBlock>{"" + this.state.parsingError} <Button onClick={this.revert}>revert</Button> </HelpBlock>}
-        <FormControl componentClass="textarea" placeholder="textarea" value={this.state.value} onChange={this.onValueChange} rows="25" />
+        return <FormGroup>
+        {this.state.parsingError && <Alert color="danger">{"" + this.state.parsingError + " "} <Button color="primary" onClick={this.revert}>revert</Button> </Alert>}
+        <Input type="textarea" placeholder="textarea" value={this.state.value} onChange={this.onValueChange} rows="25" invalid={this.state.parsingError != null} />
       </FormGroup>
     }
 

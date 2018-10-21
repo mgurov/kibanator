@@ -1,10 +1,10 @@
 import React from 'react'
 import {
     FormGroup,
-    ControlLabel,
-    FormControl,
-    HelpBlock,
-} from 'react-bootstrap'
+    Label,
+    Input,
+    FormText,
+} from 'reactstrap'
 
 export default function EditConfigForm({
     onSubmit,
@@ -80,12 +80,12 @@ export default function EditConfigForm({
 
 }
 
-function FieldGroup({ id, label, help, ...rest }) {
+function FieldGroup({label, help, ...rest }) {
     return (
-        <FormGroup controlId={id}>
-            <ControlLabel>{label}</ControlLabel>
-            <FormControl {...rest} />
-            {help && <HelpBlock>{help}</HelpBlock>}
+        <FormGroup>
+            <Label>{label}</Label>
+            <Input {...rest}/>
+            {help && <FormText>{help}</FormText>}
         </FormGroup>
     );
 }

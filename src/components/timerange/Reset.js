@@ -1,8 +1,10 @@
 import React from 'react'
-import {Button} from 'react-bootstrap'
+import {Button} from 'reactstrap'
 import { connect } from 'react-redux'
 
 import { stopFetchTimer, resetData } from '../../actions'
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const mapStateToProps = state => {
     return {
@@ -20,15 +22,14 @@ const mapDispatchToProps = dispatch => {
 }
 
 function ResetButton(props) {
-    return <Button 
-        className="btn btn-xs" 
+    return <Button
+        size="sm" 
         data-test-id="reset"
         onClick={props.reset}
         disabled={!props.fetchStarted}
         title="Reset"
     >
-        <span className="glyphicon glyphicon-repeat"/>
-        {props.children}
+        <FontAwesomeIcon icon="sync" />
     </Button>
 }
 

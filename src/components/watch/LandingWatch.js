@@ -2,8 +2,9 @@ import React from 'react'
 import TimeRangeControl from '../timerange/TimeRangeControl';
 import HitsTimeline from '../datalist/HitsTimeline';
 import {Link, Switch, Route} from 'react-router-dom'
-import {Button} from 'react-bootstrap'
+import {Button} from 'reactstrap'
 import EditConfig from './edit/EditConfig';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export default function LandingWatch({watchIndex}) {
     return <Switch>
@@ -23,6 +24,8 @@ function ExistingWatch({watchIndex}) {
 
 function EditLink({watchIndex}) {
     return <Link to={`/watch/${watchIndex}/edit`} >
-        <Button className="btn btn-xs glyphicon glyphicon-wrench" data-test-id="edit-config"/>
+        <Button data-test-id="edit-config" size="sm">
+            <FontAwesomeIcon icon="wrench" />
+        </Button>
         </Link>
 }

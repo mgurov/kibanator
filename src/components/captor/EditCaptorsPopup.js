@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Modal, Grid, Row, Col} from 'react-bootstrap';
+import {Button, Container, Row, Col, Modal, ModalHeader, ModalBody, ModalFooter} from 'reactstrap'
 import * as FormHelper from '../generic/FormHelper'
 
 import { connect } from 'react-redux'
@@ -7,6 +7,7 @@ import { withRouter } from 'react-router-dom'
 import { removeCaptor } from '../../actions'
 import {captorKeyToView} from '../../domain/Captor'
 import {watchIndexData} from '../../state/data'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 
 const mapStateToProps = (state, {match}) => {
@@ -56,33 +57,35 @@ class EditCaptorsPopup extends Component {
         }
 
         const modalInstance = (
-            <span className="static-modal">
-                <Modal show={this.props.visible} onHide={this.props.close} onKeyDown={FormHelper.handleEnterKey(this.submit)}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Edit captors</Modal.Title>
-                    </Modal.Header>
+            <div>
+                <Modal isOpen={this.props.visible} toggle={this.props.close} onKeyDown={FormHelper.handleEnterKey(this.submit)}>
+                    <ModalHeader toggle={this.props.close}>
+                        Edit captors
+                    </ModalHeader>
 
-                    <Modal.Body>
-                        <Grid fluid={true}>
+                    <ModalBody>
+                        <Container fluid={true}>
                         {props.captors.map(
                             captor => 
                             <Row key={captor.key}>
                                 <Col xs={2}>
-                                    <button className="rm-filter btn btn-default btn-xs glyphicon glyphicon-remove" onClick={() => this.props.removeCaptor(captor, this.props.watchIndex)}></button>
+                                    <Button size="sm" className="rm-filter" onClick={() => this.props.removeCaptor(captor, this.props.watchIndex)}>
+                                        <FontAwesomeIcon icon="trash-alt" />
+                                    </Button>
                                 </Col>
                                 <Col xs={10}>
-                                    {captor.key} <span className="badge">{countCaptured(captor.key)}</span>                                 
+                                    {captor.key} <span className="badge badge-secondary">{countCaptured(captor.key)}</span>                                 
                                 </Col>
                             </Row>
                         )}
-                        </Grid>
-                    </Modal.Body>
+                        </Container>
+                    </ModalBody>
 
-                    <Modal.Footer>
+                    <ModalFooter>
                         <Button onClick={this.props.close}>Close</Button>
-                    </Modal.Footer>
+                    </ModalFooter>
                 </Modal>
-            </span>
+            </div>
         );
 
         return modalInstance;

@@ -1,13 +1,12 @@
 import React from 'react'
 
 import {
-    FormGroup,
-    ControlLabel,
-    FormControl,
-    HelpBlock,
+    Input,
     InputGroup,
+    InputGroupAddon,
+    FormGroup,
     Button
-} from 'react-bootstrap';
+} from 'reactstrap'
 import DateTime from '../generic/DateTime'
 import _ from 'lodash'
 
@@ -40,27 +39,19 @@ class CustomDatePopupForm extends React.Component {
             return 'success'
         }
     }  
-  
     render() {
       return (
         <form onSubmit={this.submit}>
-          <FormGroup
-            controlId="formBasicText"
-            validationState={this.getValidationState()}
-          >
-            <ControlLabel>Show logs starting from:</ControlLabel>
-                <InputGroup>
-                    <FormControl
-                    type="text"
-                    value={this.state.value}
-                    onChange={this.handleChange}
+          <FormGroup>
+              <InputGroup>
+                    <Input
+                        invalid={this.getValidationState() === 'error'}
+                        value={this.state.value}
+                        onChange={this.handleChange}
                     />
-                    <InputGroup.Button>
-                    <Button disabled={'error' === this.getValidationState()} onClick={this.submit}>go</Button>
-                    </InputGroup.Button>
+                    <InputGroupAddon addonType="append"><Button disabled={'error' === this.getValidationState()} onClick={this.submit}>go</Button></InputGroupAddon>
                 </InputGroup>
-            {/* <FormControl.Feedback /> */}
-            <HelpBlock><DateTime value={this.state.value}/></HelpBlock>
+            <DateTime value={this.state.value}/>
           </FormGroup>
         </form>
       );

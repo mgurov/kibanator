@@ -6,6 +6,7 @@ import { SyncTimeControl } from './SyncTimeControl'
 import { SelectTimeRange } from './SelectTimeRange'
 import Reset from './Reset'
 import _ from 'lodash'
+import {Card, CardBody, CardTitle, CardSubtitle} from 'reactstrap'
 
 const mapStateToProps = (state, {watchIndex}) => {
     return {
@@ -46,10 +47,21 @@ function TimeRangeControl(props) {
             lastSync={props.fetchStatus.lastSync}
         />
     } else {
-        return <div><h4>Select where to start from:</h4> <SelectTimeRange 
-                options={props.synctimes.options} 
-                onSelected={st => props.onSyncSelected(st, props.config)} 
-                /></div>
+        return <div>
+            
+            <Card className="text-center">
+                <CardBody>
+                    <CardTitle>Ready to go</CardTitle>
+                    <CardSubtitle>Please select where do we start from:</CardSubtitle>
+                    <SelectTimeRange 
+                    options={props.synctimes.options} 
+                    onSelected={st => props.onSyncSelected(st, props.config)} 
+                    />
+                </CardBody>
+            </Card>
+
+            
+        </div>
     }
 }
 

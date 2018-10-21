@@ -9,7 +9,24 @@ import WatchList from './components/watch/WatchList';
 import LandingWatch from './components/watch/LandingWatch';
 import EditConfig from './components/watch/edit/EditConfig';
 
+import { library } from '@fortawesome/fontawesome-svg-core'
+import * as awesomeIcons from '@fortawesome/free-solid-svg-icons'
+
+
 let App = () => {
+
+  library.add(
+    awesomeIcons.faSync, 
+    awesomeIcons.faChevronDown, 
+    awesomeIcons.faChevronRight, 
+    awesomeIcons.faCheckCircle, 
+    awesomeIcons.faCheckDouble, 
+    awesomeIcons.faCopy, 
+    awesomeIcons.faFilter,
+    awesomeIcons.faWrench,
+    awesomeIcons.faTrashAlt,
+    awesomeIcons.faBook,
+  )
 
   return (
     <Router basename="/ui">

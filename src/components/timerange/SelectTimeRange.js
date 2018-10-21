@@ -2,7 +2,7 @@ import React from 'react'
 import {
     ButtonGroup, 
     Button, 
-} from 'react-bootstrap';
+} from 'reactstrap';
 import _ from 'lodash'
 import CustomSelectionButton from './CustomSelectionButton'
 

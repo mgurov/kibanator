@@ -4,9 +4,10 @@ import { setConfig, removeConfig } from '../../../actions'
 import { connect } from 'react-redux'
 import PasteJson from './PasteJson'
 import EditConfigForm from './EditConfigForm';
-import { Tabs, Tab, Button } from 'react-bootstrap'
+import { Button } from 'reactstrap'
 import FilterList from '../FilterList'
 import _ from 'lodash'
+import NavTabs from '../../generic/NavTabs';
 
 const defaultConfig = {
     timeField: '@timestamp',
@@ -77,32 +78,37 @@ class EditConfig extends React.Component {
         }
 
         return <div>Edit configuration&nbsp;
-            <Button bsStyle="primary"
+            <Button color="primary"
                 onClick={onSubmit}
                 data-test-id="save-config"
                 title="Save the changes"
             >Save</Button> {' '}
 
-            <Button bsStyle="danger"
+            <Button color="danger"
                 onClick={onRemove}
                 data-test-id="rm-watch"
                 title="Remove"
             >Remove</Button>
 
-            <Tabs defaultActiveKey={1} id="uncontrolled-tab-example">
-                <Tab eventKey={1} title="Form">
-                    <EditConfigForm {...{ values: this.state.values, onChange, onSubmit }} />
-                </Tab>
-                <Tab eventKey="filters" title="Filters">
-                    <FilterList value={this.state.values.captors} onRemove={onFilterRemove} />
-                </Tab>
-                <Tab eventKey={3} title="Source">
-                    <PasteJson value={this.state.values} onJsonEdited={(values) => this.setState({ values })} />
-                </Tab>
-            </Tabs>
-
+            <NavTabs>
+                {[
+                    {
+                        title: 'Form',
+                        content: <EditConfigForm {...{ values: this.state.values, onChange, onSubmit }} />
+                    },
+                    {
+                        title: 'Filters',
+                        content: <FilterList value={this.state.values.captors} onRemove={onFilterRemove} />
+                    },
+                    {
+                        title: 'Source',
+                        content: <PasteJson value={this.state.values} onJsonEdited={(values) => this.setState({ values })} />
+                    },
+                ]}
+            </NavTabs>
         </div>
     }
 }
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(EditConfig))
