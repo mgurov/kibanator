@@ -29,5 +29,11 @@
   "homepage": "http://mywebsite.com/ui",
   "devDependencies": {
     "enzyme-adapter-react-16": "^1.1.1"
-  }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }
