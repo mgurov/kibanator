@@ -5,7 +5,8 @@ import 'bootstrap/dist/css/bootstrap-theme.css';
 import './index.css';
 import App from './App';
 import {unregister} from './registerServiceWorker';
-import { Provider } from 'react-redux'
+import { Provider } from 'react-redux';
+import 'react-app-polyfill/ie11'; //need this for cypress fetch hack
 
 import {newStore} from './store'
 
