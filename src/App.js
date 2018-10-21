@@ -1,9 +1,9 @@
 import React from 'react';
 import './App.css';
-import Reset from './components/timerange/Reset'
-import DocumentTitleContainer from './components/title/DocumentTitleContainer'
-import VersionWidget from './components/version/VersionWidget'
-import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
+import Reset from './components/timerange/Reset';
+import DocumentTitleContainer from './components/title/DocumentTitleContainer';
+import VersionWidget from './components/version/VersionWidget';
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
 import CheckConfigPresent from './components/config/CheckConfigPresent';
 import WatchList from './components/watch/WatchList';
 import LandingWatch from './components/watch/LandingWatch';
