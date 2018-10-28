@@ -29,7 +29,7 @@ class LogRow extends Component {
                 <Col sm={3} md={3} lg={3} >
                     {onAck && <AckButton onAck={onAck}/>}{' '}
                     <ExpandableShevron expanded={this.state.expanded} />{' '}
-                    <DateTime value={h.timestamp} /> 
+                    <DateTime value={h.timestamp} className="text-nowrap" /> 
                     {(row.tags||[]).map(tag => <React.Fragment key={tag}> <Badge>{tag} <AckTagButton onClick={() => this.props.onAckTag(tag)} /> </Badge></React.Fragment>)}
                 </Col>
                 <Col sm={9} md={9} lg={9}>{row.message || h.message}</Col>
