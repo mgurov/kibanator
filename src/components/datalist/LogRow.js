@@ -87,8 +87,8 @@ class ExpandableDetails extends Component {
                     {this.props.onAck && 
                         <span>
                             <FilterLikeThisButton value={h} watchIndex={this.props.watchIndex}>Filter...</FilterLikeThisButton>&nbsp;
-                            <Button size="sm" onClick={() => this.props.onAck(false)}><FontAwesomeIcon icon="check-circle"/> ack this</Button>&nbsp;
-                            <Button size="sm" onClick={() => this.props.onAck(true)}><FontAwesomeIcon icon="check-double"/> ack down to this</Button>&nbsp;
+                            <Button size="sm" color="light" onClick={() => this.props.onAck(false)}><FontAwesomeIcon icon="check-circle"/> ack this</Button>&nbsp;
+                            <Button size="sm" color="light" onClick={() => this.props.onAck(true)}><FontAwesomeIcon icon="check-double"/> ack down to this</Button>&nbsp;
                         </span>
                     }
                 </div>

@@ -17,6 +17,7 @@ function FilterLikeThisButton(props) {
     return <Button 
             className="filter-like-this-button" 
             size="sm"
+            color="light"
             title="filter"
             onClick={() => props.makeFilterLikeThis()}>
             <FontAwesomeIcon icon="filter"/>{' '}{props.children}

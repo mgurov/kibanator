@@ -24,7 +24,7 @@ function ExistingWatch({watchIndex}) {
 
 function EditLink({watchIndex}) {
     return <Link to={`/watch/${watchIndex}/edit`} >
-        <Button data-test-id="edit-config" size="sm">
+        <Button data-test-id="edit-config" size="sm" color="light">
             <FontAwesomeIcon icon="wrench" />
         </Button>
         </Link>

@@ -22,7 +22,7 @@ class LogRowFieldValue extends React.Component {
                 document.execCommand('copy')
             }
 
-            this.copyButton = <Button size="sm" title="copy to clipboard" onClick={onSelect}><FontAwesomeIcon icon="copy"/></Button>
+            this.copyButton = <Button size="sm" color="primary" title="copy to clipboard" onClick={onSelect}><FontAwesomeIcon icon="copy"/></Button>
             this.renderedValue = <pre ref={(textHolder) => { this.textHolder = textHolder }}>{value}</pre>
         } else {
             this.renderedValue = value
@@ -32,7 +32,7 @@ class LogRowFieldValue extends React.Component {
     render() {
         return <div className="field-row">
                 {this.filterButton} {this.copyButton} <label>{this.fieldName}:</label> 
-                {this.renderedValue}
+                {' '}{this.renderedValue}
             </div>
 
     }

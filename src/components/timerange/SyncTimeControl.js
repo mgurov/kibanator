@@ -5,7 +5,7 @@ export function SyncTimeControl({selected, lastSync, syncIntervalId}) {
 
     let syncingFrom 
     if (lastSync) {
-        syncingFrom = <DateTime value={lastSync} className="badge badge-secondary"/>
+        syncingFrom = <DateTime value={lastSync} className="badge badge-light"/>
     } else if (syncIntervalId) {
         syncingFrom = <span>fetching...</span>
     } else {

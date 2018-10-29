@@ -24,6 +24,7 @@ const mapDispatchToProps = dispatch => {
 function ResetButton(props) {
     return <Button
         size="sm" 
+        color="light"
         data-test-id="reset"
         onClick={props.reset}
         disabled={!props.fetchStarted}
