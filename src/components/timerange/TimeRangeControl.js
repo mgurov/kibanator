@@ -28,11 +28,11 @@ const mapDispatchToProps = (dispatch, {watchIndex}) => {
 }
 
 
-function TimeRangeControl(props) {
-    let fetchedWatchIndexes = props.synctimes.fetchedWatchIndexes;
+function TimeRangeControl({synctimes, watchIndex, fetchStatus, onSyncSelected, config}) {
+    let fetchedWatchIndexes = synctimes.fetchedWatchIndexes;
 
     if (_.size(fetchedWatchIndexes) > 0) {
-        let fetchingCurrentWatch = (_.indexOf(fetchedWatchIndexes, props.watchIndex) >= 0)
+        let fetchingCurrentWatch = (_.indexOf(fetchedWatchIndexes, watchIndex) >= 0)
         if (!fetchingCurrentWatch) {
             return <div className="bg-warning">Other watches are being fetched.  
                 { }<Reset>Reset data</Reset> or <a target="_blank" href="#open-me-new-window">open in new window</a> to start with this one.
@@ -40,11 +40,11 @@ function TimeRangeControl(props) {
         }
     }
     
-    if (props.synctimes.selected) {    
+    if (synctimes.selected) {    
         return <SyncTimeControl
-            selected={props.synctimes.selected}
-            syncIntervalId={props.synctimes.intervalId}
-            lastSync={props.fetchStatus.lastSync}
+            selected={synctimes.selected}
+            syncIntervalId={synctimes.intervalId}
+            lastSync={fetchStatus.lastSync}
         />
     } else {
         return <div>
@@ -54,8 +54,7 @@ function TimeRangeControl(props) {
                     <CardTitle>Ready to go</CardTitle>
                     <CardSubtitle>Please select where do we start from:</CardSubtitle>
                     <SelectTimeRange 
-                    options={props.synctimes.options} 
-                    onSelected={st => props.onSyncSelected(st, props.config)} 
+                    onSelected={st => onSyncSelected(st, config)} 
                     />
                 </CardBody>
             </Card>
