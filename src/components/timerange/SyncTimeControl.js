@@ -1,7 +1,7 @@
 import React from 'react'
 import {DateTime} from '../generic/'
 
-export function SyncTimeControl({selected, lastSync, syncIntervalId}) {
+export function SyncTimeControl({lastSync, syncIntervalId}) {
 
     let syncingFrom 
     if (lastSync) {

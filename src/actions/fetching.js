@@ -66,7 +66,7 @@ export function fetchData({fromTimestamp=new Date(), toTimestamp=new Date(), con
                         message: `To prevent your password lockout the polling has been stopped. Please check your credentials and restart. Response.status: ${response.status} message: ${response.statusText}`,
                     }
                     dispatch(failedFetchingData(error))
-                    dispatch(stopFetchTimer())
+                    dispatch(stopFetchTimers())
                     throw error
                 }
                 throw new Error(response.statusText);
@@ -92,7 +92,7 @@ export function fetchData({fromTimestamp=new Date(), toTimestamp=new Date(), con
                             message: 'Reset from a later point in time to continue. Please note that the marks will be lost upon this operation.',
                         }
                         dispatch(failedFetchingData(error))        
-                        dispatch(stopFetchTimer())
+                        dispatch(stopFetchTimers())
                     }
                     onResponse();
                 }
@@ -122,20 +122,20 @@ export function startFetching({from, config, watchIndex}) {
 
         doFetch()
         let intervalId = setInterval(doFetch, refreshInterval)
-        dispatch(startedFetchTimer({intervalId, watchIndexes: [watchIndex]}))
+        dispatch(startedFetchTimer({intervalId, watchIndex}))
     }
 }
 
-export function stopFetchTimer() {
+export function stopFetchTimers() {
     return {
-        type: 'FETCH_STOP_TIMER',
+        type: 'FETCH_STOP_TIMERS',
     }
 }
 
-export function startedFetchTimer({intervalId, watchIndexes}) {
+export function startedFetchTimer({intervalId, watchIndex}) {
     return {
         type: 'FETCH_STARTED_TIMER',
-        payload: {intervalId, watchIndexes}
+        payload: {intervalId, watchIndex}
     }
 }
 

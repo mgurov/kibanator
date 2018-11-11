@@ -1,39 +1,42 @@
 let nextId = 1
 export const getNextId = () => nextId++
 
-export const selectSyncTime = selected => {
-  return function(dispatch) {
-    dispatch({type: 'SELECT_SYNC_TIME', selected})
-  }  
+export const selectSyncTime = ({ selected, watchIndex }) => {
+  return function (dispatch) {
+    dispatch({
+      type: 'SELECT_SYNC_TIME',
+      payload: { selected, watchIndex }
+    })
+  }
 }
 
-export const ackTillId = ({id, watchIndex}) => {
+export const ackTillId = ({ id, watchIndex }) => {
   return {
     type: 'ACK_TILL_ID',
     id,
-    payload: {id, watchIndex}
+    payload: { id, watchIndex }
   }
 }
 
-export const ackId = ({id, watchIndex}) => {
+export const ackId = ({ id, watchIndex }) => {
   return {
     type: 'ACK_ID',
     id,
-    payload: {id, watchIndex},
+    payload: { id, watchIndex },
   }
 }
 
-export const ackAll = ({watchIndex}) => {
+export const ackAll = ({ watchIndex }) => {
   return {
     type: 'ACK_ALL',
-    payload: {watchIndex}
+    payload: { watchIndex }
   }
 }
 
-export const ackTag = ({tag, watchIndex}) => {
+export const ackTag = ({ tag, watchIndex }) => {
   return {
     type: 'ACK_TAG',
-    payload: {tag, watchIndex}
+    payload: { tag, watchIndex }
   }
 }
 
@@ -43,7 +46,7 @@ export const resetData = () => {
   }
 }
 
-export const setConfig = ({value, index}) => {
+export const setConfig = ({ value, index }) => {
   return {
     type: 'SET_CONFIG',
     payload: {
@@ -53,7 +56,7 @@ export const setConfig = ({value, index}) => {
   }
 }
 
-export const removeConfig = ({watchIndex}) => {
+export const removeConfig = ({ watchIndex }) => {
   return {
     type: 'RM_CONFIG',
     payload: {
@@ -62,17 +65,17 @@ export const removeConfig = ({watchIndex}) => {
   }
 }
 
-export const addCaptor = ({captor, watchIndex}) => {
+export const addCaptor = ({ captor, watchIndex }) => {
   return {
     type: 'ADD_CAPTOR',
-    payload: {captor, watchIndex},
+    payload: { captor, watchIndex },
   }
 }
 
-export const removeCaptor = ({captorKey, watchIndex}) => {
+export const removeCaptor = ({ captorKey, watchIndex }) => {
   return {
     type: 'REMOVE_CAPTOR',
-    payload: {captorKey, watchIndex},
+    payload: { captorKey, watchIndex },
   }
 }
 

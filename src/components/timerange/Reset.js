@@ -1,21 +1,22 @@
 import React from 'react'
 import {Button} from 'reactstrap'
 import { connect } from 'react-redux'
+import _ from 'lodash'
 
-import { stopFetchTimer, resetData } from '../../actions'
+import { stopFetchTimers, resetData } from '../../actions'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const mapStateToProps = state => {
     return {
-        fetchStarted: !!state.synctimes.selected,
+        fetchStarted: !!_.find(state.synctimes, e => !!e.selectedTimeRange),
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
         reset: () => {
-            dispatch(stopFetchTimer())
+            dispatch(stopFetchTimers())
             dispatch(resetData())
         },
     }

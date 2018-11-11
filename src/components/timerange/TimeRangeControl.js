@@ -20,7 +20,7 @@ const mapStateToProps = (state, {watchIndex}) => {
 const mapDispatchToProps = (dispatch, {watchIndex}) => {
     return {
         onSyncSelected: (st, config) => {
-            dispatch(actions.selectSyncTime(st))
+            dispatch(actions.selectSyncTime({selected: st, watchIndex}))
             let from = new Date(st.nowToStart(new Date()))
             dispatch(actions.startFetching({from, config, watchIndex}))
         },
@@ -29,21 +29,20 @@ const mapDispatchToProps = (dispatch, {watchIndex}) => {
 
 
 function TimeRangeControl({synctimes, watchIndex, fetchStatus, onSyncSelected, config}) {
-    let fetchedWatchIndexes = synctimes.fetchedWatchIndexes;
 
-    if (_.size(fetchedWatchIndexes) > 0) {
-        let fetchingCurrentWatch = (_.indexOf(fetchedWatchIndexes, watchIndex) >= 0)
-        if (!fetchingCurrentWatch) {
-            return <div className="bg-warning">Other watches are being fetched.  
-                { }<Reset>Reset data</Reset> or <a target="_blank" href="#open-me-new-window">open in new window</a> to start with this one.
-            </div>
-        }
+    let otherWatchesFetched = !!_.find(synctimes, e => e.watchIndex !== watchIndex && e.pollingIntervalId !== null)
+
+    if (otherWatchesFetched) {
+        return <div className="bg-warning">Other watches are being fetched.  
+            { }<Reset>Reset data</Reset> or <a target="_blank" href="#open-me-new-window">open in new window</a> to start with this one.
+        </div>
     }
+
+    let thisWatchSyncTimes = _.find(synctimes, e => e.watchIndex === watchIndex) || {}
     
-    if (synctimes.selected) {    
+    if (thisWatchSyncTimes.selectedTimeRange) {    
         return <SyncTimeControl
-            selected={synctimes.selected}
-            syncIntervalId={synctimes.intervalId}
+            syncIntervalId={thisWatchSyncTimes.pollingIntervalId}
             lastSync={fetchStatus.lastSync}
         />
     } else {
