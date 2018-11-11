@@ -41,7 +41,7 @@ function doHttpFetch({fromTimestamp, toTimestamp, config}) {
         ignoreMissingIndex = true
     }
     let body = makeSearch({ serviceName: config.serviceName, from: fromTimestamp, to: now, config })
-    return fetch(API_PATH + '/' + index + '/_search?size=' + MAX_FETCH_SIZE + '&ignore_unavailable=' + ignoreMissingIndex + '&cypress-app=' + config.serviceName, {
+    return fetch(API_PATH + '/' + index + '/_search?size=' + MAX_FETCH_SIZE + '&ignore_unavailable=' + ignoreMissingIndex, {
         method: "POST",
         headers: new Headers({"Content-Type": "application/json"}),
         body: JSON.stringify(body),

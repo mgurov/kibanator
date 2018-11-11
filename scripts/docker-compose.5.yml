@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+      
+  
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.6.9
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    networks:
+      elk5:
+        aliases:
+          - elasticsearch
+
+  streamer:
+    image: mgurov/kibanato-streamator
+    networks:
+      - elk5
+    depends_on:
+      - elasticsearch
+    command: --elasticURL=http://elasticsearch:9200
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:5.6.9
+    ports:
+      - "5601:5601"
+    networks:
+      - elk5
+    depends_on:
+      - elasticsearch
+      - streamer
+
+networks:
+
+  elk5:
